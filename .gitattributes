@@ -1,0 +1,11 @@
+# GitHub Linguist Configuration
+# Hide language statistics and vendor generated / documentation files
+* text=auto eol=lf
+
+# Hide language detection from repository breakdown
+docs/* linguist-documentation=true
+docs/** linguist-documentation=true
+*.md linguist-documentation=true
+*.yaml linguist-documentation=true
+*.json linguist-generated=true
+prisma/* linguist-generated=true

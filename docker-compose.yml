@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: marketspace-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - api
+    networks:
+      - marketspace-net
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: marketspace-api
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://marketspace_app:secretpassword@postgres:5432/marketspace?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_ACCESS_SECRET=production_super_strong_jwt_access_secret_1234567890
+      - JWT_REFRESH_SECRET=production_super_strong_jwt_refresh_secret_1234567890
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - marketspace-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: marketspace-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: marketspace
+      POSTGRES_USER: marketspace_app
+      POSTGRES_PASSWORD: secretpassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketspace_app -d marketspace"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - marketspace-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: marketspace-redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - marketspace-net
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  marketspace-net:
+    driver: bridge
