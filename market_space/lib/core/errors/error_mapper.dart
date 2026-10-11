@@ -118,7 +118,6 @@ class ErrorMapper {
         );
 
       case DioExceptionType.unknown:
-      default:
         return const NetworkFailure();
     }
   }

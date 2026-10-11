@@ -1,30 +1,82 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:market_space/app/app.dart';
+import 'package:market_space/app/app_dependencies.dart';
+import 'package:market_space/app/app_theme.dart';
+import 'package:market_space/core/config/app_config.dart';
+import 'package:market_space/core/localization/locale_controller.dart';
+import 'package:market_space/core/logging/app_logger.dart';
+import 'package:market_space/core/mock_data/mock_data_provider.dart';
+import 'package:market_space/core/network/api_client.dart';
+import 'package:market_space/core/network/network_info.dart';
+import 'package:market_space/core/platform/platform_info.dart';
+import 'package:market_space/core/security/secure_token_provider.dart';
+import 'package:market_space/core/storage/preferences_service.dart';
+import 'package:market_space/core/storage/secure_storage_service.dart';
 
-import 'package:market_space/main.dart';
+class FakeNetworkInfo implements NetworkInfo {
+  @override
+  Future<bool> get isConnected async => true;
+}
+
+class FakeApiClient implements ApiClient {
+  @override
+  Future<Response<T>> get<T>(String path, {Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response<T>> post<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response<T>> put<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response<T>> patch<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response<T>> delete<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+    throw UnimplementedError();
+  }
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('MarketSpaceApp boots and displays foundation root placeholder', (WidgetTester tester) async {
+    final preferencesService = InMemoryPreferencesService();
+    final secureStorageService = InMemorySecureStorageService();
+    final tokenProvider = SecureTokenProvider(secureStorageService: secureStorageService);
+    final localeController = LocaleController(preferencesService: preferencesService);
+    final themeController = ThemeController(preferencesService: preferencesService);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    final dependencies = AppDependencies(
+      appConfig: AppConfig.development(),
+      logger: const AppLoggerImpl(isLoggingEnabled: false),
+      networkInfo: FakeNetworkInfo(),
+      preferencesService: preferencesService,
+      secureStorageService: secureStorageService,
+      tokenProvider: tokenProvider,
+      apiClient: FakeApiClient(),
+      mockDataProvider: MockDataProvider(),
+      platformInfo: const PlatformInfoImpl(),
+      localeController: localeController,
+      themeController: themeController,
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.byType(Scaffold), findsOneWidget);
+    expect(find.byIcon(Icons.storefront_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.language_rounded), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.language_rounded));
+    await tester.pumpAndSettle();
   });
 }
