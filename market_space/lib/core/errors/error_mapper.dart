@@ -83,6 +83,11 @@ class ErrorMapper {
           userFriendlyMessage: exception.message,
           technicalCode: exception.errorCode,
         );
+      default:
+        return UnknownFailure(
+          userFriendlyMessage: exception.message,
+          technicalCode: exception.errorCode,
+        );
     }
   }
 
@@ -91,6 +96,7 @@ class ErrorMapper {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
+      case DioExceptionType.transformTimeout:
         return const TimeoutFailure();
 
       case DioExceptionType.connectionError:
@@ -112,6 +118,7 @@ class ErrorMapper {
         );
 
       case DioExceptionType.unknown:
+      default:
         return const NetworkFailure();
     }
   }
