@@ -1,0 +1,18 @@
+{
+  "@@locale": "en",
+  "appTitle": "Market Space",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "close": "Close",
+  "networkError": "No internet connection. Please check your network.",
+  "serverError": "An unexpected server error occurred. Please try again later.",
+  "timeoutError": "The connection timed out. Please try again.",
+  "unauthorizedError": "Your session has expired. Please log in again.",
+  "unknownError": "Something went wrong. Please try again.",
+  "emptyStateMessage": "No data available at the moment.",
+  "loading": "Loading...",
+  "initializationFailed": "Application failed to initialize.",
+  "pageNotFound": "Page not found.",
+  "backToHome": "Back to Home"
+}
