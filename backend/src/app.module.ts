@@ -16,12 +16,17 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { ModerationModule } from './modules/moderation/moderation.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 
+import { RedisModule } from './core/redis/redis.module';
+import { WorkerModule } from './workers/worker.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validate: validateEnv,
     }),
+    RedisModule,
+    WorkerModule,
     AuthModule,
     UsersModule,
     CategoriesModule,

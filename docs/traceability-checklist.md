@@ -1,8 +1,8 @@
 # Traceability & Implementation Tracking Checklist — Market Space
 
-**Architecture:** Modular Monolith (NestJS / TypeScript / PostgreSQL / Redis)  
-**Current Phase:** Phase 2 (Backend Implementation)  
-**Current Milestone:** Milestone 4 (Completed)  
+**Architecture:** Modular Monolith (NestJS / TypeScript / PostgreSQL / Redis / Nginx)  
+**Current Phase:** Phase 2 (Backend Implementation Completed)  
+**Status:** All Core & Domain Modules Implemented and Verified  
 
 ---
 
@@ -14,11 +14,11 @@
 - [x] **Milestone 2: Categories Taxonomy & Dynamic Fields Engine (`FR-CAT`)** (Completed)
 - [x] **Milestone 3: Listings Lifecycle & S3/R2 Presigned Uploads (`FR-LIST`, `FR-MEDIA`)** (Completed)
 - [x] **Milestone 4: Search Engine & Arabic Trigram Matching (`FR-SEARCH`)** (Completed)
-- [ ] **Milestone 5: Buyer Contact & In-App Messaging (`FR-COMM`)** (Ready to begin)
-- [ ] **Milestone 6: Cloudflare Stream 30s Video Feed (`FR-VID`)**
-- [ ] **Milestone 7: Paymob Payments & Promotions Engine (`FR-PAY`)**
-- [ ] **Milestone 8: Moderation Queue & Admin Web APIs (`FR-MOD`, `FR-ADM`)**
-- [ ] **Milestone 9: FCM Push Notifications & Background Workers (`FR-NOTIF`)**
+- [x] **Milestone 5: Buyer Contact & In-App Messaging (`FR-COMM`)** (Completed)
+- [x] **Milestone 6: Cloudflare Stream 30s Video Feed (`FR-VID`)** (Completed)
+- [x] **Milestone 7: Paymob Payments & Promotions Engine (`FR-PAY`)** (Completed)
+- [x] **Milestone 8: Moderation Queue & Admin Web APIs (`FR-MOD`, `FR-ADM`)** (Completed)
+- [x] **Milestone 9: FCM Push Notifications & Security Polish (`FR-NOTIF`)** (Completed)
 
 ---
 
@@ -39,8 +39,12 @@
 | `FR-LIST-001` | Listings | Completed | [x] | `backend/src/modules/listings/` |
 | `FR-LIST-002` | Listings | Completed | [x] | `backend/src/modules/listings/` |
 | `FR-SEARCH-001`| Search | Completed | [x] | `backend/src/modules/search/` |
-| `FR-COMM-001` | Chat / Contact | Pending | [ ] | Milestone 5 |
-| `FR-VID-001`  | Video | Pending | [ ] | Milestone 6 |
-| `FR-PAY-001`  | Payments | Pending | [ ] | Milestone 7 |
-| `FR-MOD-001`  | Moderation | Pending | [ ] | Milestone 8 |
-| `FR-ADM-001`  | Admin | Pending | [ ] | Milestone 8 |
+| `FR-COMM-001` | Chat / Contact | Completed | [x] | `backend/src/modules/chat/` |
+| `FR-VID-001`  | Video | Completed | [x] | `backend/src/modules/video/` |
+| `FR-PAY-001`  | Payments | Completed | [x] | `backend/src/modules/payments/` |
+| `FR-MOD-001`  | Moderation | Completed | [x] | `backend/src/modules/moderation/` |
+| `FR-ADM-001`  | Admin / Audit | Completed | [x] | `backend/src/modules/moderation/` |
+| `FR-NOTIF-001`| Notifications | Completed | [x] | `backend/src/modules/notifications/` |
+| `NFR-CACHE-001`| Core / Redis | Completed | [x] | `backend/src/core/redis/` |
+| `NFR-ASYNC-001`| Workers Queue | Completed | [x] | `backend/src/workers/` |
+
