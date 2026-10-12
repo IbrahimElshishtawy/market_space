@@ -16,6 +16,7 @@ import '../core/platform/platform_info.dart';
 import '../core/security/secure_token_provider.dart';
 import '../core/storage/preferences_service.dart';
 import '../core/storage/secure_storage_service.dart';
+import '../shared/state/sector_controller.dart';
 import 'bootstrap_observer.dart';
 
 Future<AppDependencies> initializeDependencies(AppConfig config) async {
@@ -63,6 +64,11 @@ Future<AppDependencies> initializeDependencies(AppConfig config) async {
   );
   await themeController.loadSavedTheme();
 
+  final sectorController = SectorController(
+    preferencesService: preferencesService,
+  );
+  await sectorController.loadSavedSector();
+
   return AppDependencies(
     appConfig: config,
     logger: logger,
@@ -75,6 +81,7 @@ Future<AppDependencies> initializeDependencies(AppConfig config) async {
     platformInfo: platformInfo,
     localeController: localeController,
     themeController: themeController,
+    sectorController: sectorController,
   );
 }
 

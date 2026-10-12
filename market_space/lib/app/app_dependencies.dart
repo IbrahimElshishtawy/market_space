@@ -9,6 +9,7 @@ import '../core/platform/platform_info.dart';
 import '../core/security/token_provider.dart';
 import '../core/storage/preferences_service.dart';
 import '../core/storage/secure_storage_service.dart';
+import '../shared/state/sector_controller.dart';
 import 'app_theme.dart';
 
 class AppDependencies {
@@ -23,8 +24,9 @@ class AppDependencies {
   final PlatformInfo platformInfo;
   final LocaleController localeController;
   final ThemeController themeController;
+  final SectorController sectorController;
 
-  const AppDependencies({
+  AppDependencies({
     required this.appConfig,
     required this.logger,
     required this.networkInfo,
@@ -36,7 +38,8 @@ class AppDependencies {
     required this.platformInfo,
     required this.localeController,
     required this.themeController,
-  });
+    SectorController? sectorController,
+  }) : sectorController = sectorController ?? SectorController(preferencesService: preferencesService);
 
   static AppDependencies of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<AppDependenciesScope>();

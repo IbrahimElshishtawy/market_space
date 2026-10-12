@@ -14,6 +14,8 @@ import 'package:market_space/core/platform/platform_info.dart';
 import 'package:market_space/core/security/secure_token_provider.dart';
 import 'package:market_space/core/storage/preferences_service.dart';
 import 'package:market_space/core/storage/secure_storage_service.dart';
+import 'package:market_space/shared/state/sector_controller.dart';
+import 'package:market_space/shared/widgets/market_home_screen.dart';
 
 class FakeNetworkInfo implements NetworkInfo {
   @override
@@ -47,36 +49,94 @@ class FakeApiClient implements ApiClient {
   }
 }
 
-void main() {
-  testWidgets('MarketSpaceApp boots and displays foundation root placeholder', (WidgetTester tester) async {
-    final preferencesService = InMemoryPreferencesService();
-    final secureStorageService = InMemorySecureStorageService();
-    final tokenProvider = SecureTokenProvider(secureStorageService: secureStorageService);
-    final localeController = LocaleController(preferencesService: preferencesService);
-    final themeController = ThemeController(preferencesService: preferencesService);
+AppDependencies createTestDependencies() {
+  final preferencesService = InMemoryPreferencesService();
+  final secureStorageService = InMemorySecureStorageService();
+  final tokenProvider = SecureTokenProvider(secureStorageService: secureStorageService);
+  final localeController = LocaleController(preferencesService: preferencesService);
+  final themeController = ThemeController(preferencesService: preferencesService);
+  final sectorController = SectorController(preferencesService: preferencesService);
 
-    final dependencies = AppDependencies(
-      appConfig: AppConfig.development(),
-      logger: const AppLoggerImpl(isLoggingEnabled: false),
-      networkInfo: FakeNetworkInfo(),
-      preferencesService: preferencesService,
-      secureStorageService: secureStorageService,
-      tokenProvider: tokenProvider,
-      apiClient: FakeApiClient(),
-      mockDataProvider: MockDataProvider(),
-      platformInfo: const PlatformInfoImpl(),
-      localeController: localeController,
-      themeController: themeController,
-    );
+  return AppDependencies(
+    appConfig: AppConfig.development(),
+    logger: const AppLoggerImpl(isLoggingEnabled: false),
+    networkInfo: FakeNetworkInfo(),
+    preferencesService: preferencesService,
+    secureStorageService: secureStorageService,
+    tokenProvider: tokenProvider,
+    apiClient: FakeApiClient(),
+    mockDataProvider: MockDataProvider(),
+    platformInfo: const PlatformInfoImpl(),
+    localeController: localeController,
+    themeController: themeController,
+    sectorController: sectorController,
+  );
+}
+
+void main() {
+  testWidgets('MarketSpaceApp boots and displays Stitch Bazar Jo marketplace screen', (WidgetTester tester) async {
+    final dependencies = createTestDependencies();
 
     await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
     await tester.pumpAndSettle();
 
-    expect(find.byType(Scaffold), findsOneWidget);
-    expect(find.byIcon(Icons.storefront_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.language_rounded), findsOneWidget);
+    expect(find.byType(MarketHomeScreen), findsOneWidget);
+    expect(find.text('بازار جو'), findsOneWidget);
+    expect(find.text('عقارات • تشطيب ومُوَن • خدمات'), findsOneWidget);
+    expect(find.text('الكل'), findsOneWidget);
+    expect(find.text('عقارات للبيع'), findsWidgets);
+    expect(find.text('عقارات للإيجار'), findsWidgets);
+    expect(find.text('مُوَن وبناء'), findsOneWidget);
+    expect(find.text('خدمات وصيانة'), findsOneWidget);
+    expect(find.text('طلب مواد البناء والمُوَن والتوريد المباشر إلى موقع مشروعك'), findsOneWidget);
+  });
 
-    await tester.tap(find.byIcon(Icons.language_rounded));
+  testWidgets('MarketHomeScreen renders without overflow on compact mobile screen (320x568)', (WidgetTester tester) async {
+    final dependencies = createTestDependencies();
+
+    tester.view.physicalSize = const Size(320 * 2.0, 568 * 2.0);
+    tester.view.devicePixelRatio = 2.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
     await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('بازار جو'), findsOneWidget);
+  });
+
+  testWidgets('MarketHomeScreen renders without overflow on large mobile screen (430x932)', (WidgetTester tester) async {
+    final dependencies = createTestDependencies();
+
+    tester.view.physicalSize = const Size(430 * 3.0, 932 * 3.0);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('بازار جو'), findsOneWidget);
+  });
+
+  testWidgets('MarketHomeScreen sector switching persists choice and updates state', (WidgetTester tester) async {
+    final dependencies = createTestDependencies();
+
+    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
+    await tester.pumpAndSettle();
+
+    final buildingMaterialsChip = find.text('مُوَن ومواد بناء');
+    expect(buildingMaterialsChip, findsOneWidget);
+
+    await tester.tap(buildingMaterialsChip);
+    await tester.pumpAndSettle();
+
+    expect(dependencies.sectorController.value.titleAr, 'مواد البناء والمُوَن');
   });
 }

@@ -7,6 +7,8 @@ import '../shared/widgets/app_error_view.dart';
 import 'app_dependencies.dart';
 import 'app_localization.dart';
 
+import '../shared/widgets/market_home_screen.dart';
+
 class AppRouter {
   static GoRouter createRouter({
     RouteGuard? routeGuard,
@@ -36,7 +38,7 @@ class AppRouter {
           path: RouteNames.root,
           name: RouteNames.rootName,
           builder: (context, state) {
-            return const FoundationRootPlaceholder();
+            return const MarketHomeScreen();
           },
         ),
       ],

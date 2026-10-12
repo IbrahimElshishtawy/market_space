@@ -3,6 +3,7 @@ class StorageKeys {
   static const String languageCode = 'app_language_code';
   static const String onboardingCompleted = 'app_onboarding_completed';
   static const String cachedUser = 'app_cached_user';
+  static const String selectedSector = 'app_selected_sector';
 
   static const String accessToken = 'secure_access_token';
   static const String refreshToken = 'secure_refresh_token';
