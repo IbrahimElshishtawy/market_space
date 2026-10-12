@@ -2,10 +2,7 @@ abstract class AppFailure {
   final String userFriendlyMessage;
   final String? technicalCode;
 
-  const AppFailure({
-    required this.userFriendlyMessage,
-    this.technicalCode,
-  });
+  const AppFailure({required this.userFriendlyMessage, this.technicalCode});
 
   @override
   String toString() => '$runtimeType: $userFriendlyMessage ($technicalCode)';
@@ -13,7 +10,8 @@ abstract class AppFailure {
 
 class NetworkFailure extends AppFailure {
   const NetworkFailure({
-    super.userFriendlyMessage = 'No internet connection. Please verify your network.',
+    super.userFriendlyMessage =
+        'No internet connection. Please verify your network.',
     super.technicalCode = 'NETWORK_ERROR',
   });
 }
@@ -34,14 +32,16 @@ class ServerFailure extends AppFailure {
 
 class UnauthorizedFailure extends AppFailure {
   const UnauthorizedFailure({
-    super.userFriendlyMessage = 'Your session has expired. Please log in again.',
+    super.userFriendlyMessage =
+        'Your session has expired. Please log in again.',
     super.technicalCode = 'UNAUTHORIZED',
   });
 }
 
 class ForbiddenFailure extends AppFailure {
   const ForbiddenFailure({
-    super.userFriendlyMessage = 'You do not have permission to perform this action.',
+    super.userFriendlyMessage =
+        'You do not have permission to perform this action.',
     super.technicalCode = 'FORBIDDEN',
   });
 }
@@ -65,7 +65,8 @@ class ValidationFailure extends AppFailure {
 
 class RateLimitFailure extends AppFailure {
   const RateLimitFailure({
-    super.userFriendlyMessage = 'Too many requests. Please wait a moment and try again.',
+    super.userFriendlyMessage =
+        'Too many requests. Please wait a moment and try again.',
     super.technicalCode = 'RATE_LIMIT_ERROR',
   });
 }

@@ -11,7 +11,8 @@ class PlatformInfoImpl implements PlatformInfo {
   const PlatformInfoImpl();
 
   @override
-  bool get isAndroid => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+  bool get isAndroid =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
   @override
   bool get isIOS => !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import '../core/config/app_config.dart';
 import '../core/localization/locale_controller.dart';
 import '../core/logging/app_logger.dart';
@@ -39,10 +40,13 @@ class AppDependencies {
     required this.localeController,
     required this.themeController,
     SectorController? sectorController,
-  }) : sectorController = sectorController ?? SectorController(preferencesService: preferencesService);
+  }) : sectorController =
+           sectorController ??
+           SectorController(preferencesService: preferencesService);
 
   static AppDependencies of(BuildContext context) {
-    final scope = context.dependOnInheritedWidgetOfExactType<AppDependenciesScope>();
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<AppDependenciesScope>();
     if (scope == null) {
       throw StateError('AppDependenciesScope not found in widget tree.');
     }

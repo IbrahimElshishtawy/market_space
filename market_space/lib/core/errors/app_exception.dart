@@ -12,7 +12,8 @@ abstract class AppException implements Exception {
   });
 
   @override
-  String toString() => '$runtimeType: $message (code: $errorCode, status: $statusCode)';
+  String toString() =>
+      '$runtimeType: $message (code: $errorCode, status: $statusCode)';
 }
 
 class NetworkException extends AppException {

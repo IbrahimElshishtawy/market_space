@@ -24,7 +24,10 @@ class LogSanitizer {
       final sanitizedMap = <String, dynamic>{};
       for (final entry in data.entries) {
         final keyString = entry.key.toString();
-        final normalizedKey = keyString.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+        final normalizedKey = keyString.toLowerCase().replaceAll(
+          RegExp(r'[^a-z0-9]'),
+          '',
+        );
         if (sensitiveKeys.contains(normalizedKey)) {
           sanitizedMap[keyString] = '[REDACTED]';
         } else {

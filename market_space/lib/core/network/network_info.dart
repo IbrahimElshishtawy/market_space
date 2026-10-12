@@ -7,9 +7,7 @@ abstract class NetworkInfo {
 class NetworkInfoImpl implements NetworkInfo {
   final Connectivity connectivity;
 
-  const NetworkInfoImpl({
-    required this.connectivity,
-  });
+  const NetworkInfoImpl({required this.connectivity});
 
   @override
   Future<bool> get isConnected async {

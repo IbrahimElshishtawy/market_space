@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/utils/responsive_utils.dart';
@@ -29,9 +30,7 @@ class MarketBottomNavBar extends StatelessWidget {
             offset: const Offset(0, -3),
           ),
         ],
-        border: const Border(
-          top: BorderSide(color: AppColors.lightBorder),
-        ),
+        border: const Border(top: BorderSide(color: AppColors.lightBorder)),
       ),
       child: SafeArea(
         top: false,
@@ -61,9 +60,7 @@ class MarketBottomNavBar extends StatelessWidget {
               ),
 
               // 3. Center Action (+ أضف إعلانك)
-              Expanded(
-                child: _buildCenterAddButton(isCompact),
-              ),
+              Expanded(child: _buildCenterAddButton(isCompact)),
 
               // 4. الرسائل (Messages with badge)
               Expanded(
@@ -115,11 +112,7 @@ class MarketBottomNavBar extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                Icon(
-                  icon,
-                  size: isCompact ? 22.0 : 25.0,
-                  color: color,
-                ),
+                Icon(icon, size: isCompact ? 22.0 : 25.0, color: color),
                 if (hasLiveDot)
                   Positioned(
                     top: -1,
@@ -139,7 +132,10 @@ class MarketBottomNavBar extends StatelessWidget {
                     right: -7,
                     child: Container(
                       padding: const EdgeInsets.all(3.0),
-                      constraints: const BoxConstraints(minWidth: 15.0, minHeight: 15.0),
+                      constraints: const BoxConstraints(
+                        minWidth: 15.0,
+                        minHeight: 15.0,
+                      ),
                       decoration: const BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 
 /// Renders a network image with a smooth shimmer-like loading placeholder and a clean fallback icon.
@@ -37,10 +38,7 @@ class SafeNetworkImage extends StatelessWidget {
     );
 
     if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius!,
-        child: imageWidget,
-      );
+      return ClipRRect(borderRadius: borderRadius!, child: imageWidget);
     }
 
     return imageWidget;
@@ -70,11 +68,7 @@ class SafeNetworkImage extends StatelessWidget {
       height: height,
       color: const Color(0xFFF1F5F9),
       child: Center(
-        child: Icon(
-          fallbackIcon,
-          size: 32,
-          color: AppColors.lightTextMuted,
-        ),
+        child: Icon(fallbackIcon, size: 32, color: AppColors.lightTextMuted),
       ),
     );
   }

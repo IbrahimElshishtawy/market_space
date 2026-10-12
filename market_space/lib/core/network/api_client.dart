@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+
 import '../config/app_config.dart';
 import '../errors/app_exception.dart';
 import '../errors/error_mapper.dart';
@@ -56,10 +57,7 @@ class DioApiClient implements ApiClient {
   final Dio dio;
   final NetworkInfo networkInfo;
 
-  DioApiClient({
-    required this.dio,
-    required this.networkInfo,
-  });
+  DioApiClient({required this.dio, required this.networkInfo});
 
   factory DioApiClient.create({
     required AppConfig appConfig,
@@ -89,10 +87,7 @@ class DioApiClient implements ApiClient {
       RetryInterceptor(dio: dioInstance),
     ]);
 
-    return DioApiClient(
-      dio: dioInstance,
-      networkInfo: networkInfo,
-    );
+    return DioApiClient(dio: dioInstance, networkInfo: networkInfo);
   }
 
   Future<void> _checkConnectivity() async {

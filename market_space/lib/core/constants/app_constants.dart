@@ -6,7 +6,8 @@ class AppConstants {
   static const String fallbackLocaleCountryCode = 'US';
 
   static const String egyptCountryDialCode = '+20';
-  static const String egyptianPhoneRegexPattern = r'^\+20(10|11|12|15)[0-9]{8}$';
+  static const String egyptianPhoneRegexPattern =
+      r'^\+20(10|11|12|15)[0-9]{8}$';
 
   static const int defaultPaginationPageSize = 20;
   static const int maxOtpLength = 6;

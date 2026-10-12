@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/storage/preferences_service.dart';
 import '../../core/storage/storage_keys.dart';
 import '../models/market_sector.dart';
@@ -13,7 +14,9 @@ class SectorController extends ValueNotifier<MarketSector> {
   }) : super(initialSector);
 
   Future<void> loadSavedSector() async {
-    final savedKey = await preferencesService.getString(StorageKeys.selectedSector);
+    final savedKey = await preferencesService.getString(
+      StorageKeys.selectedSector,
+    );
     if (savedKey != null) {
       value = MarketSector.fromKey(savedKey);
     }
@@ -22,6 +25,9 @@ class SectorController extends ValueNotifier<MarketSector> {
   Future<void> setSector(MarketSector newSector) async {
     if (value == newSector) return;
     value = newSector;
-    await preferencesService.setString(StorageKeys.selectedSector, newSector.key);
+    await preferencesService.setString(
+      StorageKeys.selectedSector,
+      newSector.key,
+    );
   }
 }

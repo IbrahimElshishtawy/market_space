@@ -55,7 +55,9 @@ void main() {
         response: Response(
           requestOptions: RequestOptions(path: '/listings/123'),
           statusCode: 404,
-          data: {'error': {'message': 'Listing not found', 'code': 'NOT_FOUND'}},
+          data: {
+            'error': {'message': 'Listing not found', 'code': 'NOT_FOUND'},
+          },
         ),
       );
       final failure = ErrorMapper.map(dioException);

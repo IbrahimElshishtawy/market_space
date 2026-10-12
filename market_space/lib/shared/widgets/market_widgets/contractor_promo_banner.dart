@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -7,10 +8,7 @@ import '../../../core/utils/responsive_utils.dart';
 class ContractorPromoBanner extends StatelessWidget {
   final VoidCallback? onOrderTap;
 
-  const ContractorPromoBanner({
-    super.key,
-    this.onOrderTap,
-  });
+  const ContractorPromoBanner({super.key, this.onOrderTap});
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +43,7 @@ class ContractorPromoBanner extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.08),
                 borderRadius: AppRadii.md,
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.12),
-                ),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
               ),
               child: Icon(
                 Icons.local_shipping_rounded,
@@ -120,9 +116,9 @@ class ContractorPromoBanner extends StatelessWidget {
                     onTap: onOrderTap,
                     borderRadius: AppRadii.full,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14.0,
-                        vertical: 6.5,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isCompact ? 10.0 : 14.0,
+                        vertical: isCompact ? 5.5 : 6.5,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -135,14 +131,14 @@ class ContractorPromoBanner extends StatelessWidget {
                             'طلب توريد فوري',
                             style: TextStyle(
                               color: AppColors.neutral,
-                              fontSize: isCompact ? 11.5 : 12.5,
+                              fontSize: isCompact ? 11.0 : 12.5,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(width: 4.0),
-                          const Icon(
+                          Icon(
                             Icons.arrow_forward_rounded,
-                            size: 15.0,
+                            size: isCompact ? 14.0 : 15.0,
                             color: AppColors.neutral,
                           ),
                         ],

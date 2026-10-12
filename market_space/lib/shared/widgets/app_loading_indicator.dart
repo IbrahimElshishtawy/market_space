@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 
@@ -35,9 +36,8 @@ class AppLoadingIndicator extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               message!,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.lightTextSecondary,
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: AppColors.lightTextSecondary),
               textAlign: TextAlign.center,
             ),
           ],

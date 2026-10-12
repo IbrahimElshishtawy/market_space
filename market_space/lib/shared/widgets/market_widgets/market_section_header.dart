@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -98,7 +99,10 @@ class MarketSectionHeader extends StatelessWidget {
               onTap: onActionTap,
               borderRadius: AppRadii.sm,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4.0,
+                  vertical: 2.0,
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

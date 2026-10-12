@@ -33,7 +33,8 @@ class InputNormalizers {
       cleanedNumber = '+20${cleanedNumber.substring(1)}';
     }
 
-    final isValidEgyptianNumber = RegExp(r'^\+20(10|11|12|15)[0-9]{8}$').hasMatch(cleanedNumber);
+    final isValidEgyptianNumber = RegExp(r'^\+20(10|11|12|15)[0-9]{8}$')
+        .hasMatch(cleanedNumber);
     if (!isValidEgyptianNumber) {
       return null;
     }

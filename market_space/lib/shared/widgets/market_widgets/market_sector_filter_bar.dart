@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -78,7 +79,9 @@ class MarketSectorFilterBar extends StatelessWidget {
                   color: isSelected ? AppColors.primary : Colors.white,
                   borderRadius: AppRadii.full,
                   border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.lightBorder,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.lightBorder,
                   ),
                   boxShadow: isSelected
                       ? [
@@ -96,15 +99,21 @@ class MarketSectorFilterBar extends StatelessWidget {
                     Icon(
                       chip.icon,
                       size: isCompact ? 15.0 : 17.0,
-                      color: isSelected ? Colors.white : AppColors.lightTextPrimary,
+                      color: isSelected
+                          ? Colors.white
+                          : AppColors.lightTextPrimary,
                     ),
                     const SizedBox(width: 5.0),
                     Text(
                       chip.title,
                       style: TextStyle(
                         fontSize: isCompact ? 11.5 : 12.5,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                        color: isSelected ? Colors.white : AppColors.lightTextPrimary,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w600,
+                        color: isSelected
+                            ? Colors.white
+                            : AppColors.lightTextPrimary,
                       ),
                     ),
                   ],

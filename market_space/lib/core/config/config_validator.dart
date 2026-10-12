@@ -7,7 +7,8 @@ class ConfigValidator {
     }
 
     final parsedUri = Uri.tryParse(config.apiBaseUrl);
-    final isValidHttpScheme = parsedUri != null &&
+    final isValidHttpScheme =
+        parsedUri != null &&
         (parsedUri.scheme == 'http' || parsedUri.scheme == 'https') &&
         parsedUri.host.isNotEmpty;
 
@@ -18,11 +19,15 @@ class ConfigValidator {
     }
 
     if (config.connectTimeout.inMilliseconds <= 0) {
-      throw ArgumentError('Configuration error: connectTimeout must be greater than zero.');
+      throw ArgumentError(
+        'Configuration error: connectTimeout must be greater than zero.',
+      );
     }
 
     if (config.receiveTimeout.inMilliseconds <= 0) {
-      throw ArgumentError('Configuration error: receiveTimeout must be greater than zero.');
+      throw ArgumentError(
+        'Configuration error: receiveTimeout must be greater than zero.',
+      );
     }
   }
 }

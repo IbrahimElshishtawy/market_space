@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/utils/responsive_utils.dart';
@@ -50,14 +51,19 @@ class MaterialProductCard extends StatelessWidget {
                   height: isCompact ? 105.0 : 120.0,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16.0),
+                  ),
                   fallbackIcon: Icons.handyman_rounded,
                 ),
                 Positioned(
                   top: 6.0,
                   right: 6.0,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 2.5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7.0,
+                      vertical: 2.5,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.neutral.withValues(alpha: 0.85),
                       borderRadius: AppRadii.sm,
@@ -195,7 +201,9 @@ class MaterialProductCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 3.0),
                           ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: isCompact ? 80.0 : 95.0),
+                            constraints: BoxConstraints(
+                              maxWidth: isCompact ? 80.0 : 95.0,
+                            ),
                             child: Text(
                               item.footerText,
                               maxLines: 1,

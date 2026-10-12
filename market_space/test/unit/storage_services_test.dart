@@ -36,7 +36,9 @@ void main() {
   group('SecureTokenProvider', () {
     test('saves, retrieves, and clears tokens safely', () async {
       final secureStorageService = InMemorySecureStorageService();
-      final tokenProvider = SecureTokenProvider(secureStorageService: secureStorageService);
+      final tokenProvider = SecureTokenProvider(
+        secureStorageService: secureStorageService,
+      );
 
       expect(await tokenProvider.hasValidToken(), isFalse);
 

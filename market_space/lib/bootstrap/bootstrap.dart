@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../app/app.dart';
 import '../app/app_dependencies.dart';
 import '../app/app_theme.dart';
@@ -40,9 +41,7 @@ Future<AppDependencies> initializeDependencies(AppConfig config) async {
     secureStorageService: secureStorageService,
   );
 
-  final networkInfo = NetworkInfoImpl(
-    connectivity: Connectivity(),
-  );
+  final networkInfo = NetworkInfoImpl(connectivity: Connectivity());
 
   final apiClient = DioApiClient.create(
     appConfig: config,

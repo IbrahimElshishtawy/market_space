@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../app/app_dependencies.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radii.dart';
@@ -138,9 +139,7 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
 
                     // 2. Search & Filter Bar
                     SliverToBoxAdapter(
-                      child: MarketSearchBar(
-                        onFilterTap: _showFilterSheet,
-                      ),
+                      child: MarketSearchBar(onFilterTap: _showFilterSheet),
                     ),
 
                     // 3. Sector Filter Bar (الكل، عقارات، مواد بناء...)
@@ -166,7 +165,9 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
                     SliverToBoxAdapter(
                       child: ContractorPromoBanner(
                         onOrderTap: () {
-                          sectorController.setSector(MarketSector.buildingMaterials);
+                          sectorController.setSector(
+                            MarketSector.buildingMaterials,
+                          );
                         },
                       ),
                     ),
@@ -222,23 +223,26 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
                           vertical: AppSpacing.xs,
                         ),
                         sliver: SliverGrid(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: AppSpacing.sm,
-                            crossAxisSpacing: AppSpacing.sm,
-                            childAspectRatio: context.isCompactPhone ? 0.68 : 0.74,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final item = _materials[index];
-                              return MaterialProductCard(
-                                item: item,
-                                onCallTap: () => _callSupplier(item),
-                                onChatTap: () => _chatSupplier(item),
-                              );
-                            },
-                            childCount: _materials.length,
-                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: AppSpacing.sm,
+                                crossAxisSpacing: AppSpacing.sm,
+                                childAspectRatio: context.isCompactPhone
+                                    ? 0.68
+                                    : 0.74,
+                              ),
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final item = _materials[index];
+                            return MaterialProductCard(
+                              item: item,
+                              onCallTap: () => _callSupplier(item),
+                              onChatTap: () => _chatSupplier(item),
+                            );
+                          }, childCount: _materials.length),
                         ),
                       ),
                     ],
@@ -258,16 +262,13 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
                         ),
                       ),
                       SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final item = _providers[index];
-                            return ServiceProviderCard(
-                              item: item,
-                              onActionTap: () => _requestQuote(item),
-                            );
-                          },
-                          childCount: _providers.length,
-                        ),
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final item = _providers[index];
+                          return ServiceProviderCard(
+                            item: item,
+                            onActionTap: () => _requestQuote(item),
+                          );
+                        }, childCount: _providers.length),
                       ),
                     ],
 
@@ -283,20 +284,15 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
                         ),
                       ),
                       SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final item = _investments[index];
-                            return _buildInvestmentCard(context, item);
-                          },
-                          childCount: _investments.length,
-                        ),
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final item = _investments[index];
+                          return _buildInvestmentCard(context, item);
+                        }, childCount: _investments.length),
                       ),
                     ],
 
                     // 10. Trust & Guarantee Card
-                    const SliverToBoxAdapter(
-                      child: TrustGuaranteeCard(),
-                    ),
+                    const SliverToBoxAdapter(child: TrustGuaranteeCard()),
 
                     // Extra bottom padding for scroll clearance
                     const SliverToBoxAdapter(
@@ -321,7 +317,10 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
     );
   }
 
-  Widget _buildInvestmentCard(BuildContext context, InvestmentProjectItem item) {
+  Widget _buildInvestmentCard(
+    BuildContext context,
+    InvestmentProjectItem item,
+  ) {
     final isCompact = context.isCompactPhone;
     final horizontalPadding = context.horizontalScreenPadding;
 
@@ -350,7 +349,9 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
             height: isCompact ? 115.0 : 130.0,
             width: double.infinity,
             fit: BoxFit.cover,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(16.0),
+            ),
             fallbackIcon: Icons.apartment_rounded,
           ),
           Padding(
@@ -456,7 +457,14 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
                   style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                ...['الرياض / دبي', 'الرياض', 'جدة', 'دبي', 'أبوظبي', 'الشارقة'].map(
+                ...[
+                  'الرياض / دبي',
+                  'الرياض',
+                  'جدة',
+                  'دبي',
+                  'أبوظبي',
+                  'الشارقة',
+                ].map(
                   (city) => ListTile(
                     title: Text(city),
                     trailing: _selectedCity == city
@@ -531,17 +539,26 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 ListTile(
-                  leading: const Icon(Icons.home_work_outlined, color: AppColors.secondary),
+                  leading: const Icon(
+                    Icons.home_work_outlined,
+                    color: AppColors.secondary,
+                  ),
                   title: const Text('إعلان عقاري (بيع أو إيجار)'),
                   onTap: () => Navigator.pop(ctx),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.handyman_outlined, color: AppColors.tertiary),
+                  leading: const Icon(
+                    Icons.handyman_outlined,
+                    color: AppColors.tertiary,
+                  ),
                   title: const Text('إعلان مواد بناء وتوريد مُوَن'),
                   onTap: () => Navigator.pop(ctx),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.engineering_outlined, color: AppColors.info),
+                  leading: const Icon(
+                    Icons.engineering_outlined,
+                    color: AppColors.info,
+                  ),
                   title: const Text('تسجيل مقدم خدمة ومقاولات'),
                   onTap: () => Navigator.pop(ctx),
                 ),

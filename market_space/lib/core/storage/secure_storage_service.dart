@@ -11,9 +11,7 @@ abstract class SecureStorageService {
 class FlutterSecureStorageServiceImpl implements SecureStorageService {
   final FlutterSecureStorage secureStorage;
 
-  FlutterSecureStorageServiceImpl({
-    required this.secureStorage,
-  });
+  FlutterSecureStorageServiceImpl({required this.secureStorage});
 
   @override
   Future<String?> read(String key) async {

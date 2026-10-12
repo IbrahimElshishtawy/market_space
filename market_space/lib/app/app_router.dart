@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../core/routing/route_guards.dart';
 import '../core/routing/route_names.dart';
 import '../core/theme/app_spacing.dart';
+import '../features/home/presentation/pages/home_page.dart';
+import '../features/real_estate/presentation/pages/real_estate_detail_page.dart';
+import '../features/real_estate/presentation/pages/real_estate_page.dart';
 import '../shared/widgets/app_error_view.dart';
 import 'app_dependencies.dart';
 import 'app_localization.dart';
-
-import '../shared/widgets/market_home_screen.dart';
 
 class AppRouter {
   static GoRouter createRouter({
@@ -38,7 +40,22 @@ class AppRouter {
           path: RouteNames.root,
           name: RouteNames.rootName,
           builder: (context, state) {
-            return const MarketHomeScreen();
+            return const HomePage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.realEstate,
+          name: RouteNames.realEstateName,
+          builder: (context, state) {
+            return const RealEstatePage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.realEstateDetail,
+          name: RouteNames.realEstateDetailName,
+          builder: (context, state) {
+            final id = state.uri.queryParameters['id'] ?? 'aqar-1';
+            return RealEstateDetailPage(listingId: id);
           },
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'app_colors.dart';
 import 'app_radii.dart';
 import 'app_spacing.dart';
@@ -70,9 +71,7 @@ class AppThemeData {
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadii.md,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
           textStyle: AppTextStyles.labelLarge,
         ),
       ),
@@ -83,9 +82,7 @@ class AppThemeData {
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadii.md,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
           side: const BorderSide(color: AppColors.primary),
           textStyle: AppTextStyles.labelLarge,
         ),
@@ -142,7 +139,10 @@ class AppThemeData {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadii.md,
-          borderSide: const BorderSide(color: AppColors.primaryLight, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.primaryLight,
+            width: 1.5,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadii.md,
@@ -158,9 +158,7 @@ class AppThemeData {
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadii.md,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
           textStyle: AppTextStyles.labelLarge,
         ),
       ),
@@ -171,9 +169,7 @@ class AppThemeData {
             horizontal: AppSpacing.xl,
             vertical: AppSpacing.md,
           ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadii.md,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadii.md),
           side: const BorderSide(color: AppColors.primaryLight),
           textStyle: AppTextStyles.labelLarge,
         ),

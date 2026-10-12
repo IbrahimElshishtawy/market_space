@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:dio/dio.dart';
+
 import '../api_headers.dart';
 
 class RequestIdInterceptor extends Interceptor {
@@ -16,7 +18,10 @@ class RequestIdInterceptor extends Interceptor {
 
   String _generateUniqueRequestId() {
     final timestamp = DateTime.now().microsecondsSinceEpoch;
-    final randomSuffix = _randomGenerator.nextInt(1000000).toString().padLeft(6, '0');
+    final randomSuffix = _randomGenerator
+        .nextInt(1000000)
+        .toString()
+        .padLeft(6, '0');
     return 'req-$timestamp-$randomSuffix';
   }
 }

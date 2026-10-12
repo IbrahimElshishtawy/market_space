@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -8,10 +9,7 @@ import '../../models/market_sector.dart';
 class MarketCategoryGrid extends StatelessWidget {
   final ValueChanged<MarketSector>? onSelectSector;
 
-  const MarketCategoryGrid({
-    super.key,
-    this.onSelectSector,
-  });
+  const MarketCategoryGrid({super.key, this.onSelectSector});
 
   @override
   Widget build(BuildContext context) {

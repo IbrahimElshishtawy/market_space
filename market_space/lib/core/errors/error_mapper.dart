@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+
 import 'app_exception.dart';
 import 'app_failure.dart';
 
@@ -58,7 +59,9 @@ class ErrorMapper {
         final Map<String, String> fieldErrors = {};
         if (exception.details is List) {
           for (final item in exception.details as List) {
-            if (item is Map && item.containsKey('field') && item.containsKey('issue')) {
+            if (item is Map &&
+                item.containsKey('field') &&
+                item.containsKey('issue')) {
               fieldErrors[item['field'].toString()] = item['issue'].toString();
             }
           }
@@ -142,8 +145,11 @@ class ErrorMapper {
         extractedCode = errorMap['code']?.toString();
         if (errorMap['details'] is List) {
           for (final item in errorMap['details'] as List) {
-            if (item is Map && item.containsKey('field') && item.containsKey('issue')) {
-              extractedFieldErrors[item['field'].toString()] = item['issue'].toString();
+            if (item is Map &&
+                item.containsKey('field') &&
+                item.containsKey('issue')) {
+              extractedFieldErrors[item['field'].toString()] = item['issue']
+                  .toString();
             }
           }
         }

@@ -5,9 +5,7 @@ import 'token_provider.dart';
 class SecureTokenProvider implements TokenProvider {
   final SecureStorageService secureStorageService;
 
-  SecureTokenProvider({
-    required this.secureStorageService,
-  });
+  SecureTokenProvider({required this.secureStorageService});
 
   @override
   Future<String?> getAccessToken() async {

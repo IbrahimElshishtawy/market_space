@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import '../l10n/app_localizations.dart';
 
 class AppLocalization {
@@ -13,5 +14,6 @@ class AppLocalization {
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       AppLocalizations.localizationsDelegates;
 
-  static const List<Locale> supportedLocales = AppLocalizations.supportedLocales;
+  static const List<Locale> supportedLocales =
+      AppLocalizations.supportedLocales;
 }

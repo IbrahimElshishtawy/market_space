@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -128,9 +129,7 @@ class MarketHeaderBar extends StatelessWidget {
             ),
             const SizedBox(width: 4.0),
             ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: isCompact ? 75.0 : 95.0,
-              ),
+              constraints: BoxConstraints(maxWidth: isCompact ? 75.0 : 95.0),
               child: Text(
                 selectedCity,
                 overflow: TextOverflow.ellipsis,

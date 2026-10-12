@@ -12,18 +12,25 @@ class RetryInterceptor extends Interceptor {
   });
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     final requestOptions = err.requestOptions;
-    final isIdempotentMethod = requestOptions.method.toUpperCase() == 'GET' ||
+    final isIdempotentMethod =
+        requestOptions.method.toUpperCase() == 'GET' ||
         requestOptions.method.toUpperCase() == 'HEAD';
 
-    final isTransientError = err.type == DioExceptionType.connectionTimeout ||
+    final isTransientError =
+        err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.sendTimeout ||
         err.type == DioExceptionType.connectionError;
 
     final currentRetryCount = requestOptions.extra['retry_count'] as int? ?? 0;
 
-    if (isIdempotentMethod && isTransientError && currentRetryCount < maxRetries) {
+    if (isIdempotentMethod &&
+        isTransientError &&
+        currentRetryCount < maxRetries) {
       requestOptions.extra['retry_count'] = currentRetryCount + 1;
       await Future.delayed(retryDelay * (currentRetryCount + 1));
 

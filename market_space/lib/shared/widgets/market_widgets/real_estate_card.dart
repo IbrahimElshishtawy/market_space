@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -64,7 +65,9 @@ class RealEstateCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: isCompact ? 14.0 : 16.0,
                           fontWeight: FontWeight.w800,
-                          color: isForSale ? AppColors.primary : AppColors.primaryDark,
+                          color: isForSale
+                              ? AppColors.primary
+                              : AppColors.primaryDark,
                         ),
                       ),
                       const SizedBox(width: 4.0),
@@ -161,7 +164,10 @@ class RealEstateCard extends StatelessWidget {
           top: 8.0,
           right: 8.0,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3.5),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10.0,
+              vertical: 3.5,
+            ),
             decoration: BoxDecoration(
               color: isForSale ? AppColors.secondary : AppColors.primary,
               borderRadius: AppRadii.sm,
@@ -212,7 +218,10 @@ class RealEstateCard extends StatelessWidget {
             bottom: 8.0,
             right: 8.0,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 2.5),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 7.0,
+                vertical: 2.5,
+              ),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.65),
                 borderRadius: AppRadii.full,
@@ -245,7 +254,10 @@ class RealEstateCard extends StatelessWidget {
             bottom: 8.0,
             left: 8.0,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 2.5),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 7.0,
+                vertical: 2.5,
+              ),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.65),
                 borderRadius: AppRadii.full,
@@ -274,9 +286,21 @@ class RealEstateCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Flexible(child: _buildSpecItem(Icons.bed_rounded, '${item.beds} غرف', isCompact)),
+          Flexible(
+            child: _buildSpecItem(
+              Icons.bed_rounded,
+              '${item.beds} غرف',
+              isCompact,
+            ),
+          ),
           Container(height: 12.0, width: 1.0, color: AppColors.lightBorder),
-          Flexible(child: _buildSpecItem(Icons.bathtub_outlined, '${item.baths} حمام', isCompact)),
+          Flexible(
+            child: _buildSpecItem(
+              Icons.bathtub_outlined,
+              '${item.baths} حمام',
+              isCompact,
+            ),
+          ),
           if (item.areaM2 != null) ...[
             Container(height: 12.0, width: 1.0, color: AppColors.lightBorder),
             Flexible(
@@ -298,7 +322,11 @@ class RealEstateCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: isCompact ? 13.0 : 15.0, color: AppColors.lightTextSecondary),
+          Icon(
+            icon,
+            size: isCompact ? 13.0 : 15.0,
+            color: AppColors.lightTextSecondary,
+          ),
           const SizedBox(width: 4.0),
           Text(
             label,

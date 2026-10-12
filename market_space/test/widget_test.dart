@@ -14,8 +14,8 @@ import 'package:market_space/core/platform/platform_info.dart';
 import 'package:market_space/core/security/secure_token_provider.dart';
 import 'package:market_space/core/storage/preferences_service.dart';
 import 'package:market_space/core/storage/secure_storage_service.dart';
+import 'package:market_space/features/home/presentation/pages/home_page.dart';
 import 'package:market_space/shared/state/sector_controller.dart';
-import 'package:market_space/shared/widgets/market_home_screen.dart';
 
 class FakeNetworkInfo implements NetworkInfo {
   @override
@@ -24,27 +24,56 @@ class FakeNetworkInfo implements NetworkInfo {
 
 class FakeApiClient implements ApiClient {
   @override
-  Future<Response<T>> get<T>(String path, {Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+  Future<Response<T>> get<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Response<T>> post<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+  Future<Response<T>> post<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Response<T>> put<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+  Future<Response<T>> put<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Response<T>> patch<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+  Future<Response<T>> patch<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Response<T>> delete<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
+  Future<Response<T>> delete<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) {
     throw UnimplementedError();
   }
 }
@@ -52,10 +81,18 @@ class FakeApiClient implements ApiClient {
 AppDependencies createTestDependencies() {
   final preferencesService = InMemoryPreferencesService();
   final secureStorageService = InMemorySecureStorageService();
-  final tokenProvider = SecureTokenProvider(secureStorageService: secureStorageService);
-  final localeController = LocaleController(preferencesService: preferencesService);
-  final themeController = ThemeController(preferencesService: preferencesService);
-  final sectorController = SectorController(preferencesService: preferencesService);
+  final tokenProvider = SecureTokenProvider(
+    secureStorageService: secureStorageService,
+  );
+  final localeController = LocaleController(
+    preferencesService: preferencesService,
+  );
+  final themeController = ThemeController(
+    preferencesService: preferencesService,
+  );
+  final sectorController = SectorController(
+    preferencesService: preferencesService,
+  );
 
   return AppDependencies(
     appConfig: AppConfig.development(),
@@ -74,73 +111,65 @@ AppDependencies createTestDependencies() {
 }
 
 void main() {
-  testWidgets('MarketSpaceApp boots and displays Stitch Bazar Jo marketplace screen', (WidgetTester tester) async {
+  testWidgets('MarketSpaceApp boots and displays Modular HomePage UI', (
+    WidgetTester tester,
+  ) async {
     final dependencies = createTestDependencies();
 
     await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
     await tester.pumpAndSettle();
 
-    expect(find.byType(MarketHomeScreen), findsOneWidget);
-    expect(find.text('بازار جو'), findsOneWidget);
-    expect(find.text('عقارات • تشطيب ومُوَن • خدمات'), findsOneWidget);
-    expect(find.text('الكل'), findsOneWidget);
-    expect(find.text('عقارات للبيع'), findsWidgets);
-    expect(find.text('عقارات للإيجار'), findsWidgets);
-    expect(find.text('مُوَن وبناء'), findsOneWidget);
-    expect(find.text('خدمات وصيانة'), findsOneWidget);
-    expect(find.text('طلب مواد البناء والمُوَن والتوريد المباشر إلى موقع مشروعك'), findsOneWidget);
+    expect(find.byType(HomePage), findsOneWidget);
+    expect(find.text('مصطفي هيكل'), findsOneWidget);
+    expect(find.text('الغربية - طنطا'), findsOneWidget);
+    expect(find.text('أبحث عن عقار، خدمة صيانة...'), findsOneWidget);
+    expect(find.text('احجز بيت أحلامك'), findsOneWidget);
+    expect(find.text('الأقسام الرئيسية'), findsOneWidget);
+    expect(find.text('عقارات'), findsOneWidget);
+    expect(find.text('أجهزة منزلية'), findsOneWidget);
+    expect(find.text('خدمات منزلية'), findsOneWidget);
+    expect(find.text('مواد بناء'), findsOneWidget);
+    expect(find.text('الخدمات الأكثر طلباً'), findsOneWidget);
   });
 
-  testWidgets('MarketHomeScreen renders without overflow on compact mobile screen (320x568)', (WidgetTester tester) async {
-    final dependencies = createTestDependencies();
+  testWidgets(
+    'HomePage renders without overflow on compact mobile screen (320x568)',
+    (WidgetTester tester) async {
+      final dependencies = createTestDependencies();
 
-    tester.view.physicalSize = const Size(320 * 2.0, 568 * 2.0);
-    tester.view.devicePixelRatio = 2.0;
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-    });
+      tester.view.physicalSize = const Size(320 * 2.0, 568 * 2.0);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
-    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
+      await tester.pumpAndSettle();
 
-    final exception = tester.takeException();
-    if (exception != null) {
-      debugPrint('FULL_ERROR: $exception');
-    }
-    expect(exception, isNull);
-    expect(find.text('بازار جو'), findsOneWidget);
-  });
+      final exception = tester.takeException();
+      expect(exception, isNull);
+      expect(find.text('مصطفي هيكل'), findsOneWidget);
+    },
+  );
 
-  testWidgets('MarketHomeScreen renders without overflow on large mobile screen (430x932)', (WidgetTester tester) async {
-    final dependencies = createTestDependencies();
+  testWidgets(
+    'HomePage renders without overflow on large mobile screen (430x932)',
+    (WidgetTester tester) async {
+      final dependencies = createTestDependencies();
 
-    tester.view.physicalSize = const Size(430 * 3.0, 932 * 3.0);
-    tester.view.devicePixelRatio = 3.0;
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-    });
+      tester.view.physicalSize = const Size(430 * 3.0, 932 * 3.0);
+      tester.view.devicePixelRatio = 3.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
 
-    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(find.text('بازار جو'), findsOneWidget);
-  });
-
-  testWidgets('MarketHomeScreen sector switching persists choice and updates state', (WidgetTester tester) async {
-    final dependencies = createTestDependencies();
-
-    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
-    await tester.pumpAndSettle();
-
-    final buildingMaterialsChip = find.text('مُوَن ومواد بناء');
-    expect(buildingMaterialsChip, findsOneWidget);
-
-    await tester.tap(buildingMaterialsChip);
-    await tester.pumpAndSettle();
-
-    expect(dependencies.sectorController.value.titleAr, 'مواد البناء والمُوَن');
-  });
+      expect(tester.takeException(), isNull);
+      expect(find.text('مصطفي هيكل'), findsOneWidget);
+    },
+  );
 }

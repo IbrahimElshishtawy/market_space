@@ -18,18 +18,16 @@ extension ResponsiveContext on BuildContext {
   double get screenHeight => MediaQuery.sizeOf(this).height;
 
   bool get isCompactPhone => screenWidth < AppBreakpoints.compact;
-  bool get isStandardPhone => screenWidth >= AppBreakpoints.compact && screenWidth < AppBreakpoints.standard;
+  bool get isStandardPhone =>
+      screenWidth >= AppBreakpoints.compact &&
+      screenWidth < AppBreakpoints.standard;
   bool get isLargePhone => screenWidth >= AppBreakpoints.standard;
 
   /// Responsive horizontal screen margin: 12dp on compact, 16dp on standard and larger.
   double get horizontalScreenPadding => isCompactPhone ? 12.0 : 16.0;
 
   /// Returns a responsive value tailored to mobile sizes.
-  T responsiveValue<T>({
-    required T compact,
-    T? standard,
-    T? large,
-  }) {
+  T responsiveValue<T>({required T compact, T? standard, T? large}) {
     if (isCompactPhone) {
       return compact;
     }

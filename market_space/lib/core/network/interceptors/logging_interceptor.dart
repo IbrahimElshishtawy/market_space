@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
+
 import '../../logging/app_logger.dart';
 import '../../logging/log_sanitizer.dart';
 
 class NetworkLoggingInterceptor extends Interceptor {
   final AppLogger logger;
 
-  NetworkLoggingInterceptor({
-    required this.logger,
-  });
+  NetworkLoggingInterceptor({required this.logger});
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -31,9 +30,7 @@ class NetworkLoggingInterceptor extends Interceptor {
 
     logger.info(
       'HTTP Response [${response.statusCode}] ${response.requestOptions.uri}',
-      data: {
-        'data': sanitizedData,
-      },
+      data: {'data': sanitizedData},
     );
     handler.next(response);
   }
@@ -44,10 +41,7 @@ class NetworkLoggingInterceptor extends Interceptor {
 
     logger.error(
       'HTTP Error [${err.response?.statusCode}] ${err.requestOptions.uri} (${err.type.name})',
-      data: {
-        'message': err.message,
-        'response': sanitizedResponse,
-      },
+      data: {'message': err.message, 'response': sanitizedResponse},
       error: err,
     );
     handler.next(err);

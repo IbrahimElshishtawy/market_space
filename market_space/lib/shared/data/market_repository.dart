@@ -11,9 +11,7 @@ abstract class MarketRepository {
 class MarketRepositoryImpl implements MarketRepository {
   final MockDataProvider mockDataProvider;
 
-  MarketRepositoryImpl({
-    required this.mockDataProvider,
-  });
+  MarketRepositoryImpl({required this.mockDataProvider});
 
   @override
   Future<List<RealEstateItem>> getRealEstateListings() async {
@@ -32,7 +30,8 @@ class MarketRepositoryImpl implements MarketRepository {
         areaM2: 420,
         location: 'دبي، تلال الإمارات',
         timeAgo: 'منذ 3 ساعات',
-        imageUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9',
+        imageUrl:
+            'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9',
       ),
       RealEstateItem(
         id: 're-2',
@@ -62,7 +61,8 @@ class MarketRepositoryImpl implements MarketRepository {
         areaM2: 165,
         location: 'الرياض، حي النرجس',
         timeAgo: 'منذ 5 ساعات',
-        imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750',
+        imageUrl:
+            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750',
       ),
     ];
   }
@@ -80,7 +80,8 @@ class MarketRepositoryImpl implements MarketRepository {
         footerText: 'توصيل لجميع المواقع',
         hasCall: true,
         hasChat: false,
-        imageUrl: 'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122',
+        imageUrl:
+            'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122',
       ),
       BuildingMaterialItem(
         id: 'bm-2',
@@ -92,7 +93,8 @@ class MarketRepositoryImpl implements MarketRepository {
         footerText: 'مورد معتمد',
         hasCall: false,
         hasChat: true,
-        imageUrl: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f',
+        imageUrl:
+            'https://images.unsplash.com/photo-1589939705384-5185137a7f0f',
       ),
       BuildingMaterialItem(
         id: 'bm-3',
@@ -104,7 +106,8 @@ class MarketRepositoryImpl implements MarketRepository {
         footerText: 'مستودع الشارقة',
         hasCall: true,
         hasChat: false,
-        imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
+        imageUrl:
+            'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
       ),
       BuildingMaterialItem(
         id: 'bm-4',
@@ -179,7 +182,8 @@ class MarketRepositoryImpl implements MarketRepository {
         minInvestment: '150,000 د.إ',
         expectedReturn: 'عائد رأسمالي مستهدف 14%',
         progressPercent: 0.65,
-        imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab',
+        imageUrl:
+            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab',
       ),
     ];
   }

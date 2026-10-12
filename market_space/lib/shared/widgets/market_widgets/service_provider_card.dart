@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -22,7 +23,9 @@ class ServiceProviderCard extends StatelessWidget {
     final isCompact = context.isCompactPhone;
     final horizontalPadding = context.horizontalScreenPadding;
 
-    final (icon, iconColor, bgColor) = _resolveCategoryVisuals(item.categoryKey);
+    final (icon, iconColor, bgColor) = _resolveCategoryVisuals(
+      item.categoryKey,
+    );
 
     return Container(
       margin: EdgeInsets.symmetric(

@@ -16,9 +16,7 @@ abstract class PreferencesService {
 class SharedPreferencesServiceImpl implements PreferencesService {
   final SharedPreferences sharedPreferences;
 
-  SharedPreferencesServiceImpl({
-    required this.sharedPreferences,
-  });
+  SharedPreferencesServiceImpl({required this.sharedPreferences});
 
   @override
   Future<String?> getString(String key) async {

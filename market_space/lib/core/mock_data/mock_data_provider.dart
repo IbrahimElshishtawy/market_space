@@ -1,20 +1,23 @@
 import 'dart:convert';
+
 import 'package:flutter/services.dart';
 
 class MockDataProvider {
   static const String categoriesAssetPath = 'assets/mock_data/categories.json';
-  static const String listingsFeedAssetPath = 'assets/mock_data/listings_feed.json';
-  static const String listingDetailAssetPath = 'assets/mock_data/listing_detail.json';
-  static const String authSuccessAssetPath = 'assets/mock_data/auth_success.json';
+  static const String listingsFeedAssetPath =
+      'assets/mock_data/listings_feed.json';
+  static const String listingDetailAssetPath =
+      'assets/mock_data/listing_detail.json';
+  static const String authSuccessAssetPath =
+      'assets/mock_data/auth_success.json';
   static const String apiErrorAssetPath = 'assets/mock_data/api_error.json';
   static const String videoFeedAssetPath = 'assets/mock_data/video_feed.json';
   static const String locationsAssetPath = 'assets/mock_data/locations.json';
 
   final AssetBundle assetBundle;
 
-  MockDataProvider({
-    AssetBundle? assetBundle,
-  }) : assetBundle = assetBundle ?? rootBundle;
+  MockDataProvider({AssetBundle? assetBundle})
+    : assetBundle = assetBundle ?? rootBundle;
 
   Future<Map<String, dynamic>> loadJson(String assetPath) async {
     final jsonString = await assetBundle.loadString(assetPath);

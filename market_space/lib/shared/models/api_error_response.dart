@@ -2,10 +2,7 @@ class ApiErrorDetail {
   final String? field;
   final String issue;
 
-  const ApiErrorDetail({
-    this.field,
-    required this.issue,
-  });
+  const ApiErrorDetail({this.field, required this.issue});
 
   factory ApiErrorDetail.fromJson(Map<String, dynamic> json) {
     return ApiErrorDetail(
