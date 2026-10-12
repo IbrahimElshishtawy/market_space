@@ -120,9 +120,9 @@ class ContractorPromoBanner extends StatelessWidget {
                     onTap: onOrderTap,
                     borderRadius: AppRadii.full,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14.0,
-                        vertical: 6.5,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isCompact ? 10.0 : 14.0,
+                        vertical: isCompact ? 5.5 : 6.5,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -135,14 +135,14 @@ class ContractorPromoBanner extends StatelessWidget {
                             'طلب توريد فوري',
                             style: TextStyle(
                               color: AppColors.neutral,
-                              fontSize: isCompact ? 11.5 : 12.5,
+                              fontSize: isCompact ? 11.0 : 12.5,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(width: 4.0),
-                          const Icon(
+                          Icon(
                             Icons.arrow_forward_rounded,
-                            size: 15.0,
+                            size: isCompact ? 14.0 : 15.0,
                             color: AppColors.neutral,
                           ),
                         ],

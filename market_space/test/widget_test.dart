@@ -105,9 +105,6 @@ void main() {
     await tester.pumpAndSettle();
 
     final exception = tester.takeException();
-    if (exception != null) {
-      debugPrint('FULL_ERROR: $exception');
-    }
     expect(exception, isNull);
     expect(find.text('بازار جو'), findsOneWidget);
   });
