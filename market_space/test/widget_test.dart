@@ -104,7 +104,13 @@ void main() {
     await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
     await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
+    final exception = tester.takeException();
+    if (exception is FlutterError) {
+      for (final line in exception.diagnostics) {
+        debugPrint('DIAGNOSTIC: ${line.toStringDeep()}');
+      }
+    }
+    expect(exception, isNull);
     expect(find.text('بازار جو'), findsOneWidget);
   });
 

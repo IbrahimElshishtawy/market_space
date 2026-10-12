@@ -138,13 +138,16 @@ class ServiceProviderCard extends StatelessWidget {
                           color: AppColors.lightTextPrimary,
                         ),
                       ),
-                      const SizedBox(width: 5.0),
-                      Text(
-                        '• ${item.perkText}',
-                        style: TextStyle(
-                          fontSize: isCompact ? 9.5 : 10.5,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.secondaryDark,
+                      Flexible(
+                        child: Text(
+                          '• ${item.perkText}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: isCompact ? 9.0 : 10.5,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.secondaryDark,
+                          ),
                         ),
                       ),
                     ],
