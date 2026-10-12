@@ -48,39 +48,49 @@ class MarketSectionHeader extends StatelessWidget {
 
           const SizedBox(width: AppSpacing.xs + 3),
 
-          // Title
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: isCompact ? 14.5 : 16.5,
-              fontWeight: FontWeight.w800,
-              color: AppColors.lightTextPrimary,
+          // Title and optional badge in Expanded
+          Expanded(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: isCompact ? 14.0 : 16.0,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.lightTextPrimary,
+                    ),
+                  ),
+                ),
+                if (badgeText != null) ...[
+                  const SizedBox(width: AppSpacing.xs + 3),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7.0,
+                      vertical: 2.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: badgeColor ?? markerColor.withValues(alpha: 0.12),
+                      borderRadius: AppRadii.full,
+                    ),
+                    child: Text(
+                      badgeText!,
+                      style: TextStyle(
+                        fontSize: isCompact ? 9.5 : 10.5,
+                        fontWeight: FontWeight.w700,
+                        color: badgeTextColor ?? markerColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
 
-          if (badgeText != null) ...[
-            const SizedBox(width: AppSpacing.xs + 3),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 7.0,
-                vertical: 2.5,
-              ),
-              decoration: BoxDecoration(
-                color: badgeColor ?? markerColor.withValues(alpha: 0.12),
-                borderRadius: AppRadii.full,
-              ),
-              child: Text(
-                badgeText!,
-                style: TextStyle(
-                  fontSize: isCompact ? 9.5 : 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: badgeTextColor ?? markerColor,
-                ),
-              ),
-            ),
-          ],
-
-          const Spacer(),
+          const SizedBox(width: AppSpacing.sm),
 
           // Action link with arrow
           if (actionLabel != null)

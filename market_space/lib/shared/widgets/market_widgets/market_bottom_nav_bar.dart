@@ -38,43 +38,52 @@ class MarketBottomNavBar extends StatelessWidget {
         child: SizedBox(
           height: isCompact ? 60.0 : 66.0,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               // 1. الرئيسية (Home)
-              _buildNavItem(
-                index: 0,
-                icon: Icons.home_rounded,
-                label: 'الرئيسية',
-                isCompact: isCompact,
+              Expanded(
+                child: _buildNavItem(
+                  index: 0,
+                  icon: Icons.home_rounded,
+                  label: 'الرئيسية',
+                  isCompact: isCompact,
+                ),
               ),
 
               // 2. جولات فيديو (Video Tours)
-              _buildNavItem(
-                index: 1,
-                icon: Icons.play_circle_outline_rounded,
-                label: 'جولات فيديو',
-                isCompact: isCompact,
-                hasLiveDot: true,
+              Expanded(
+                child: _buildNavItem(
+                  index: 1,
+                  icon: Icons.play_circle_outline_rounded,
+                  label: 'جولات فيديو',
+                  isCompact: isCompact,
+                  hasLiveDot: true,
+                ),
               ),
 
               // 3. Center Action (+ أضف إعلانك)
-              _buildCenterAddButton(isCompact),
+              Expanded(
+                child: _buildCenterAddButton(isCompact),
+              ),
 
               // 4. الرسائل (Messages with badge)
-              _buildNavItem(
-                index: 2,
-                icon: Icons.chat_outlined,
-                label: 'الرسائل',
-                isCompact: isCompact,
-                badgeCount: 2,
+              Expanded(
+                child: _buildNavItem(
+                  index: 2,
+                  icon: Icons.chat_outlined,
+                  label: 'الرسائل',
+                  isCompact: isCompact,
+                  badgeCount: 2,
+                ),
               ),
 
               // 5. حسابي (Profile)
-              _buildNavItem(
-                index: 3,
-                icon: Icons.person_outline_rounded,
-                label: 'حسابي',
-                isCompact: isCompact,
+              Expanded(
+                child: _buildNavItem(
+                  index: 3,
+                  icon: Icons.person_outline_rounded,
+                  label: 'حسابي',
+                  isCompact: isCompact,
+                ),
               ),
             ],
           ),
@@ -98,7 +107,7 @@ class MarketBottomNavBar extends StatelessWidget {
       onTap: () => onIndexChanged?.call(index),
       borderRadius: AppRadii.md,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 4.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -150,12 +159,15 @@ class MarketBottomNavBar extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 3.0),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: isCompact ? 10.0 : 11.0,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: color,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: isCompact ? 10.0 : 11.0,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: color,
+                ),
               ),
             ),
           ],
@@ -173,8 +185,8 @@ class MarketBottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: isCompact ? 38.0 : 44.0,
-            height: isCompact ? 38.0 : 44.0,
+            width: isCompact ? 36.0 : 42.0,
+            height: isCompact ? 36.0 : 42.0,
             decoration: BoxDecoration(
               color: AppColors.primary,
               shape: BoxShape.circle,
@@ -189,16 +201,19 @@ class MarketBottomNavBar extends StatelessWidget {
             child: Icon(
               Icons.add_rounded,
               color: Colors.white,
-              size: isCompact ? 24.0 : 28.0,
+              size: isCompact ? 22.0 : 26.0,
             ),
           ),
           const SizedBox(height: 2.0),
-          Text(
-            'أضف إعلانك',
-            style: TextStyle(
-              fontSize: isCompact ? 9.5 : 10.5,
-              fontWeight: FontWeight.w700,
-              color: AppColors.lightTextPrimary,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              'أضف إعلانك',
+              style: TextStyle(
+                fontSize: isCompact ? 9.0 : 10.5,
+                fontWeight: FontWeight.w700,
+                color: AppColors.lightTextPrimary,
+              ),
             ),
           ),
         ],
