@@ -65,21 +65,25 @@ class ContractorPromoBanner extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Promo tag pill
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 3.0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: AppRadii.full,
-                    ),
-                    child: Text(
-                      'عروض الجملة للمقاولين • خصم حتى 30%',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: isCompact ? 9.5 : 10.5,
-                        fontWeight: FontWeight.w700,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 3.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: AppRadii.full,
+                      ),
+                      child: Text(
+                        'عروض الجملة للمقاولين • خصم حتى 30%',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: isCompact ? 9.5 : 10.5,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),

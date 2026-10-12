@@ -105,10 +105,8 @@ void main() {
     await tester.pumpAndSettle();
 
     final exception = tester.takeException();
-    if (exception is FlutterError) {
-      for (final line in exception.diagnostics) {
-        debugPrint('DIAGNOSTIC: ${line.toStringDeep()}');
-      }
+    if (exception != null) {
+      debugPrint('FULL_ERROR: $exception');
     }
     expect(exception, isNull);
     expect(find.text('بازار جو'), findsOneWidget);

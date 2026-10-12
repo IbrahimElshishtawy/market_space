@@ -58,22 +58,15 @@ class MarketCategoryGrid extends StatelessWidget {
         horizontal: horizontalPadding,
         vertical: AppSpacing.sm,
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Calculate individual card width to fit 4 cards smoothly
-          final totalSpacing = (categories.length - 1) * (isCompact ? 6.0 : 8.0);
-          final cardWidth = (constraints.maxWidth - totalSpacing) / categories.length;
-
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: categories.map((cat) {
-              return SizedBox(
-                width: cardWidth,
-                child: _buildCategoryCard(context, cat, isCompact),
-              );
-            }).toList(),
-          );
-        },
+      child: Row(
+        children: [
+          for (int i = 0; i < categories.length; i++) ...[
+            if (i > 0) SizedBox(width: isCompact ? 6.0 : 8.0),
+            Expanded(
+              child: _buildCategoryCard(context, categories[i], isCompact),
+            ),
+          ],
+        ],
       ),
     );
   }
