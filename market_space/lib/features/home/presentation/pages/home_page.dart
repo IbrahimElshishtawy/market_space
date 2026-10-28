@@ -37,6 +37,16 @@ class _HomePageState extends State<HomePage> {
   void _onCategorySelected(HomeCategoryData category) {
     if (category.id == 'cat-real-estate' || category.title == 'عقارات') {
       context.push(RouteNames.realEstate);
+    } else if (category.id == 'cat-appliances' ||
+        category.title.contains('أجهزة') ||
+        category.title.contains('كهربائية')) {
+      context.push(RouteNames.homeAppliances);
+    } else if (category.id == 'cat-building-materials' ||
+        category.title.contains('مواد') ||
+        category.title.contains('بناء') ||
+        category.title.contains('مونة') ||
+        category.title.contains('أسمنت')) {
+      context.push(RouteNames.buildingMaterials);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -76,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                 SliverToBoxAdapter(
                   child: HomeSearchBar(
                     onFilterTap: () {},
-                    onSearchTap: () => context.push(RouteNames.realEstate),
+                    onSearchTap: () => context.push(RouteNames.homeAppliances),
                   ),
                 ),
 
@@ -84,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                 SliverToBoxAdapter(
                   child: HeroCarousel(
                     banners: _banners,
-                    onCtaTap: () => context.push(RouteNames.realEstate),
+                    onCtaTap: () => context.push(RouteNames.homeAppliances),
                   ),
                 ),
 
@@ -93,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                   child: MainCategoriesSection(
                     categories: _categories,
                     onCategoryTap: _onCategorySelected,
-                    onViewAllTap: () => context.push(RouteNames.realEstate),
+                    onViewAllTap: () => context.push(RouteNames.homeAppliances),
                   ),
                 ),
 

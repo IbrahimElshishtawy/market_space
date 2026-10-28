@@ -4,7 +4,11 @@ import 'package:go_router/go_router.dart';
 import '../core/routing/route_guards.dart';
 import '../core/routing/route_names.dart';
 import '../core/theme/app_spacing.dart';
+import '../features/building_materials/presentation/pages/building_materials_page.dart';
+import '../features/building_materials/presentation/pages/steel_rebar_listing_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
+import '../features/home_appliances/presentation/pages/appliance_category_listing_page.dart';
+import '../features/home_appliances/presentation/pages/home_appliances_page.dart';
 import '../features/real_estate/presentation/pages/real_estate_detail_page.dart';
 import '../features/real_estate/presentation/pages/real_estate_page.dart';
 import '../shared/widgets/app_error_view.dart';
@@ -56,6 +60,36 @@ class AppRouter {
           builder: (context, state) {
             final id = state.uri.queryParameters['id'] ?? 'aqar-1';
             return RealEstateDetailPage(listingId: id);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeAppliances,
+          name: RouteNames.homeAppliancesName,
+          builder: (context, state) {
+            return const HomeAppliancesPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.applianceCategoryListing,
+          name: RouteNames.applianceCategoryListingName,
+          builder: (context, state) {
+            final categoryId =
+                state.uri.queryParameters['categoryId'] ?? 'cat-tv';
+            return ApplianceCategoryListingPage(categoryId: categoryId);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterials,
+          name: RouteNames.buildingMaterialsName,
+          builder: (context, state) {
+            return const BuildingMaterialsPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.steelRebarListing,
+          name: RouteNames.steelRebarListingName,
+          builder: (context, state) {
+            return const SteelRebarListingPage();
           },
         ),
       ],
