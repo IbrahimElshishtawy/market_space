@@ -125,13 +125,10 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
                           selectedCategoryId: state.selectedCategoryId,
                           onCategoryTap: (cat) {
                             _controller.selectCategory(cat.id);
-                            if (cat.id == 'cat-steel' ||
-                                cat.title.contains('حديد')) {
-                              if (GoRouter.maybeOf(context) != null) {
-                                context.push(RouteNames.steelRebarListing);
-                              } else {
-                                _showSnackBar('قسم: ${cat.title}');
-                              }
+                            if (GoRouter.maybeOf(context) != null) {
+                              context.push(
+                                '${RouteNames.buildingMaterialCategoryDetail}?categoryId=${cat.id}',
+                              );
                             } else {
                               _showSnackBar('قسم: ${cat.title}');
                             }

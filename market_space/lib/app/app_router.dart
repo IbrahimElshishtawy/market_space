@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../core/routing/route_guards.dart';
 import '../core/routing/route_names.dart';
 import '../core/theme/app_spacing.dart';
+import '../features/building_materials/presentation/pages/building_material_category_detail_page.dart';
 import '../features/building_materials/presentation/pages/building_materials_page.dart';
 import '../features/building_materials/presentation/pages/steel_rebar_listing_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
@@ -90,6 +91,15 @@ class AppRouter {
           name: RouteNames.steelRebarListingName,
           builder: (context, state) {
             return const SteelRebarListingPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialCategoryDetail,
+          name: RouteNames.buildingMaterialCategoryDetailName,
+          builder: (context, state) {
+            final categoryId =
+                state.uri.queryParameters['categoryId'] ?? 'cat-steel';
+            return BuildingMaterialCategoryDetailPage(categoryId: categoryId);
           },
         ),
       ],

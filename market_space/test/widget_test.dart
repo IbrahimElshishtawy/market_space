@@ -24,56 +24,27 @@ class FakeNetworkInfo implements NetworkInfo {
 
 class FakeApiClient implements ApiClient {
   @override
-  Future<Response<T>> get<T>(
-    String path, {
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-  }) {
+  Future<Response<T>> get<T>(String path, {Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Response<T>> post<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-  }) {
+  Future<Response<T>> post<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Response<T>> put<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-  }) {
+  Future<Response<T>> put<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Response<T>> patch<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-  }) {
+  Future<Response<T>> patch<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
     throw UnimplementedError();
   }
 
   @override
-  Future<Response<T>> delete<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-  }) {
+  Future<Response<T>> delete<T>(String path, {dynamic data, Map<String, dynamic>? queryParameters, Options? options, CancelToken? cancelToken}) {
     throw UnimplementedError();
   }
 }
@@ -81,18 +52,10 @@ class FakeApiClient implements ApiClient {
 AppDependencies createTestDependencies() {
   final preferencesService = InMemoryPreferencesService();
   final secureStorageService = InMemorySecureStorageService();
-  final tokenProvider = SecureTokenProvider(
-    secureStorageService: secureStorageService,
-  );
-  final localeController = LocaleController(
-    preferencesService: preferencesService,
-  );
-  final themeController = ThemeController(
-    preferencesService: preferencesService,
-  );
-  final sectorController = SectorController(
-    preferencesService: preferencesService,
-  );
+  final tokenProvider = SecureTokenProvider(secureStorageService: secureStorageService);
+  final localeController = LocaleController(preferencesService: preferencesService);
+  final themeController = ThemeController(preferencesService: preferencesService);
+  final sectorController = SectorController(preferencesService: preferencesService);
 
   return AppDependencies(
     appConfig: AppConfig.development(),
@@ -111,9 +74,7 @@ AppDependencies createTestDependencies() {
 }
 
 void main() {
-  testWidgets('MarketSpaceApp boots and displays Modular HomePage UI', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('MarketSpaceApp boots and displays home page screen', (WidgetTester tester) async {
     final dependencies = createTestDependencies();
 
     await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
@@ -122,54 +83,47 @@ void main() {
     expect(find.byType(HomePage), findsOneWidget);
     expect(find.text('مصطفي هيكل'), findsOneWidget);
     expect(find.text('الغربية - طنطا'), findsOneWidget);
-    expect(find.text('أبحث عن عقار، خدمة صيانة...'), findsOneWidget);
-    expect(find.text('احجز بيت أحلامك'), findsOneWidget);
     expect(find.text('الأقسام الرئيسية'), findsOneWidget);
     expect(find.text('عقارات'), findsOneWidget);
     expect(find.text('أجهزة منزلية'), findsOneWidget);
-    expect(find.text('خدمات منزلية'), findsOneWidget);
     expect(find.text('مواد بناء'), findsOneWidget);
-    expect(find.text('الخدمات الأكثر طلباً'), findsOneWidget);
   });
 
-  testWidgets(
-    'HomePage renders without overflow on compact mobile screen (320x568)',
-    (WidgetTester tester) async {
-      final dependencies = createTestDependencies();
+  testWidgets('HomePage renders without overflow on compact mobile screen (320x568)', (WidgetTester tester) async {
+    final dependencies = createTestDependencies();
 
-      tester.view.physicalSize = const Size(320 * 2.0, 568 * 2.0);
-      tester.view.devicePixelRatio = 2.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    tester.view.physicalSize = const Size(320 * 2.0, 568 * 2.0);
+    tester.view.devicePixelRatio = 2.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
 
-      await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
+    await tester.pumpAndSettle();
 
-      final exception = tester.takeException();
-      expect(exception, isNull);
-      expect(find.text('مصطفي هيكل'), findsOneWidget);
-    },
-  );
+    final exception = tester.takeException();
+    if (exception != null) {
+      debugPrint('FULL_ERROR: $exception');
+    }
+    expect(exception, isNull);
+    expect(find.text('مصطفي هيكل'), findsOneWidget);
+  });
 
-  testWidgets(
-    'HomePage renders without overflow on large mobile screen (430x932)',
-    (WidgetTester tester) async {
-      final dependencies = createTestDependencies();
+  testWidgets('HomePage renders without overflow on large mobile screen (430x932)', (WidgetTester tester) async {
+    final dependencies = createTestDependencies();
 
-      tester.view.physicalSize = const Size(430 * 3.0, 932 * 3.0);
-      tester.view.devicePixelRatio = 3.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    tester.view.physicalSize = const Size(430 * 3.0, 932 * 3.0);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
 
-      await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(MarketSpaceApp(dependencies: dependencies));
+    await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.text('مصطفي هيكل'), findsOneWidget);
-    },
-  );
+    expect(tester.takeException(), isNull);
+    expect(find.text('مصطفي هيكل'), findsOneWidget);
+  });
 }

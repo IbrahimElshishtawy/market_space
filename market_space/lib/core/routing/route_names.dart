@@ -6,6 +6,8 @@ class RouteNames {
   static const String applianceCategoryListing = '/home-appliances/category';
   static const String buildingMaterials = '/building-materials';
   static const String steelRebarListing = '/building-materials/steel-rebar';
+  static const String buildingMaterialCategoryDetail =
+      '/building-materials/category-detail';
   static const String notFound = '/not-found';
 
   static const String rootName = 'root';
@@ -16,5 +18,7 @@ class RouteNames {
       'appliance_category_listing';
   static const String buildingMaterialsName = 'building_materials';
   static const String steelRebarListingName = 'steel_rebar_listing';
+  static const String buildingMaterialCategoryDetailName =
+      'building_material_category_detail';
   static const String notFoundName = 'not_found';
 }
