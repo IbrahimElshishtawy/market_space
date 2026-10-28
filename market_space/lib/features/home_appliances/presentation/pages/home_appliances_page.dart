@@ -1,0 +1,214 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/routing/route_names.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_empty_state.dart';
+import '../../../../shared/widgets/app_error_view.dart';
+import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../widgets/appliances_category_grid/appliances_category_grid.dart';
+import '../../widgets/appliances_financing_banner/appliances_financing_banner.dart';
+import '../../widgets/appliances_header/appliances_header.dart';
+import '../../widgets/appliances_hero_banner/appliances_hero_banner.dart';
+import '../../widgets/appliances_products_grid/appliances_products_grid.dart';
+import '../../widgets/appliances_search_bar/appliances_search_bar.dart';
+import '../controllers/home_appliances_controller.dart';
+
+class HomeAppliancesPage extends StatefulWidget {
+  final HomeAppliancesController? controller;
+
+  const HomeAppliancesPage({super.key, this.controller});
+
+  @override
+  State<HomeAppliancesPage> createState() => _HomeAppliancesPageState();
+}
+
+class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
+  late final HomeAppliancesController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ?? HomeAppliancesController();
+    _controller.loadData();
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
+    );
+  }
+
+  void _openCategoryListing(String categoryId) {
+    if (GoRouter.maybeOf(context) != null) {
+      context.push(
+        '${RouteNames.applianceCategoryListing}?categoryId=$categoryId',
+      );
+    } else {
+      _controller.setCategoryFilter(categoryId);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: AppColors.lightBackground,
+        body: SafeArea(
+          child: ValueListenableBuilder<HomeAppliancesState>(
+            valueListenable: _controller,
+            builder: (context, state, _) {
+              if (state.isLoading) {
+                return const Center(child: AppLoadingIndicator());
+              }
+
+              if (state.errorMessage != null) {
+                return Center(
+                  child: AppErrorView(
+                    message: state.errorMessage!,
+                    onRetry: _controller.loadData,
+                  ),
+                );
+              }
+
+              return RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: _controller.loadData,
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  slivers: [
+                    // 1. Header Bar
+                    SliverToBoxAdapter(
+                      child: AppliancesHeader(
+                        onNotificationTap: () =>
+                            _showSnackBar('لا توجد إشعارات جديدة'),
+                        onCartTap: () => _showSnackBar(
+                          'سلة الأجهزة تحتوي على العناصر المضافة',
+                        ),
+                      ),
+                    ),
+
+                    // 2. Search & Filter Bar
+                    SliverToBoxAdapter(
+                      child: AppliancesSearchBar(
+                        onChanged: _controller.setSearchQuery,
+                        onFilterTap: _showFilterSheet,
+                      ),
+                    ),
+
+                    // 3. Hero Promo Deal Banner
+                    if (state.heroBanner != null)
+                      SliverToBoxAdapter(
+                        child: AppliancesHeroBanner(
+                          banner: state.heroBanner!,
+                          onCtaTap: () => _showSnackBar(
+                            'جاري عرض العروض والتخفيضات اليومية',
+                          ),
+                        ),
+                      ),
+
+                    // 4. Category Grid (8 categories)
+                    SliverToBoxAdapter(
+                      child: AppliancesCategoryGrid(
+                        categories: state.categories,
+                        selectedCategoryId: state.filter.selectedCategoryId,
+                        onCategoryTap: _openCategoryListing,
+                        onViewAllTap: () => _openCategoryListing('cat-tv'),
+                      ),
+                    ),
+
+                    // 5. ValU / Aman Financing Installment Banner
+                    SliverToBoxAdapter(
+                      child: AppliancesFinancingBanner(
+                        onKnowLimitTap: () => _showSnackBar(
+                          'جاري الاستعلام عن حد التقسيط المتاح مع ValU وأمان',
+                        ),
+                      ),
+                    ),
+
+                    // 6. Products Grid (Most requested items)
+                    if (state.products.isEmpty)
+                      const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(
+                          child: AppEmptyState(
+                            title: 'لا توجد أجهزة مطابقة',
+                            message: 'جرّب تغيير كلمات البحث أو الفئة لتصفح المزيد من الأجهزة',
+                          ),
+                        ),
+                      )
+                    else
+                      SliverToBoxAdapter(
+                        child: AppliancesProductsGrid(
+                          products: state.products,
+                          onProductTap: (id) =>
+                              _showSnackBar('تم فتح تفاصيل المنتج'),
+                          onAddToCartTap: (id) {
+                            _controller.toggleCart(id);
+                            _showSnackBar('تحديث حالة السلة للمنتج');
+                          },
+                          onViewAllTap: () => _openCategoryListing('cat-tv'),
+                        ),
+                      ),
+
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: AppSpacing.xl),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (ctx) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'تصفية الأجهزة الكهربائية',
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                const Text(
+                  'تصفية حسب الماركة، السعر، مدة الضمان، أو نظام التقسيط.',
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('تطبيق الفلتر'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
