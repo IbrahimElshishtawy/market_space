@@ -56,4 +56,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backToHome => 'Back to Home';
+
+  @override
+  String get timeRemainingText => 'timeRemainingText';
 }

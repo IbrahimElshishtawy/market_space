@@ -187,6 +187,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Home'**
   String get backToHome;
+
+  /// No description provided for @timeRemainingText.
+  ///
+  /// In en, this message translates to:
+  /// **'timeRemainingText'**
+  String get timeRemainingText;
 }
 
 class _AppLocalizationsDelegate

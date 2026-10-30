@@ -32,6 +32,22 @@ class MockHomeData {
       ctaLabel: 'اكتشف المزيد',
       imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
     ),
+    HeroBannerData(
+      id: 'hero-3',
+      badgeText: 'خدمات ممتازة',
+      title: 'جدد منزلك اليوم',
+      subtitle: 'أفضل مهندسي الديكور والخدمات في طنطا',
+      ctaLabel: 'اكتشف المزيد',
+      imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
+    ),
+    HeroBannerData(
+      id: 'hero-4',
+      badgeText: 'خدمات ممتازة',
+      title: 'جدد منزلك اليوم',
+      subtitle: 'أفضل مهندسي الديكور والخدمات في طنطا',
+      ctaLabel: 'اكتشف المزيد',
+      imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
+    ),
   ];
 
   static const List<HomeCategoryData> categories = [
@@ -81,6 +97,36 @@ class MockHomeData {
       rating: 4.9,
       avatarStackText: '+115',
       imageUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3',
+    ),
+    HomeServiceData(
+      id: 'service-3',
+      badgeText: 'مواد بناء وتأسيس',
+      title: 'توريد أسمنت وبلوك',
+      subtitle: 'خامات بناء بأفضل سعر',
+      priceText: 'السعر حسب الكمية',
+      rating: 4.2,
+      avatarStackText: '+125',
+      imageUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3',
+    ),
+    HomeServiceData(
+      id: 'service-4',
+      badgeText: 'نقاشة ودهانات',
+      title: 'صيانة وتنظيف تكييفات',
+      subtitle: 'تبريد أسرع وصيانة فورية',
+      priceText: 'يبدأ من 250 ج.م',
+      rating: 4.9,
+      avatarStackText: '+115',
+      imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e',
+    ),
+    HomeServiceData(
+      id: 'service-5',
+      badgeText: 'نقاشة ودهانات',
+      title: 'صيانة وتنظيف تكييفات',
+      subtitle: 'تبريد أسرع وصيانة فورية',
+      priceText: 'يبدأ من 250 ج.م',
+      rating: 4.9,
+      avatarStackText: '+115',
+      imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e',
     ),
   ];
 

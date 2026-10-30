@@ -83,15 +83,15 @@ class MainCategoriesSection extends StatelessWidget {
                   children: [
                     Expanded(
                       child: MainCategoryCard(
-                        category: categories[3], // Building Materials
-                        onTap: () => onCategoryTap?.call(categories[3]),
+                        category: categories[2], // Home Services
+                        onTap: () => onCategoryTap?.call(categories[2]),
                       ),
                     ),
                     const SizedBox(width: 10.0),
                     Expanded(
                       child: MainCategoryCard(
-                        category: categories[2], // Home Services
-                        onTap: () => onCategoryTap?.call(categories[2]),
+                        category: categories[3], // Building Materials
+                        onTap: () => onCategoryTap?.call(categories[3]),
                       ),
                     ),
                   ],
