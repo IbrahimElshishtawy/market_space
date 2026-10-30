@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,10 +22,18 @@ class _BuildingMaterialsCheckoutPageState
     extends State<BuildingMaterialsCheckoutPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController(text: 'المهندس أحمد الهواري');
-  final TextEditingController _phoneController = TextEditingController(text: '01012345678');
-  final TextEditingController _addressController = TextEditingController(text: 'موقع إنشاء عمارة النخيل، شارع التسعين');
-  final TextEditingController _cityController = TextEditingController(text: 'التجمع الخامس');
+  final TextEditingController _nameController = TextEditingController(
+    text: 'المهندس أحمد الهواري',
+  );
+  final TextEditingController _phoneController = TextEditingController(
+    text: '01012345678',
+  );
+  final TextEditingController _addressController = TextEditingController(
+    text: 'موقع إنشاء عمارة النخيل، شارع التسعين',
+  );
+  final TextEditingController _cityController = TextEditingController(
+    text: 'التجمع الخامس',
+  );
   final TextEditingController _notesController = TextEditingController();
 
   String _selectedGovernorate = 'القاهرة';
@@ -82,7 +92,9 @@ class _BuildingMaterialsCheckoutPageState
       deliveryAddress: _addressController.text.trim(),
       city: _cityController.text.trim(),
       governorate: _selectedGovernorate,
-      deliveryNotes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+      deliveryNotes: _notesController.text.trim().isEmpty
+          ? null
+          : _notesController.text.trim(),
       paymentMethod: _selectedPaymentMethod,
       requestedDeliveryDate: _selectedDeliveryDate,
       numberOfStagedShipments: _numberOfShipments,
@@ -104,7 +116,11 @@ class _BuildingMaterialsCheckoutPageState
           shape: RoundedRectangleBorder(borderRadius: AppRadii.lg),
           title: Row(
             children: const [
-              Icon(Icons.check_circle_rounded, color: AppColors.emerald700, size: 28),
+              Icon(
+                Icons.check_circle_rounded,
+                color: AppColors.emerald700,
+                size: 28,
+              ),
               SizedBox(width: 8),
               Text('تم تأكيد الطلب بنجاح!'),
             ],
@@ -113,12 +129,21 @@ class _BuildingMaterialsCheckoutPageState
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('رقم الطلب الرسمي: ${createdOrder.orderNumber}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Text(
+                'رقم الطلب الرسمي: ${createdOrder.orderNumber}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
               const SizedBox(height: 6),
               Text('المورد: ${createdOrder.supplier.name}'),
-              Text('عدد الشحنات المجدولة: ${createdOrder.shipments.length} شحنة'),
-              Text('الإجمالي: ${createdOrder.grandTotal.toStringAsFixed(0)} ج.م'),
+              Text(
+                'عدد الشحنات المجدولة: ${createdOrder.shipments.length} شحنة',
+              ),
+              Text(
+                'الإجمالي: ${createdOrder.grandTotal.toStringAsFixed(0)} ج.م',
+              ),
             ],
           ),
           actions: [
@@ -141,7 +166,10 @@ class _BuildingMaterialsCheckoutPageState
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(orderController.value.errorMessage ?? 'فشل إنشاء الطلب. يرجى المحاولة مرة أخرى.'),
+          content: Text(
+            orderController.value.errorMessage ??
+                'فشل إنشاء الطلب. يرجى المحاولة مرة أخرى.',
+          ),
           backgroundColor: AppColors.rose600,
         ),
       );
@@ -205,20 +233,26 @@ class _BuildingMaterialsCheckoutPageState
                       backgroundColor: AppColors.emerald700,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: AppRadii.md,
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                     ),
-                    onPressed: _isSubmitting ? null : () => _handleConfirmOrder(cart),
+                    onPressed: _isSubmitting
+                        ? null
+                        : () => _handleConfirmOrder(cart),
                     child: _isSubmitting
                         ? const SizedBox(
                             height: 20,
                             width: 20,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
                           )
                         : Text(
                             'تأكيد الطلب (${cart.grandTotal.toStringAsFixed(0)} ج.م)',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
                           ),
                   ),
                   const SizedBox(height: AppSpacing.xxl),
@@ -244,11 +278,19 @@ class _BuildingMaterialsCheckoutPageState
         children: [
           Row(
             children: const [
-              Icon(Icons.location_city_rounded, color: AppColors.emerald700, size: 20),
+              Icon(
+                Icons.location_city_rounded,
+                color: AppColors.emerald700,
+                size: 20,
+              ),
               SizedBox(width: 8),
               Text(
                 'بيانات موقع المشروع والاستلام',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.slate900),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: AppColors.slate900,
+                ),
               ),
             ],
           ),
@@ -260,7 +302,8 @@ class _BuildingMaterialsCheckoutPageState
               border: OutlineInputBorder(),
               isDense: true,
             ),
-            validator: (v) => v == null || v.trim().isEmpty ? 'يرجى إدخال اسم المستلم' : null,
+            validator: (v) =>
+                v == null || v.trim().isEmpty ? 'يرجى إدخال اسم المستلم' : null,
           ),
           const SizedBox(height: AppSpacing.md),
           TextFormField(
@@ -271,7 +314,9 @@ class _BuildingMaterialsCheckoutPageState
               border: OutlineInputBorder(),
               isDense: true,
             ),
-            validator: (v) => v == null || v.trim().length < 10 ? 'يرجى إدخال رقم هاتف صحيح' : null,
+            validator: (v) => v == null || v.trim().length < 10
+                ? 'يرجى إدخال رقم هاتف صحيح'
+                : null,
           ),
           const SizedBox(height: AppSpacing.md),
           Row(
@@ -301,7 +346,8 @@ class _BuildingMaterialsCheckoutPageState
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
-                  validator: (v) => v == null || v.trim().isEmpty ? 'مطلوب' : null,
+                  validator: (v) =>
+                      v == null || v.trim().isEmpty ? 'مطلوب' : null,
                 ),
               ),
             ],
@@ -315,7 +361,9 @@ class _BuildingMaterialsCheckoutPageState
               border: OutlineInputBorder(),
               isDense: true,
             ),
-            validator: (v) => v == null || v.trim().isEmpty ? 'يرجى إدخال العنوان التفصيلي' : null,
+            validator: (v) => v == null || v.trim().isEmpty
+                ? 'يرجى إدخال العنوان التفصيلي'
+                : null,
           ),
           const SizedBox(height: AppSpacing.md),
           TextFormField(
@@ -348,7 +396,11 @@ class _BuildingMaterialsCheckoutPageState
               SizedBox(width: 8),
               Text(
                 'جدولة التوريد المرحلي (Staged Deliveries)',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.slate900),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: AppColors.slate900,
+                ),
               ),
             ],
           ),
@@ -416,7 +468,11 @@ class _BuildingMaterialsCheckoutPageState
               SizedBox(width: 8),
               Text(
                 'طريقة الدفع المعتمدة',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.slate900),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: AppColors.slate900,
+                ),
               ),
             ],
           ),
@@ -427,7 +483,13 @@ class _BuildingMaterialsCheckoutPageState
               groupValue: _selectedPaymentMethod,
               dense: true,
               contentPadding: EdgeInsets.zero,
-              title: Text(method, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              title: Text(
+                method,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               onChanged: (val) {
                 if (val != null) setState(() => _selectedPaymentMethod = val);
               },
@@ -451,7 +513,11 @@ class _BuildingMaterialsCheckoutPageState
         children: [
           const Text(
             'مراجعة عناصر الطلبية',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.slate900),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: AppColors.slate900,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           ...cart.items.map((i) {
@@ -469,7 +535,10 @@ class _BuildingMaterialsCheckoutPageState
                   ),
                   Text(
                     '${i.totalPrice.toStringAsFixed(0)} ج.م',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -479,10 +548,17 @@ class _BuildingMaterialsCheckoutPageState
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('الإجمالي الشامل للنقل والتعتيق:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              const Text(
+                'الإجمالي الشامل للنقل والتعتيق:',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
               Text(
                 '${cart.grandTotal.toStringAsFixed(0)} ج.م',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.emerald700),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: AppColors.emerald700,
+                ),
               ),
             ],
           ),

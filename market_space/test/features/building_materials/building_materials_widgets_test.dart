@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:market_space/app/app_dependencies.dart';
+import 'package:market_space/features/building_materials/data/mock/mock_building_materials_comprehensive_data.dart';
+import 'package:market_space/features/building_materials/data/models/unit_of_measurement.dart';
+import 'package:market_space/features/building_materials/presentation/pages/building_materials_categories_page.dart';
+import 'package:market_space/features/building_materials/presentation/pages/building_materials_cart_page.dart';
+import 'package:market_space/features/building_materials/presentation/pages/building_materials_orders_page.dart';
+
+import '../../widget_test.dart';
+
+Widget _buildTestApp(Widget child, {AppDependencies? dependencies}) {
+  return AppDependenciesScope(
+    dependencies: dependencies ?? createTestDependencies(),
+    child: MaterialApp(
+      home: Directionality(
+        textDirection: TextDirection.rtl,
+        child: child,
+      ),
+    ),
+  );
+}
+
+void main() {
+  group('BuildingMaterials Widget UI Tests', () {
+    testWidgets('BuildingMaterialsCategoriesPage renders all 10 categories', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(_buildTestApp(const BuildingMaterialsCategoriesPage()));
+      await tester.pumpAndSettle();
+
+      // Verify page title
+      expect(find.text('أقسام مواد البناء'), findsOneWidget);
+      // Verify primary categories from mock data
+      expect(find.text('حديد التسليح والصلب'), findsOneWidget);
+      expect(find.text('الأسمنت ومواد الرابطة'), findsOneWidget);
+      expect(find.text('الطوب والبلوك'), findsOneWidget);
+      expect(find.text('الرمل والسن والركام'), findsOneWidget);
+      expect(find.text('الخرسانة الجاهزة'), findsOneWidget);
+    });
+
+    testWidgets('BuildingMaterialsCategoriesPage filters categories when searching', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(_buildTestApp(const BuildingMaterialsCategoriesPage()));
+      await tester.pumpAndSettle();
+
+      // Enter search text 'عزل'
+      final searchField = find.byType(TextField);
+      expect(searchField, findsOneWidget);
+
+      await tester.enterText(searchField, 'عزل');
+      await tester.pumpAndSettle();
+
+      // Only isolation category should match
+      expect(find.text('العزل المائي والحراري'), findsOneWidget);
+      expect(find.text('حديد التسليح والصلب'), findsNothing);
+    });
+
+    testWidgets('BuildingMaterialsCartPage renders empty state when cart has no items', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final dependencies = createTestDependencies();
+      await dependencies.buildingMaterialsCartController.clearCart();
+
+      await tester.pumpWidget(_buildTestApp(const BuildingMaterialsCartPage(), dependencies: dependencies));
+      await tester.pumpAndSettle();
+
+      expect(find.text('سلة المشتريات فارغة'), findsOneWidget);
+      expect(find.text('تصفح مواد البناء'), findsOneWidget);
+    });
+
+    testWidgets('BuildingMaterialsCartPage displays supplier card and item details when cart has items', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final dependencies = createTestDependencies();
+      await dependencies.buildingMaterialsCartController.clearCart();
+
+      final steelProduct = MockBuildingMaterialsComprehensiveData.products.first;
+      await dependencies.buildingMaterialsCartController.addToCart(
+        product: steelProduct,
+        quantity: 2.0,
+        unit: MaterialUnit.ton,
+      );
+
+      await tester.pumpWidget(_buildTestApp(const BuildingMaterialsCartPage(), dependencies: dependencies));
+      await tester.pumpAndSettle();
+
+      // Check supplier name displayed
+      expect(find.text(steelProduct.supplier.name), findsOneWidget);
+      // Check product name displayed
+      expect(find.text(steelProduct.name), findsOneWidget);
+      // Check checkout action button is present
+      expect(find.text('متابعة إتمام الطلب'), findsOneWidget);
+    });
+
+    testWidgets('BuildingMaterialsOrdersPage renders tabs and orders list', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final dependencies = createTestDependencies();
+      await dependencies.buildingMaterialsOrderController.loadOrders();
+
+      await tester.pumpWidget(_buildTestApp(const BuildingMaterialsOrdersPage(), dependencies: dependencies));
+      await tester.pumpAndSettle();
+
+      expect(find.text('طلبات مواد البناء'), findsOneWidget);
+      expect(find.text('الطلبات الجارية'), findsOneWidget);
+      expect(find.text('عروض الأسعار (RFQ)'), findsOneWidget);
+      expect(find.text('السجل'), findsOneWidget);
+
+      // Verify at least one order card from mock orders is present
+      expect(find.text('شركة حديد عز لتجارة وتوزيع الصلب'), findsWidgets);
+    });
+  });
+}
