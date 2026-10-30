@@ -9,6 +9,19 @@ class RouteNames {
   static const String steelRebarListing = '/building-materials/steel-rebar';
   static const String buildingMaterialCategoryDetail =
       '/building-materials/category-detail';
+  static const String buildingMaterialsCategories =
+      '/building-materials/categories';
+  static const String buildingMaterialsCart = '/building-materials/cart';
+  static const String buildingMaterialsCheckout =
+      '/building-materials/checkout';
+  static const String buildingMaterialsOrders = '/building-materials/orders';
+  static const String buildingMaterialsOrderDetail =
+      '/building-materials/orders/detail';
+  static const String buildingMaterialsNotifications =
+      '/building-materials/notifications';
+  static const String buildingMaterialsProductDetail =
+      '/building-materials/product-detail';
+  static const String buildingMaterialsRfq = '/building-materials/rfq';
   static const String notFound = '/not-found';
 
   static const String rootName = 'root';
@@ -22,5 +35,18 @@ class RouteNames {
   static const String steelRebarListingName = 'steel_rebar_listing';
   static const String buildingMaterialCategoryDetailName =
       'building_material_category_detail';
+  static const String buildingMaterialsCategoriesName =
+      'building_materials_categories';
+  static const String buildingMaterialsCartName = 'building_materials_cart';
+  static const String buildingMaterialsCheckoutName =
+      'building_materials_checkout';
+  static const String buildingMaterialsOrdersName = 'building_materials_orders';
+  static const String buildingMaterialsOrderDetailName =
+      'building_materials_order_detail';
+  static const String buildingMaterialsNotificationsName =
+      'building_materials_notifications';
+  static const String buildingMaterialsProductDetailName =
+      'building_materials_product_detail';
+  static const String buildingMaterialsRfqName = 'building_materials_rfq';
   static const String notFoundName = 'not_found';
 }

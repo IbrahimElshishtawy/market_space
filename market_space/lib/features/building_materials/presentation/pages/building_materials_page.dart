@@ -69,16 +69,25 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
       _tabIndex = index;
     });
 
-    final config = BuildingMaterialsNavigationConfig.config;
-    final item = config.items[index];
+    if (GoRouter.maybeOf(context) == null) return;
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('مواد البناء: تصفح ${item.label}'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    switch (index) {
+      case 0:
+        // Already on home
+        break;
+      case 1:
+        context.push(RouteNames.buildingMaterialsCategories);
+        break;
+      case 2:
+        context.push(RouteNames.buildingMaterialsCart);
+        break;
+      case 3:
+        context.push(RouteNames.buildingMaterialsOrders);
+        break;
+      case 4:
+        context.push(RouteNames.buildingMaterialsNotifications);
+        break;
+    }
   }
 
   Future<void> _handleRefresh() async {
@@ -131,9 +140,18 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
                       SliverToBoxAdapter(
                         child: BuildingMaterialsHeader(
                           onAvatarTap: () => _showSnackBar('الملف الشخصي'),
-                          onCartTap: () => _showSnackBar('سلة المشتريات'),
-                          onNotificationsTap: () =>
-                              _showSnackBar('التنبيهات الإشعارات'),
+                          onCartTap: () {
+                            if (GoRouter.maybeOf(context) != null) {
+                              context.push(RouteNames.buildingMaterialsCart);
+                            }
+                          },
+                          onNotificationsTap: () {
+                            if (GoRouter.maybeOf(context) != null) {
+                              context.push(
+                                RouteNames.buildingMaterialsNotifications,
+                              );
+                            }
+                          },
                         ),
                       ),
 
@@ -142,7 +160,13 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
                         child: BuildingMaterialsSearchBar(
                           onChanged: (query) =>
                               _controller.setSearchQuery(query),
-                          onFilterTap: () => _showSnackBar('فتح تصفية المواد'),
+                          onFilterTap: () {
+                            if (GoRouter.maybeOf(context) != null) {
+                              context.push(
+                                RouteNames.buildingMaterialsCategories,
+                              );
+                            }
+                          },
                         ),
                       ),
 
@@ -151,8 +175,13 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
                         SliverToBoxAdapter(
                           child: DailyPriceBanner(
                             banner: state.dailyPriceBanner!,
-                            onOrderTap: () =>
-                                _showSnackBar('طلب كمية أسمنت بسعر اليوم'),
+                            onOrderTap: () {
+                              if (GoRouter.maybeOf(context) != null) {
+                                context.push(
+                                  '${RouteNames.buildingMaterialsProductDetail}?productId=prod-cement-swe-ord',
+                                );
+                              }
+                            },
                           ),
                         ),
 
@@ -166,14 +195,17 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
                               _controller.selectCategory(cat.id);
                               if (GoRouter.maybeOf(context) != null) {
                                 context.push(
-                                  '${RouteNames.buildingMaterialCategoryDetail}?categoryId=${cat.id}',
+                                  '${RouteNames.buildingMaterialsCategories}?categoryId=${cat.id}',
                                 );
-                              } else {
-                                _showSnackBar('قسم: ${cat.title}');
                               }
                             },
-                            onViewAllTap: () =>
-                                _showSnackBar('عرض جميع أقسام مواد البناء'),
+                            onViewAllTap: () {
+                              if (GoRouter.maybeOf(context) != null) {
+                                context.push(
+                                  RouteNames.buildingMaterialsCategories,
+                                );
+                              }
+                            },
                           ),
                         ),
 
@@ -182,12 +214,27 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
                         SliverToBoxAdapter(
                           child: MostRequestedMaterialsGrid(
                             products: state.mostRequestedProducts,
-                            onProductTap: (prod) =>
-                                _showSnackBar('تفاصيل: ${prod.title}'),
-                            onOrderTap: (prod) =>
-                                _showSnackBar('طلب توريد: ${prod.title}'),
-                            onViewAllTap: () =>
-                                _showSnackBar('عرض جميع الخامات الأكثر طلباً'),
+                            onProductTap: (prod) {
+                              if (GoRouter.maybeOf(context) != null) {
+                                context.push(
+                                  '${RouteNames.buildingMaterialsProductDetail}?productId=${prod.id}',
+                                );
+                              }
+                            },
+                            onOrderTap: (prod) {
+                              if (GoRouter.maybeOf(context) != null) {
+                                context.push(
+                                  '${RouteNames.buildingMaterialsProductDetail}?productId=${prod.id}',
+                                );
+                              }
+                            },
+                            onViewAllTap: () {
+                              if (GoRouter.maybeOf(context) != null) {
+                                context.push(
+                                  RouteNames.buildingMaterialsCategories,
+                                );
+                              }
+                            },
                           ),
                         )
                       else if (!state.isLoading)
@@ -203,8 +250,11 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
                         SliverToBoxAdapter(
                           child: ContractorProjectsBanner(
                             banner: state.contractorBanner!,
-                            onRequestQuoteTap: () =>
-                                _showSnackBar('طلب مقايسة خاصة بمشروعك'),
+                            onRequestQuoteTap: () {
+                              if (GoRouter.maybeOf(context) != null) {
+                                context.push(RouteNames.buildingMaterialsRfq);
+                              }
+                            },
                           ),
                         ),
 

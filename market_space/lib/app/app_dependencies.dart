@@ -12,6 +12,9 @@ import '../core/platform/platform_info.dart';
 import '../core/security/token_provider.dart';
 import '../core/storage/preferences_service.dart';
 import '../core/storage/secure_storage_service.dart';
+import '../features/building_materials/presentation/controllers/building_materials_cart_controller.dart';
+import '../features/building_materials/presentation/controllers/building_materials_notification_controller.dart';
+import '../features/building_materials/presentation/controllers/building_materials_order_controller.dart';
 import '../features/home_appliances/cart/presentation/controllers/home_appliances_cart_controller.dart';
 import '../features/home_appliances/notifications/presentation/controllers/home_appliances_notification_controller.dart';
 import '../features/home_appliances/orders/presentation/controllers/home_appliances_order_controller.dart';
@@ -41,6 +44,10 @@ class AppDependencies {
   final HomeAppliancesOrderController homeAppliancesOrderController;
   final HomeAppliancesNotificationController
   homeAppliancesNotificationController;
+  final BuildingMaterialsCartController buildingMaterialsCartController;
+  final BuildingMaterialsOrderController buildingMaterialsOrderController;
+  final BuildingMaterialsNotificationController
+  buildingMaterialsNotificationController;
 
   AppDependencies({
     required this.appConfig,
@@ -62,6 +69,10 @@ class AppDependencies {
     HomeAppliancesCartController? homeAppliancesCartController,
     HomeAppliancesOrderController? homeAppliancesOrderController,
     HomeAppliancesNotificationController? homeAppliancesNotificationController,
+    BuildingMaterialsCartController? buildingMaterialsCartController,
+    BuildingMaterialsOrderController? buildingMaterialsOrderController,
+    BuildingMaterialsNotificationController?
+    buildingMaterialsNotificationController,
   }) : sectorController =
            sectorController ??
            SectorController(preferencesService: preferencesService),
@@ -83,7 +94,17 @@ class AppDependencies {
            homeAppliancesOrderController ?? HomeAppliancesOrderController(),
        homeAppliancesNotificationController =
            homeAppliancesNotificationController ??
-           HomeAppliancesNotificationController();
+           HomeAppliancesNotificationController(),
+       buildingMaterialsCartController =
+           buildingMaterialsCartController ?? BuildingMaterialsCartController(),
+       buildingMaterialsOrderController =
+           buildingMaterialsOrderController ??
+           BuildingMaterialsOrderController(),
+       buildingMaterialsNotificationController =
+           buildingMaterialsNotificationController ??
+           BuildingMaterialsNotificationController(
+             repository: notificationRepository ?? NotificationRepositoryImpl(),
+           );
 
   static AppDependencies of(BuildContext context) {
     final scope = context

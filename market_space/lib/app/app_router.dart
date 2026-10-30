@@ -5,7 +5,15 @@ import '../core/routing/route_guards.dart';
 import '../core/routing/route_names.dart';
 import '../core/theme/app_spacing.dart';
 import '../features/building_materials/presentation/pages/building_material_category_detail_page.dart';
+import '../features/building_materials/presentation/pages/building_material_product_detail_page.dart';
+import '../features/building_materials/presentation/pages/building_materials_cart_page.dart';
+import '../features/building_materials/presentation/pages/building_materials_categories_page.dart';
+import '../features/building_materials/presentation/pages/building_materials_checkout_page.dart';
+import '../features/building_materials/presentation/pages/building_materials_notifications_page.dart';
+import '../features/building_materials/presentation/pages/building_materials_order_detail_page.dart';
+import '../features/building_materials/presentation/pages/building_materials_orders_page.dart';
 import '../features/building_materials/presentation/pages/building_materials_page.dart';
+import '../features/building_materials/presentation/pages/rfq_create_page.dart';
 import '../features/building_materials/presentation/pages/steel_rebar_listing_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
 import '../features/home_appliances/cart/presentation/pages/home_appliances_cart_page.dart';
@@ -197,6 +205,64 @@ class AppRouter {
             final categoryId =
                 state.uri.queryParameters['categoryId'] ?? 'cat-steel';
             return BuildingMaterialCategoryDetailPage(categoryId: categoryId);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialsCategories,
+          name: RouteNames.buildingMaterialsCategoriesName,
+          builder: (context, state) {
+            return const BuildingMaterialsCategoriesPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialsCart,
+          name: RouteNames.buildingMaterialsCartName,
+          builder: (context, state) {
+            return const BuildingMaterialsCartPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialsCheckout,
+          name: RouteNames.buildingMaterialsCheckoutName,
+          builder: (context, state) {
+            return const BuildingMaterialsCheckoutPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialsOrders,
+          name: RouteNames.buildingMaterialsOrdersName,
+          builder: (context, state) {
+            return const BuildingMaterialsOrdersPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialsOrderDetail,
+          name: RouteNames.buildingMaterialsOrderDetailName,
+          builder: (context, state) {
+            final orderId = state.uri.queryParameters['orderId'] ?? 'ord-bm-901';
+            return BuildingMaterialsOrderDetailPage(orderId: orderId);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialsNotifications,
+          name: RouteNames.buildingMaterialsNotificationsName,
+          builder: (context, state) {
+            return const BuildingMaterialsNotificationsPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialsProductDetail,
+          name: RouteNames.buildingMaterialsProductDetailName,
+          builder: (context, state) {
+            final productId = state.uri.queryParameters['productId'] ?? 'prod-steel-ezz-12';
+            return BuildingMaterialProductDetailPage(productId: productId);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.buildingMaterialsRfq,
+          name: RouteNames.buildingMaterialsRfqName,
+          builder: (context, state) {
+            return const RfqCreatePage();
           },
         ),
       ],
