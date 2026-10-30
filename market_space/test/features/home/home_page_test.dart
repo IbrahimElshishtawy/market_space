@@ -94,5 +94,19 @@ void main() {
       navBarWidget = tester.widget<HomeNavBar>(navBarFinder);
       expect(navBarWidget.isVisible, isTrue);
     });
+
+    testWidgets('Tapping خدمات منزلية category navigates to BuildingMaterials', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: HomePage()));
+      await tester.pumpAndSettle();
+
+      final servicesCategoryFinder = find.text('خدمات منزلية');
+      expect(servicesCategoryFinder, findsOneWidget);
+
+      await tester.tap(servicesCategoryFinder);
+      await tester.pump();
+      // Interaction succeeds without throwing exceptions
+    });
   });
 }

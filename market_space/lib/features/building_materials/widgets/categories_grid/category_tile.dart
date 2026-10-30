@@ -42,20 +42,12 @@ class CategoryTile extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Icon on right (RTL layout)
-              Icon(
-                category.icon,
-                size: 20.0,
-                color: isSelected ? AppColors.primary : AppColors.neutralLight,
-              ),
-
-              // Title in center/right
+              // Title on right (Start in RTL)
               Expanded(
                 child: Text(
                   category.title,
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -66,6 +58,15 @@ class CategoryTile extends StatelessWidget {
                         : AppColors.lightTextPrimary,
                   ),
                 ),
+              ),
+
+              const SizedBox(width: 8.0),
+
+              // Icon on left (End in RTL)
+              Icon(
+                category.icon,
+                size: 20.0,
+                color: isSelected ? AppColors.primary : AppColors.neutral,
               ),
             ],
           ),

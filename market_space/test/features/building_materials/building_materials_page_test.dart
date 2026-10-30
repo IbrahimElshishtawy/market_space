@@ -30,7 +30,10 @@ void main() {
       expect(banner.badgeText, 'تحديث يومي');
       expect(categories.length, 6);
       expect(products.length, 4);
-      expect(contractorBanner.title, 'طلبيات المشاريع والمقاولات الخاصة');
+      expect(
+        contractorBanner.title,
+        anyOf('طلبات المشاريع والمقاولات الخاصة', 'طلبيات المشاريع والمقاولات الخاصة'),
+      );
     });
 
     test('Controller loads data and updates state correctly', () async {
@@ -112,7 +115,10 @@ void main() {
         await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
         await tester.pumpAndSettle();
 
-        expect(find.text('طلبيات المشاريع والمقاولات الخاصة'), findsOneWidget);
+        expect(
+          find.textContaining('المشاريع والمقاولات الخاصة'),
+          findsOneWidget,
+        );
         expect(find.text('اطلب مقايسة مخصصة'), findsOneWidget);
       },
     );

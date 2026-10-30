@@ -165,30 +165,7 @@ class DailyPriceBanner extends StatelessWidget {
                     // Bottom Row: CTA Button & Indicator Dots
                     Row(
                       children: [
-                        // Carousel Indicator Dots (Bottom Left)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 18.0,
-                              height: 7.0,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF38BDF8),
-                                borderRadius: AppRadii.full,
-                              ),
-                            ),
-                            const SizedBox(width: 4.0),
-                            _buildDot(),
-                            const SizedBox(width: 4.0),
-                            _buildDot(),
-                            const SizedBox(width: 4.0),
-                            _buildDot(),
-                          ],
-                        ),
-
-                        const Spacer(),
-
-                        // CTA Button "اطلب كميتك" (Bottom Right)
+                        // CTA Button "اطلب كميتك" (Right in RTL)
                         ElevatedButton(
                           onPressed: onOrderTap,
                           style: ElevatedButton.styleFrom(
@@ -222,6 +199,29 @@ class DailyPriceBanner extends StatelessWidget {
                               ),
                             ],
                           ),
+                        ),
+
+                        const Spacer(),
+
+                        // Carousel Indicator Dots (Left in RTL)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 18.0,
+                              height: 7.0,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF38BDF8),
+                                borderRadius: AppRadii.full,
+                              ),
+                            ),
+                            const SizedBox(width: 4.0),
+                            _buildDot(),
+                            const SizedBox(width: 4.0),
+                            _buildDot(),
+                            const SizedBox(width: 4.0),
+                            _buildDot(),
+                          ],
                         ),
                       ],
                     ),

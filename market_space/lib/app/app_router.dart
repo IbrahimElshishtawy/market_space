@@ -23,7 +23,6 @@ import '../features/home_appliances/notifications/presentation/pages/home_applia
 import '../features/home_appliances/orders/presentation/pages/home_appliances_orders_page.dart';
 import '../features/home_appliances/presentation/pages/appliance_category_listing_page.dart';
 import '../features/home_appliances/presentation/pages/home_appliances_page.dart';
-import '../features/home_services/presentation/pages/home_services_page.dart';
 import '../features/real_estate/favorites/presentation/pages/real_estate_favorites_page.dart';
 import '../features/real_estate/map/presentation/pages/real_estate_map_page.dart';
 import '../features/real_estate/notifications/presentation/pages/real_estate_notifications_page.dart';
@@ -130,7 +129,7 @@ class AppRouter {
           path: RouteNames.homeServices,
           name: RouteNames.homeServicesName,
           builder: (context, state) {
-            return const HomeServicesPage();
+            return const BuildingMaterialsPage();
           },
         ),
         GoRoute(

@@ -36,29 +36,25 @@ class BuildingMaterialsHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Left Action Buttons: Cart & Notifications
-          _buildActionButton(
-            icon: Icons.shopping_bag_outlined,
-            onTap: onCartTap,
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          _buildActionButton(
-            icon: Icons.notifications_none_rounded,
-            badgeCount: unreadNotificationsCount,
-            onTap: onNotificationsTap,
-          ),
-
-          const Spacer(),
-
-          // Right User Info: Name, Location, Avatar
+          // Right User Info: Name, Location, Avatar (Start in RTL)
           InkWell(
             onTap: onAvatarTap,
             borderRadius: AppRadii.full,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                ClipRRect(
+                  borderRadius: AppRadii.full,
+                  child: SafeNetworkImage(
+                    imageUrl: avatarUrl,
+                    width: BuildingMaterialsHeaderLayout.avatarSize,
+                    height: BuildingMaterialsHeaderLayout.avatarSize,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
@@ -73,6 +69,12 @@ class BuildingMaterialsHeader extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        const Icon(
+                          Icons.location_on_rounded,
+                          size: 14.0,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 4.0),
                         Text(
                           userLocation,
                           style: const TextStyle(
@@ -80,28 +82,26 @@ class BuildingMaterialsHeader extends StatelessWidget {
                             color: AppColors.lightTextSecondary,
                           ),
                         ),
-                        const SizedBox(width: 4.0),
-                        const Icon(
-                          Icons.location_on_rounded,
-                          size: 14.0,
-                          color: AppColors.primary,
-                        ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                ClipRRect(
-                  borderRadius: AppRadii.full,
-                  child: SafeNetworkImage(
-                    imageUrl: avatarUrl,
-                    width: BuildingMaterialsHeaderLayout.avatarSize,
-                    height: BuildingMaterialsHeaderLayout.avatarSize,
-                    fit: BoxFit.cover,
-                  ),
-                ),
               ],
             ),
+          ),
+
+          const Spacer(),
+
+          // Left Action Buttons: Notifications & Cart (End in RTL)
+          _buildActionButton(
+            icon: Icons.notifications_none_rounded,
+            badgeCount: unreadNotificationsCount,
+            onTap: onNotificationsTap,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          _buildActionButton(
+            icon: Icons.shopping_basket_outlined,
+            onTap: onCartTap,
           ),
         ],
       ),

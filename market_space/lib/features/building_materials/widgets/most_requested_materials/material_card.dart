@@ -156,30 +156,7 @@ class MaterialCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Action Circular Button (Bottom Left in RTL)
-                        InkWell(
-                          onTap: onOrderTap,
-                          borderRadius: AppRadii.full,
-                          child: Container(
-                            width: 30.0,
-                            height: 30.0,
-                            decoration: const BoxDecoration(
-                              color: AppColors.neutral,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.local_shipping_rounded,
-                                size: 15.0,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        const Spacer(),
-
-                        // Price (Bottom Right in RTL)
+                        // Price (Right in RTL)
                         Flexible(
                           child: Text(
                             product.priceText,
@@ -189,6 +166,29 @@ class MaterialCard extends StatelessWidget {
                               fontSize: 12.5,
                               fontWeight: FontWeight.w800,
                               color: Color(0xFFD97706), // Amber/Orange price
+                            ),
+                          ),
+                        ),
+
+                        const Spacer(),
+
+                        // Action Button (Left in RTL)
+                        InkWell(
+                          onTap: onOrderTap,
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Container(
+                            width: 32.0,
+                            height: 32.0,
+                            decoration: BoxDecoration(
+                              color: AppColors.neutral,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.add_shopping_cart_rounded,
+                                size: 16.0,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),

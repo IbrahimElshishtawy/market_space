@@ -26,31 +26,7 @@ class BuildingMaterialsSearchBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Filter Button (Left)
-          InkWell(
-            onTap: onFilterTap,
-            borderRadius: AppRadii.md,
-            child: Container(
-              width: BuildingMaterialsSearchBarLayout.filterButtonWidth,
-              height: BuildingMaterialsSearchBarLayout.height,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: AppRadii.md,
-                border: Border.all(color: AppColors.lightBorder),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.filter_list_rounded,
-                  color: AppColors.neutralLight,
-                  size: 22.0,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(width: AppSpacing.sm),
-
-          // Search Field (Right)
+          // Search Field (Right in RTL)
           Expanded(
             child: Container(
               height: BuildingMaterialsSearchBarLayout.height,
@@ -83,6 +59,30 @@ class BuildingMaterialsSearchBar extends StatelessWidget {
                     horizontal: AppSpacing.md,
                     vertical: 12.0,
                   ),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: AppSpacing.sm),
+
+          // Filter Button (Left in RTL)
+          InkWell(
+            onTap: onFilterTap,
+            borderRadius: AppRadii.md,
+            child: Container(
+              width: BuildingMaterialsSearchBarLayout.filterButtonWidth,
+              height: BuildingMaterialsSearchBarLayout.height,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: AppRadii.md,
+                border: Border.all(color: AppColors.lightBorder),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.filter_alt_outlined,
+                  color: AppColors.neutral,
+                  size: 20.0,
                 ),
               ),
             ),

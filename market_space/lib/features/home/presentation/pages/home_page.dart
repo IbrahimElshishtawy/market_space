@@ -87,6 +87,9 @@ class _HomePageState extends State<HomePage> {
         category.title.contains('مونة') ||
         category.title.contains('أسمنت')) {
       context.push(RouteNames.buildingMaterials);
+    } else if (category.id == 'cat-services' ||
+        category.title.contains('خدمات')) {
+      context.push(RouteNames.buildingMaterials);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -157,8 +160,10 @@ class _HomePageState extends State<HomePage> {
                   SliverToBoxAdapter(
                     child: MostRequestedServicesSection(
                       services: _services,
-                      onServiceTap: (service) {},
-                      onViewAllTap: () {},
+                      onServiceTap: (service) =>
+                          context.push(RouteNames.buildingMaterials),
+                      onViewAllTap: () =>
+                          context.push(RouteNames.buildingMaterials),
                     ),
                   ),
 
