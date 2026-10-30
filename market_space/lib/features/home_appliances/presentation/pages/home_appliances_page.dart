@@ -142,7 +142,7 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
               return NotificationListener<UserScrollNotification>(
                 onNotification: _onUserScroll,
                 child: RefreshIndicator(
-                  color: AppColors.primary,
+                  color: AppColors.neutral,
                   onRefresh: _controller.loadData,
                   child: CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(
@@ -236,7 +236,7 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
                           ),
                         ),
 
-                      const SliverToBoxAdapter(child: SizedBox(height: 140.0)),
+                      const SliverToBoxAdapter(child: SizedBox(height: 90.0)),
                     ],
                   ),
                 ),

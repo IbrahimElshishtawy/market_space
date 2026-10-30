@@ -78,11 +78,11 @@ class OrderStatusTimeline extends StatelessWidget {
                     width: 20.0,
                     height: 20.0,
                     decoration: BoxDecoration(
-                      color: isCompleted ? AppColors.primary : Colors.white,
+                      color: isCompleted ? AppColors.neutral : Colors.white,
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isCompleted
-                            ? AppColors.primary
+                            ? AppColors.neutral
                             : AppColors.lightBorder,
                         width: 2.0,
                       ),
@@ -105,7 +105,7 @@ class OrderStatusTimeline extends StatelessWidget {
                           ? FontWeight.bold
                           : FontWeight.normal,
                       color: isCompleted
-                          ? AppColors.primary
+                          ? AppColors.neutral
                           : AppColors.lightTextSecondary,
                     ),
                   ),
@@ -117,7 +117,7 @@ class OrderStatusTimeline extends StatelessWidget {
                     height: 2.0,
                     margin: const EdgeInsets.only(bottom: 14.0),
                     color: index < currentIdx
-                        ? AppColors.primary
+                        ? AppColors.neutral
                         : AppColors.lightBorder,
                   ),
                 ),

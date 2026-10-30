@@ -118,7 +118,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
               }
 
               return RefreshIndicator(
-                color: AppColors.primary,
+                color: AppColors.neutral,
                 onRefresh: _controller.loadCart,
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(
@@ -145,7 +145,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                         },
                       ),
 
-                      const SizedBox(height: 12.0),
+                      const SizedBox(height: 10.0),
 
                       // Coupon Promo Code Input Box
                       Container(
@@ -189,7 +189,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                                 ElevatedButton(
                                   onPressed: _applyCoupon,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primary,
+                                    backgroundColor: AppColors.neutral,
                                     foregroundColor: Colors.white,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: AppRadii.md,
@@ -213,7 +213,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 12.0),
+                      const SizedBox(height: 10.0),
 
                       // Order Summary Pricing Breakdown Box
                       Container(
@@ -268,7 +268,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                               child: ElevatedButton(
                                 onPressed: _proceedToCheckout,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
+                                  backgroundColor: AppColors.neutral,
                                   foregroundColor: Colors.white,
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: AppRadii.md,
@@ -288,7 +288,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                         ),
                       ),
 
-                      const SizedBox(height: 140.0),
+                      const SizedBox(height: 90.0),
                     ],
                   ),
                 ),
@@ -312,6 +312,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
           },
           notificationController: dependencies?.notificationController,
           isVisible: true,
+          showFloatingAction: false,
         ),
       ),
     );
@@ -339,9 +340,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
           style: TextStyle(
             fontSize: isTotal ? 15.0 : 12.5,
             fontWeight: isTotal ? FontWeight.w900 : FontWeight.bold,
-            color: isDiscount
-                ? AppColors.secondary
-                : (isTotal ? AppColors.primary : AppColors.neutral),
+            color: isDiscount ? AppColors.secondary : AppColors.neutral,
           ),
         ),
       ],

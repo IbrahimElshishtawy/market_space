@@ -107,7 +107,7 @@ class CartItemCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
+                          color: AppColors.neutral,
                         ),
                       ),
 
@@ -163,7 +163,7 @@ class CartItemCard extends StatelessWidget {
                                 child: Icon(
                                   Icons.add_rounded,
                                   size: 16.0,
-                                  color: AppColors.primary,
+                                  color: AppColors.neutral,
                                 ),
                               ),
                             ),

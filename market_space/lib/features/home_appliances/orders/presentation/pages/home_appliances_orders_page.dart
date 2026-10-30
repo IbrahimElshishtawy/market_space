@@ -140,7 +140,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                       style: const TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.primary,
+                        color: AppColors.neutral,
                       ),
                     ),
                   ],
@@ -207,7 +207,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
               final ordersList = state.filteredOrders;
 
               return RefreshIndicator(
-                color: AppColors.primary,
+                color: AppColors.neutral,
                 onRefresh: _controller.loadOrders,
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(
@@ -291,7 +291,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                                           vertical: 3.0,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.primary.withValues(
+                                          color: AppColors.neutral.withValues(
                                             alpha: 0.1,
                                           ),
                                           borderRadius: AppRadii.xs,
@@ -299,7 +299,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                                         child: Text(
                                           order.status.label,
                                           style: const TextStyle(
-                                            color: AppColors.primary,
+                                            color: AppColors.neutral,
                                             fontSize: 11.0,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -356,7 +356,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                                             style: const TextStyle(
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.w900,
-                                              color: AppColors.primary,
+                                              color: AppColors.neutral,
                                             ),
                                           ),
                                           const SizedBox(height: 2.0),
@@ -383,7 +383,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                         }, childCount: ordersList.length),
                       ),
 
-                    const SliverToBoxAdapter(child: SizedBox(height: 140.0)),
+                    const SliverToBoxAdapter(child: SizedBox(height: 90.0)),
                   ],
                 ),
               );
@@ -406,6 +406,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
           },
           notificationController: dependencies?.notificationController,
           isVisible: true,
+          showFloatingAction: false,
         ),
       ),
     );
@@ -422,7 +423,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
       child: ChoiceChip(
         label: Text(label),
         selected: isSelected,
-        selectedColor: AppColors.primary,
+        selectedColor: AppColors.neutral,
         labelStyle: TextStyle(
           color: isSelected ? Colors.white : AppColors.neutral,
           fontSize: 12.0,

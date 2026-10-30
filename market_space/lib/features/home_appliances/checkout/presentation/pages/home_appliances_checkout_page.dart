@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -69,7 +71,7 @@ class _HomeAppliancesCheckoutPageState
           content: Text(
             'تم إنشاء الطلب بنجاح! رقم الطلب: ${order.orderNumber}',
           ),
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.neutral,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -122,7 +124,7 @@ class _HomeAppliancesCheckoutPageState
                       children: [
                         Icon(
                           Icons.location_on_rounded,
-                          color: AppColors.primary,
+                          color: AppColors.neutral,
                         ),
                         SizedBox(width: 8.0),
                         Text(
@@ -164,7 +166,7 @@ class _HomeAppliancesCheckoutPageState
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.payment_rounded, color: AppColors.primary),
+                        Icon(Icons.payment_rounded, color: AppColors.neutral),
                         SizedBox(width: 8.0),
                         Text(
                           'اختر طريقة الدفع المناسبة',
@@ -184,7 +186,7 @@ class _HomeAppliancesCheckoutPageState
                       ),
                       value: 'الدفع عند الاستلام',
                       groupValue: _selectedPaymentMethod,
-                      activeColor: AppColors.primary,
+                      activeColor: AppColors.neutral,
                       onChanged: (val) =>
                           setState(() => _selectedPaymentMethod = val!),
                     ),
@@ -195,7 +197,7 @@ class _HomeAppliancesCheckoutPageState
                       ),
                       value: 'بطاقة ائتمان',
                       groupValue: _selectedPaymentMethod,
-                      activeColor: AppColors.primary,
+                      activeColor: AppColors.neutral,
                       onChanged: (val) =>
                           setState(() => _selectedPaymentMethod = val!),
                     ),
@@ -206,7 +208,7 @@ class _HomeAppliancesCheckoutPageState
                       ),
                       value: 'تقسيط ميسر',
                       groupValue: _selectedPaymentMethod,
-                      activeColor: AppColors.primary,
+                      activeColor: AppColors.neutral,
                       onChanged: (val) =>
                           setState(() => _selectedPaymentMethod = val!),
                     ),
@@ -225,7 +227,7 @@ class _HomeAppliancesCheckoutPageState
                       ? null
                       : () => _placeOrder(cartController, orderController),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: AppColors.neutral,
                     foregroundColor: Colors.white,
                     shape: const RoundedRectangleBorder(
                       borderRadius: AppRadii.md,
