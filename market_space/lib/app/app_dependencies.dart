@@ -12,6 +12,9 @@ import '../core/platform/platform_info.dart';
 import '../core/security/token_provider.dart';
 import '../core/storage/preferences_service.dart';
 import '../core/storage/secure_storage_service.dart';
+import '../features/home_appliances/cart/presentation/controllers/home_appliances_cart_controller.dart';
+import '../features/home_appliances/notifications/presentation/controllers/home_appliances_notification_controller.dart';
+import '../features/home_appliances/orders/presentation/controllers/home_appliances_order_controller.dart';
 import '../features/real_estate/favorites/presentation/controllers/real_estate_favorites_controller.dart';
 import '../features/real_estate/notifications/presentation/controllers/real_estate_notification_controller.dart';
 import '../shared/state/sector_controller.dart';
@@ -34,6 +37,10 @@ class AppDependencies {
   final NotificationController notificationController;
   final RealEstateFavoritesController realEstateFavoritesController;
   final RealEstateNotificationController realEstateNotificationController;
+  final HomeAppliancesCartController homeAppliancesCartController;
+  final HomeAppliancesOrderController homeAppliancesOrderController;
+  final HomeAppliancesNotificationController
+  homeAppliancesNotificationController;
 
   AppDependencies({
     required this.appConfig,
@@ -52,6 +59,9 @@ class AppDependencies {
     NotificationController? notificationController,
     RealEstateFavoritesController? realEstateFavoritesController,
     RealEstateNotificationController? realEstateNotificationController,
+    HomeAppliancesCartController? homeAppliancesCartController,
+    HomeAppliancesOrderController? homeAppliancesOrderController,
+    HomeAppliancesNotificationController? homeAppliancesNotificationController,
   }) : sectorController =
            sectorController ??
            SectorController(preferencesService: preferencesService),
@@ -66,7 +76,14 @@ class AppDependencies {
            realEstateFavoritesController ?? RealEstateFavoritesController(),
        realEstateNotificationController =
            realEstateNotificationController ??
-           RealEstateNotificationController();
+           RealEstateNotificationController(),
+       homeAppliancesCartController =
+           homeAppliancesCartController ?? HomeAppliancesCartController(),
+       homeAppliancesOrderController =
+           homeAppliancesOrderController ?? HomeAppliancesOrderController(),
+       homeAppliancesNotificationController =
+           homeAppliancesNotificationController ??
+           HomeAppliancesNotificationController();
 
   static AppDependencies of(BuildContext context) {
     final scope = context

@@ -8,6 +8,11 @@ import '../features/building_materials/presentation/pages/building_material_cate
 import '../features/building_materials/presentation/pages/building_materials_page.dart';
 import '../features/building_materials/presentation/pages/steel_rebar_listing_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
+import '../features/home_appliances/cart/presentation/pages/home_appliances_cart_page.dart';
+import '../features/home_appliances/categories/presentation/pages/home_appliances_categories_page.dart';
+import '../features/home_appliances/checkout/presentation/pages/home_appliances_checkout_page.dart';
+import '../features/home_appliances/notifications/presentation/pages/home_appliances_notifications_page.dart';
+import '../features/home_appliances/orders/presentation/pages/home_appliances_orders_page.dart';
 import '../features/home_appliances/presentation/pages/appliance_category_listing_page.dart';
 import '../features/home_appliances/presentation/pages/home_appliances_page.dart';
 import '../features/home_services/presentation/pages/home_services_page.dart';
@@ -125,6 +130,41 @@ class AppRouter {
           name: RouteNames.homeAppliancesName,
           builder: (context, state) {
             return const HomeAppliancesPage();
+          },
+        ),
+        GoRoute(
+          path: '/home-appliances/categories',
+          name: 'home_appliances_categories',
+          builder: (context, state) {
+            return const HomeAppliancesCategoriesPage();
+          },
+        ),
+        GoRoute(
+          path: '/home-appliances/cart',
+          name: 'home_appliances_cart',
+          builder: (context, state) {
+            return const HomeAppliancesCartPage();
+          },
+        ),
+        GoRoute(
+          path: '/home-appliances/checkout',
+          name: 'home_appliances_checkout',
+          builder: (context, state) {
+            return const HomeAppliancesCheckoutPage();
+          },
+        ),
+        GoRoute(
+          path: '/home-appliances/orders',
+          name: 'home_appliances_orders',
+          builder: (context, state) {
+            return const HomeAppliancesOrdersPage();
+          },
+        ),
+        GoRoute(
+          path: '/home-appliances/notifications',
+          name: 'home_appliances_notifications',
+          builder: (context, state) {
+            return const HomeAppliancesNotificationsPage();
           },
         ),
         GoRoute(

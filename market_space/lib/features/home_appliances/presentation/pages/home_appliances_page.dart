@@ -73,13 +73,27 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
     final config = HomeAppliancesNavigationConfig.config;
     final item = config.items[index];
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('الأجهزة المنزلية: تصفح ${item.label}'),
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    if (item.id == 'ha-categories' ||
+        item.destination == '/home-appliances/categories') {
+      if (GoRouter.maybeOf(context) != null) {
+        context.push('/home-appliances/categories');
+      }
+    } else if (item.id == 'ha-cart' ||
+        item.destination == '/home-appliances/cart') {
+      if (GoRouter.maybeOf(context) != null) {
+        context.push('/home-appliances/cart');
+      }
+    } else if (item.id == 'ha-orders' ||
+        item.destination == '/home-appliances/orders') {
+      if (GoRouter.maybeOf(context) != null) {
+        context.push('/home-appliances/orders');
+      }
+    } else if (item.id == 'ha-notifications' ||
+        item.destination == '/home-appliances/notifications') {
+      if (GoRouter.maybeOf(context) != null) {
+        context.push('/home-appliances/notifications');
+      }
+    }
   }
 
   void _showSnackBar(String message) {
@@ -138,11 +152,16 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
                       // 1. Header Bar
                       SliverToBoxAdapter(
                         child: AppliancesHeader(
-                          onNotificationTap: () =>
-                              _showSnackBar('لا توجد إشعارات جديدة'),
-                          onCartTap: () => _showSnackBar(
-                            'سلة الأجهزة تحتوي على العناصر المضافة',
-                          ),
+                          onNotificationTap: () {
+                            if (GoRouter.maybeOf(context) != null) {
+                              context.push('/home-appliances/notifications');
+                            }
+                          },
+                          onCartTap: () {
+                            if (GoRouter.maybeOf(context) != null) {
+                              context.push('/home-appliances/cart');
+                            }
+                          },
                         ),
                       ),
 
@@ -171,7 +190,11 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
                           categories: state.categories,
                           selectedCategoryId: state.filter.selectedCategoryId,
                           onCategoryTap: _openCategoryListing,
-                          onViewAllTap: () => _openCategoryListing('cat-tv'),
+                          onViewAllTap: () {
+                            if (GoRouter.maybeOf(context) != null) {
+                              context.push('/home-appliances/categories');
+                            }
+                          },
                         ),
                       ),
 
@@ -203,9 +226,13 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
                                 _showSnackBar('تم فتح تفاصيل المنتج'),
                             onAddToCartTap: (id) {
                               _controller.toggleCart(id);
-                              _showSnackBar('تحديث حالة السلة للمنتج');
+                              _showSnackBar('تمت إضافة المنتج إلى السلة بنجاح');
                             },
-                            onViewAllTap: () => _openCategoryListing('cat-tv'),
+                            onViewAllTap: () {
+                              if (GoRouter.maybeOf(context) != null) {
+                                context.push('/home-appliances/categories');
+                              }
+                            },
                           ),
                         ),
 
