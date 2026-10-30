@@ -32,7 +32,8 @@ class _BuildingMaterialCategoryDetailPageState
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ??
+    _controller =
+        widget.controller ??
         CategoryDetailController(categoryId: widget.categoryId);
     _controller.loadData();
   }
@@ -51,10 +52,7 @@ class _BuildingMaterialCategoryDetailPageState
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
 
@@ -120,10 +118,12 @@ class _BuildingMaterialCategoryDetailPageState
                     SliverToBoxAdapter(
                       child: CategoryPriceBanner(
                         detail: detail,
-                        onOrderTap: () =>
-                            _showSnackBar('طلب توريد كمية من قسم ${detail.title}'),
+                        onOrderTap: () => _showSnackBar(
+                          'طلب توريد كمية من قسم ${detail.title}',
+                        ),
                         onPriceLogTap: () => _showSnackBar(
-                            'عرض سجل أسعار ${detail.title} اليومية'),
+                          'عرض سجل أسعار ${detail.title} اليومية',
+                        ),
                       ),
                     ),
 
@@ -137,7 +137,8 @@ class _BuildingMaterialCategoryDetailPageState
                           onOrderTap: (prod) =>
                               _showSnackBar('طلب توريد: ${prod.title}'),
                           onViewAllTap: () => _showSnackBar(
-                              'عرض جميع منتجات قسم ${detail.title}'),
+                            'عرض جميع منتجات قسم ${detail.title}',
+                          ),
                         ),
                       )
                     else
@@ -148,9 +149,7 @@ class _BuildingMaterialCategoryDetailPageState
                         ),
                       ),
 
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: 24.0),
-                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 24.0)),
                   ],
                 ),
               );

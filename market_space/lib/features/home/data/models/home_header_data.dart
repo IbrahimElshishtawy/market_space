@@ -1,4 +1,5 @@
 class HomeHeaderData {
+  final String appName;
   final String userName;
   final String location;
   final String? avatarUrl;
@@ -6,6 +7,7 @@ class HomeHeaderData {
   final int cartItemsCount;
 
   const HomeHeaderData({
+    this.appName = 'Deal One',
     required this.userName,
     required this.location,
     this.avatarUrl,

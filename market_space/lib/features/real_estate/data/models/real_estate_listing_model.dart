@@ -25,6 +25,8 @@ class RealEstateListingModel {
   final int areaM2;
   final int bathsCount;
   final String imageUrl;
+  final double? latitude;
+  final double? longitude;
 
   const RealEstateListingModel({
     required this.id,
@@ -42,6 +44,8 @@ class RealEstateListingModel {
     required this.areaM2,
     required this.bathsCount,
     required this.imageUrl,
+    this.latitude,
+    this.longitude,
   });
 
   RealEstateListingModel copyWith({
@@ -60,6 +64,8 @@ class RealEstateListingModel {
     int? areaM2,
     int? bathsCount,
     String? imageUrl,
+    double? latitude,
+    double? longitude,
   }) {
     return RealEstateListingModel(
       id: id ?? this.id,
@@ -77,6 +83,8 @@ class RealEstateListingModel {
       areaM2: areaM2 ?? this.areaM2,
       bathsCount: bathsCount ?? this.bathsCount,
       imageUrl: imageUrl ?? this.imageUrl,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
     );
   }
 }

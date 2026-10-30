@@ -54,9 +54,7 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: SteelRebarListingPage(controller: controller),
-        ),
+        MaterialApp(home: SteelRebarListingPage(controller: controller)),
       );
 
       // Loading State
@@ -102,9 +100,7 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: SteelRebarListingPage(controller: controller),
-        ),
+        MaterialApp(home: SteelRebarListingPage(controller: controller)),
       );
       await tester.pumpAndSettle();
 

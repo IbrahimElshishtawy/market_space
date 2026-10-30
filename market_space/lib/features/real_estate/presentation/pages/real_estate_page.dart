@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/app_dependencies.dart';
+import '../../../../core/navigation/widgets/app_bottom_navigation/app_bottom_navigation.dart';
 import '../../../../core/routing/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_view.dart';
 import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../navigation/real_estate_navigation_config.dart';
 import '../../widgets/real_estate_card/real_estate_card.dart';
 import '../../widgets/real_estate_filter_bar/real_estate_filter_bar.dart';
+import '../../widgets/real_estate_filter_sheet/real_estate_filter_sheet.dart';
 import '../../widgets/real_estate_header/real_estate_header.dart';
 import '../../widgets/real_estate_search_bar/real_estate_search_bar.dart';
 import '../controllers/real_estate_controller.dart';
@@ -24,6 +29,8 @@ class RealEstatePage extends StatefulWidget {
 
 class _RealEstatePageState extends State<RealEstatePage> {
   late final RealEstateController _controller;
+  int _tabIndex = 0;
+  bool _isNavVisible = true;
 
   @override
   void initState() {
@@ -40,13 +47,111 @@ class _RealEstatePageState extends State<RealEstatePage> {
     super.dispose();
   }
 
+  bool _onUserScroll(UserScrollNotification notification) {
+    if (notification.direction == ScrollDirection.reverse) {
+      if (_isNavVisible) {
+        setState(() {
+          _isNavVisible = false;
+        });
+      }
+    } else if (notification.direction == ScrollDirection.forward) {
+      if (!_isNavVisible) {
+        setState(() {
+          _isNavVisible = true;
+        });
+      }
+    }
+    return false;
+  }
+
+  void _onTabSelected(int index) {
+    setState(() {
+      _tabIndex = index;
+    });
+
+    final config = RealEstateNavigationConfig.config;
+    final item = config.items[index];
+
+    if (item.id == 're-reels' || item.destination == '/real-estate/reels') {
+      if (GoRouter.maybeOf(context) != null) {
+        context.push('/real-estate/reels');
+      }
+    } else if (item.id == 're-map' || item.destination == '/real-estate/map') {
+      if (GoRouter.maybeOf(context) != null) {
+        context.push('/real-estate/map');
+      }
+    } else if (item.id == 're-fav' ||
+        item.destination == '/real-estate/favorites') {
+      if (GoRouter.maybeOf(context) != null) {
+        context.push('/real-estate/favorites');
+      }
+    } else if (item.id == 're-notif' ||
+        item.destination == '/real-estate/notifications') {
+      if (GoRouter.maybeOf(context) != null) {
+        context.push('/real-estate/notifications');
+      }
+    }
+  }
+
+  void _handleAddProperty() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (ctx) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'إضافة عقار جديد',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8.0),
+                const Text(
+                  'اختر نوع الإعلان الذي ترغب بنشره في سياق العقارات:',
+                ),
+                const SizedBox(height: AppSpacing.md),
+                ListTile(
+                  leading: const Icon(
+                    Icons.home_work_outlined,
+                    color: AppColors.primary,
+                  ),
+                  title: const Text('إعلان عقار للبيع'),
+                  onTap: () => Navigator.pop(ctx),
+                ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.key_outlined,
+                    color: AppColors.secondary,
+                  ),
+                  title: const Text('إعلان عقار للإيجار'),
+                  onTap: () => Navigator.pop(ctx),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dependencies = AppDependencies.maybeOf(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        extendBody: true,
         backgroundColor: AppColors.lightBackground,
         body: SafeArea(
+          bottom: false,
           child: ValueListenableBuilder<RealEstateState>(
             valueListenable: _controller,
             builder: (context, state, _) {
@@ -63,89 +168,98 @@ class _RealEstatePageState extends State<RealEstatePage> {
                 );
               }
 
-              return RefreshIndicator(
-                color: AppColors.primary,
-                onRefresh: _controller.loadListings,
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
-                  ),
-                  slivers: [
-                    // 1. Header Bar
-                    SliverToBoxAdapter(
-                      child: RealEstateHeader(
-                        onNotificationsTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('لا توجد إشعارات جديدة حالياً'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        },
-                        onCartTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('سلة التسوق فارغة'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        },
-                      ),
+              return NotificationListener<UserScrollNotification>(
+                onNotification: _onUserScroll,
+                child: RefreshIndicator(
+                  color: AppColors.primary,
+                  onRefresh: _controller.loadListings,
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
                     ),
-
-                    // 2. Search & Filter Bar
-                    SliverToBoxAdapter(
-                      child: RealEstateSearchBar(
-                        onChanged: _controller.setSearchQuery,
-                        onFilterTap: _showFilterOptionsSheet,
-                      ),
-                    ),
-
-                    // 3. Filter Chips Bar (الكل، شقق للبيع، شقق للإيجار)
-                    SliverToBoxAdapter(
-                      child: RealEstateFilterBar(
-                        selectedType: state.filter.selectedType,
-                        onTypeSelected: _controller.setFilterType,
-                        onSortTap: _showSortSheet,
-                      ),
-                    ),
-
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: AppSpacing.xs),
-                    ),
-
-                    // 4. Real Estate Listings Cards
-                    if (state.listings.isEmpty)
-                      const SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Center(
-                          child: AppEmptyState(
-                            title: 'لا توجد عقارات مطابقة',
-                            message: 'جرّب تغيير كلمات البحث أو الفلتر لعرض المزيد من النتائج',
-                          ),
+                    slivers: [
+                      // 1. Header Bar
+                      SliverToBoxAdapter(
+                        child: RealEstateHeader(
+                          onNotificationsTap: () {
+                            if (GoRouter.maybeOf(context) != null) {
+                              context.push('/real-estate/notifications');
+                            }
+                          },
+                          onCartTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('سلة التسوق فارغة'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
                         ),
-                      )
-                    else
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          final item = state.listings[index];
-                          return RealEstateCard(
-                            item: item,
-                            onFavoriteTap: () =>
-                                _controller.toggleFavorite(item.id),
-                            onDetailsTap: () => _openListingDetail(item.id),
-                          );
-                        }, childCount: state.listings.length),
                       ),
 
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: AppSpacing.xl),
-                    ),
-                  ],
+                      // 2. Search & Filter Bar
+                      SliverToBoxAdapter(
+                        child: RealEstateSearchBar(
+                          onChanged: _controller.setSearchQuery,
+                          onFilterTap: _openFilterSheet,
+                        ),
+                      ),
+
+                      // 3. Filter Chips Bar (الكل، شقق للبيع، شقق للإيجار)
+                      SliverToBoxAdapter(
+                        child: RealEstateFilterBar(
+                          selectedType: state.filter.selectedType,
+                          onTypeSelected: _controller.setFilterType,
+                          onSortTap: _openFilterSheet,
+                        ),
+                      ),
+
+                      const SliverToBoxAdapter(
+                        child: SizedBox(height: AppSpacing.xs),
+                      ),
+
+                      // 4. Real Estate Listings Cards
+                      if (state.listings.isEmpty)
+                        const SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: AppEmptyState(
+                              title: 'لا توجد عقارات مطابقة',
+                              message: 'جرّب تغيير كلمات البحث أو الفلتر لعرض المزيد من النتائج',
+                            ),
+                          ),
+                        )
+                      else
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final item = state.listings[index];
+                            return RealEstateCard(
+                              item: item,
+                              onFavoriteTap: () =>
+                                  _controller.toggleFavorite(item.id),
+                              onDetailsTap: () => _openListingDetail(item.id),
+                            );
+                          }, childCount: state.listings.length),
+                        ),
+
+                      const SliverToBoxAdapter(child: SizedBox(height: 140.0)),
+                    ],
+                  ),
                 ),
               );
             },
           ),
+        ),
+        bottomNavigationBar: AppBottomNavigation(
+          config: RealEstateNavigationConfig.config,
+          currentIndex: _tabIndex,
+          onTabSelected: _onTabSelected,
+          onFloatingActionPressed: _handleAddProperty,
+          notificationController: dependencies?.notificationController,
+          isVisible: _isNavVisible,
         ),
       ),
     );
@@ -155,77 +269,14 @@ class _RealEstatePageState extends State<RealEstatePage> {
     context.push('${RouteNames.realEstateDetail}?id=$id');
   }
 
-  void _showFilterOptionsSheet() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-      ),
-      builder: (ctx) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'خيارات التصفية الفاخرة',
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                const Text(
-                  'تصفية حسب عدد الغرف، السعر، الحي والمنطقة، أوالدور.',
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  child: const Text('تطبيق التصفية'),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+  Future<void> _openFilterSheet() async {
+    final updatedFilter = await RealEstateFilterSheet.show(
+      context,
+      initialFilter: _controller.value.filter,
     );
-  }
 
-  void _showSortSheet() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
-      ),
-      builder: (ctx) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'ترتيب العقارات',
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                ),
-                ListTile(
-                  title: const Text('الأحدث أولاً'),
-                  onTap: () => Navigator.pop(ctx),
-                ),
-                ListTile(
-                  title: const Text('الأقل سعراً أولاً'),
-                  onTap: () => Navigator.pop(ctx),
-                ),
-                ListTile(
-                  title: const Text('الأعلى سعراً أولاً'),
-                  onTap: () => Navigator.pop(ctx),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    if (updatedFilter != null) {
+      _controller.updateFilter(updatedFilter);
+    }
   }
 }

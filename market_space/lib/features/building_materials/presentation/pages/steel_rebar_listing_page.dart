@@ -13,10 +13,7 @@ import '../../widgets/steel_rebar_header/steel_rebar_header.dart';
 class SteelRebarListingPage extends StatefulWidget {
   final SteelRebarController? controller;
 
-  const SteelRebarListingPage({
-    super.key,
-    this.controller,
-  });
+  const SteelRebarListingPage({super.key, this.controller});
 
   @override
   State<SteelRebarListingPage> createState() => _SteelRebarListingPageState();
@@ -46,10 +43,7 @@ class _SteelRebarListingPageState extends State<SteelRebarListingPage> {
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
 
@@ -134,9 +128,7 @@ class _SteelRebarListingPageState extends State<SteelRebarListingPage> {
                         ),
                       ),
 
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: 24.0),
-                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 24.0)),
                   ],
                 ),
               );

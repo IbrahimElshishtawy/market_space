@@ -180,7 +180,8 @@ class SteelDailyPriceBanner extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(
-                          Icons.arrow_back_rounded, // Arrow pointing left in RTL
+                          Icons
+                              .arrow_back_rounded, // Arrow pointing left in RTL
                           size: 16.0,
                           color: AppColors.neutral,
                         ),

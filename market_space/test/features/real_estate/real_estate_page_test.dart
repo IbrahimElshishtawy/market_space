@@ -91,6 +91,9 @@ void main() {
       expect(find.text('2 حمام'), findsAtLeast(1));
 
       // Check Card 2 content (for sale)
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+
       expect(
         find.text('شقة بواجهة متميزة في برج سكني جديد بسيجر'),
         findsOneWidget,
@@ -105,21 +108,43 @@ void main() {
       expect(find.text('التفاصيل'), findsWidgets);
     });
 
-    testWidgets('RealEstatePage handles navigation and filter clicks', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(home: RealEstatePage(controller: controller)),
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'RealEstatePage opens filter sheet when sort/filter is tapped',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          MaterialApp(home: RealEstatePage(controller: controller)),
+        );
+        await tester.pumpAndSettle();
 
-      // Tap on "شقق للبيع" chip
-      await tester.tap(find.text('شقق للبيع'));
-      await tester.pumpAndSettle();
+        // Tap on sort icon button
+        final sortButton = find.byIcon(Icons.swap_vert_rounded);
+        expect(sortButton, findsOneWidget);
+        await tester.tap(sortButton);
+        await tester.pumpAndSettle();
 
-      // Should only show forSale items
-      expect(find.textContaining('3,200,000 ج.م'), findsOneWidget);
-      expect(find.textContaining('14,000 ج.م'), findsNothing);
-    });
+        // Verify filter sheet title and section headers
+        expect(find.text('تصفية البحث'), findsOneWidget);
+        expect(
+          find.text('حدد مواصفات عقارك المفضل لنتائج أدق'),
+          findsOneWidget,
+        );
+        expect(find.text('نوع العقار'), findsOneWidget);
+        expect(find.text('عدد الغرف'), findsOneWidget);
+        expect(find.text('حالة التشطيب'), findsOneWidget);
+        expect(find.text('مميزات إضافية'), findsOneWidget);
+        expect(find.text('المساحة بـ م²'), findsOneWidget);
+        expect(find.text('السعر (ج.م)'), findsOneWidget);
+
+        // Verify action buttons
+        expect(find.text('تطبيق الفلترة'), findsOneWidget);
+        expect(find.text('إلغاء'), findsOneWidget);
+
+        // Tap "إلغاء" to dismiss
+        await tester.tap(find.text('إلغاء'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('تصفية البحث'), findsNothing);
+      },
+    );
   });
 }

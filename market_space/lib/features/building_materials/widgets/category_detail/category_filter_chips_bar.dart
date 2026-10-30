@@ -68,8 +68,12 @@ class CategoryFilterChipsBar extends StatelessWidget {
                     chip,
                     style: TextStyle(
                       fontSize: 12.5,
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
-                      color: isSelected ? Colors.white : AppColors.lightTextPrimary,
+                      fontWeight: isSelected
+                          ? FontWeight.w800
+                          : FontWeight.w700,
+                      color: isSelected
+                          ? Colors.white
+                          : AppColors.lightTextPrimary,
                     ),
                   ),
                 ],

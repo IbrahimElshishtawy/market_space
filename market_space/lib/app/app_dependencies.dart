@@ -6,10 +6,14 @@ import '../core/logging/app_logger.dart';
 import '../core/mock_data/mock_data_provider.dart';
 import '../core/network/api_client.dart';
 import '../core/network/network_info.dart';
+import '../core/notifications/data/repositories/notification_repository.dart';
+import '../core/notifications/presentation/state/notification_controller.dart';
 import '../core/platform/platform_info.dart';
 import '../core/security/token_provider.dart';
 import '../core/storage/preferences_service.dart';
 import '../core/storage/secure_storage_service.dart';
+import '../features/real_estate/favorites/presentation/controllers/real_estate_favorites_controller.dart';
+import '../features/real_estate/notifications/presentation/controllers/real_estate_notification_controller.dart';
 import '../shared/state/sector_controller.dart';
 import 'app_theme.dart';
 
@@ -26,6 +30,10 @@ class AppDependencies {
   final LocaleController localeController;
   final ThemeController themeController;
   final SectorController sectorController;
+  final NotificationRepository notificationRepository;
+  final NotificationController notificationController;
+  final RealEstateFavoritesController realEstateFavoritesController;
+  final RealEstateNotificationController realEstateNotificationController;
 
   AppDependencies({
     required this.appConfig,
@@ -40,9 +48,25 @@ class AppDependencies {
     required this.localeController,
     required this.themeController,
     SectorController? sectorController,
+    NotificationRepository? notificationRepository,
+    NotificationController? notificationController,
+    RealEstateFavoritesController? realEstateFavoritesController,
+    RealEstateNotificationController? realEstateNotificationController,
   }) : sectorController =
            sectorController ??
-           SectorController(preferencesService: preferencesService);
+           SectorController(preferencesService: preferencesService),
+       notificationRepository =
+           notificationRepository ?? NotificationRepositoryImpl(),
+       notificationController =
+           notificationController ??
+           NotificationController(
+             repository: notificationRepository ?? NotificationRepositoryImpl(),
+           ),
+       realEstateFavoritesController =
+           realEstateFavoritesController ?? RealEstateFavoritesController(),
+       realEstateNotificationController =
+           realEstateNotificationController ??
+           RealEstateNotificationController();
 
   static AppDependencies of(BuildContext context) {
     final scope = context
@@ -51,6 +75,12 @@ class AppDependencies {
       throw StateError('AppDependenciesScope not found in widget tree.');
     }
     return scope.dependencies;
+  }
+
+  static AppDependencies? maybeOf(BuildContext context) {
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<AppDependenciesScope>();
+    return scope?.dependencies;
   }
 }
 

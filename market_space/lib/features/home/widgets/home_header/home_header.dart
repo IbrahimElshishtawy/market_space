@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/market_widgets/safe_network_image.dart';
 import '../../data/models/home_header_data.dart';
 import 'home_header_layout.dart';
 
@@ -26,107 +25,71 @@ class HomeHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Action Buttons (Cart & Notification) on the left (RTL)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildActionButton(
-                icon: Icons.shopping_basket_outlined,
-                onTap: onCartTap,
-                badgeCount: data.cartItemsCount,
-              ),
-              const SizedBox(width: 8.0),
-              _buildActionButton(
-                icon: Icons.notifications_rounded,
-                onTap: onNotificationsTap,
-                badgeCount: data.unreadNotificationsCount,
-                showBadgeDot: true,
-              ),
-            ],
+          // Action Button (Notifications only) on the left (RTL)
+          _buildActionButton(
+            icon: Icons.notifications_rounded,
+            onTap: onNotificationsTap,
+            badgeCount: data.unreadNotificationsCount,
+            showBadgeDot: true,
           ),
 
           const SizedBox(width: 8.0),
 
-          // User Profile Info on the right (RTL)
+          // App Branding (Deal One) + Location on the right (RTL)
           Flexible(
-            child: InkWell(
-              onTap: onAvatarTap,
-              borderRadius: BorderRadius.circular(24.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          data.userName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.neutral,
-                            height: 1.2,
-                          ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      data.appName,
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.neutral,
+                        letterSpacing: -0.3,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(width: 4.0),
+                    Container(
+                      width: 6.0,
+                      height: 6.0,
+                      decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2.0),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        data.location,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.lightTextSecondary,
                         ),
-                        const SizedBox(height: 2.0),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                data.location,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.lightTextSecondary,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 2.0),
-                            const Icon(
-                              Icons.location_on_outlined,
-                              size: 14.0,
-                              color: AppColors.neutral,
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8.0),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      HomeHeaderLayout.avatarSize / 2,
+                    const SizedBox(width: 2.0),
+                    const Icon(
+                      Icons.location_on_outlined,
+                      size: 13.0,
+                      color: AppColors.lightTextSecondary,
                     ),
-                    child: SizedBox(
-                      width: HomeHeaderLayout.avatarSize,
-                      height: HomeHeaderLayout.avatarSize,
-                      child: data.avatarUrl != null
-                          ? SafeNetworkImage(
-                              imageUrl: data.avatarUrl!,
-                              fit: BoxFit.cover,
-                              fallbackIcon: Icons.person_rounded,
-                            )
-                          : CircleAvatar(
-                              backgroundColor: AppColors.primary.withValues(
-                                alpha: 0.1,
-                              ),
-                              child: const Icon(
-                                Icons.person_rounded,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],

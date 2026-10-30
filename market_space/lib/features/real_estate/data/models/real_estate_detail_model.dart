@@ -77,6 +77,8 @@ class RealEstateDetailModel {
   final String bathAndKitchenDetails;
   final List<String> featuresList;
   final AdvertiserModel advertiser;
+  final double? latitude;
+  final double? longitude;
 
   const RealEstateDetailModel({
     required this.id,
@@ -93,6 +95,8 @@ class RealEstateDetailModel {
     required this.bathAndKitchenDetails,
     required this.featuresList,
     required this.advertiser,
+    this.latitude,
+    this.longitude,
   });
 
   RealEstateDetailModel copyWith({
@@ -110,6 +114,8 @@ class RealEstateDetailModel {
     String? bathAndKitchenDetails,
     List<String>? featuresList,
     AdvertiserModel? advertiser,
+    double? latitude,
+    double? longitude,
   }) {
     return RealEstateDetailModel(
       id: id ?? this.id,
@@ -127,6 +133,8 @@ class RealEstateDetailModel {
           bathAndKitchenDetails ?? this.bathAndKitchenDetails,
       featuresList: featuresList ?? this.featuresList,
       advertiser: advertiser ?? this.advertiser,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
     );
   }
 }

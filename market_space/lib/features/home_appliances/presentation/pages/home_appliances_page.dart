@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/app_dependencies.dart';
+import '../../../../core/navigation/widgets/app_bottom_navigation/app_bottom_navigation.dart';
 import '../../../../core/routing/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_view.dart';
 import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../navigation/home_appliances_navigation_config.dart';
 import '../../widgets/appliances_category_grid/appliances_category_grid.dart';
 import '../../widgets/appliances_financing_banner/appliances_financing_banner.dart';
 import '../../widgets/appliances_header/appliances_header.dart';
@@ -26,6 +30,8 @@ class HomeAppliancesPage extends StatefulWidget {
 
 class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
   late final HomeAppliancesController _controller;
+  int _tabIndex = 0;
+  bool _isNavVisible = true;
 
   @override
   void initState() {
@@ -40,6 +46,40 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
       _controller.dispose();
     }
     super.dispose();
+  }
+
+  bool _onUserScroll(UserScrollNotification notification) {
+    if (notification.direction == ScrollDirection.reverse) {
+      if (_isNavVisible) {
+        setState(() {
+          _isNavVisible = false;
+        });
+      }
+    } else if (notification.direction == ScrollDirection.forward) {
+      if (!_isNavVisible) {
+        setState(() {
+          _isNavVisible = true;
+        });
+      }
+    }
+    return false;
+  }
+
+  void _onTabSelected(int index) {
+    setState(() {
+      _tabIndex = index;
+    });
+
+    final config = HomeAppliancesNavigationConfig.config;
+    final item = config.items[index];
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('الأجهزة المنزلية: تصفح ${item.label}'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
   }
 
   void _showSnackBar(String message) {
@@ -60,11 +100,15 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dependencies = AppDependencies.maybeOf(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        extendBody: true,
         backgroundColor: AppColors.lightBackground,
         body: SafeArea(
+          bottom: false,
           child: ValueListenableBuilder<HomeAppliancesState>(
             valueListenable: _controller,
             builder: (context, state, _) {
@@ -81,96 +125,104 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
                 );
               }
 
-              return RefreshIndicator(
-                color: AppColors.primary,
-                onRefresh: _controller.loadData,
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
-                  ),
-                  slivers: [
-                    // 1. Header Bar
-                    SliverToBoxAdapter(
-                      child: AppliancesHeader(
-                        onNotificationTap: () =>
-                            _showSnackBar('لا توجد إشعارات جديدة'),
-                        onCartTap: () => _showSnackBar(
-                          'سلة الأجهزة تحتوي على العناصر المضافة',
-                        ),
-                      ),
+              return NotificationListener<UserScrollNotification>(
+                onNotification: _onUserScroll,
+                child: RefreshIndicator(
+                  color: AppColors.primary,
+                  onRefresh: _controller.loadData,
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
                     ),
-
-                    // 2. Search & Filter Bar
-                    SliverToBoxAdapter(
-                      child: AppliancesSearchBar(
-                        onChanged: _controller.setSearchQuery,
-                        onFilterTap: _showFilterSheet,
-                      ),
-                    ),
-
-                    // 3. Hero Promo Deal Banner
-                    if (state.heroBanner != null)
+                    slivers: [
+                      // 1. Header Bar
                       SliverToBoxAdapter(
-                        child: AppliancesHeroBanner(
-                          banner: state.heroBanner!,
-                          onCtaTap: () => _showSnackBar(
-                            'جاري عرض العروض والتخفيضات اليومية',
+                        child: AppliancesHeader(
+                          onNotificationTap: () =>
+                              _showSnackBar('لا توجد إشعارات جديدة'),
+                          onCartTap: () => _showSnackBar(
+                            'سلة الأجهزة تحتوي على العناصر المضافة',
                           ),
                         ),
                       ),
 
-                    // 4. Category Grid (8 categories)
-                    SliverToBoxAdapter(
-                      child: AppliancesCategoryGrid(
-                        categories: state.categories,
-                        selectedCategoryId: state.filter.selectedCategoryId,
-                        onCategoryTap: _openCategoryListing,
-                        onViewAllTap: () => _openCategoryListing('cat-tv'),
-                      ),
-                    ),
-
-                    // 5. ValU / Aman Financing Installment Banner
-                    SliverToBoxAdapter(
-                      child: AppliancesFinancingBanner(
-                        onKnowLimitTap: () => _showSnackBar(
-                          'جاري الاستعلام عن حد التقسيط المتاح مع ValU وأمان',
+                      // 2. Search & Filter Bar
+                      SliverToBoxAdapter(
+                        child: AppliancesSearchBar(
+                          onChanged: _controller.setSearchQuery,
+                          onFilterTap: _showFilterSheet,
                         ),
                       ),
-                    ),
 
-                    // 6. Products Grid (Most requested items)
-                    if (state.products.isEmpty)
-                      const SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Center(
-                          child: AppEmptyState(
-                            title: 'لا توجد أجهزة مطابقة',
-                            message: 'جرّب تغيير كلمات البحث أو الفئة لتصفح المزيد من الأجهزة',
+                      // 3. Hero Promo Deal Banner
+                      if (state.heroBanner != null)
+                        SliverToBoxAdapter(
+                          child: AppliancesHeroBanner(
+                            banner: state.heroBanner!,
+                            onCtaTap: () => _showSnackBar(
+                              'جاري عرض العروض والتخفيضات اليومية',
+                            ),
                           ),
                         ),
-                      )
-                    else
+
+                      // 4. Category Grid (8 categories)
                       SliverToBoxAdapter(
-                        child: AppliancesProductsGrid(
-                          products: state.products,
-                          onProductTap: (id) =>
-                              _showSnackBar('تم فتح تفاصيل المنتج'),
-                          onAddToCartTap: (id) {
-                            _controller.toggleCart(id);
-                            _showSnackBar('تحديث حالة السلة للمنتج');
-                          },
+                        child: AppliancesCategoryGrid(
+                          categories: state.categories,
+                          selectedCategoryId: state.filter.selectedCategoryId,
+                          onCategoryTap: _openCategoryListing,
                           onViewAllTap: () => _openCategoryListing('cat-tv'),
                         ),
                       ),
 
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: AppSpacing.xl),
-                    ),
-                  ],
+                      // 5. ValU / Aman Financing Installment Banner
+                      SliverToBoxAdapter(
+                        child: AppliancesFinancingBanner(
+                          onKnowLimitTap: () => _showSnackBar(
+                            'جاري الاستعلام عن حد التقسيط المتاح مع ValU وأمان',
+                          ),
+                        ),
+                      ),
+
+                      // 6. Products Grid (Most requested items)
+                      if (state.products.isEmpty)
+                        const SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: AppEmptyState(
+                              title: 'لا توجد أجهزة مطابقة',
+                              message: 'جرّب تغيير كلمات البحث أو الفئة لتصفح المزيد من الأجهزة',
+                            ),
+                          ),
+                        )
+                      else
+                        SliverToBoxAdapter(
+                          child: AppliancesProductsGrid(
+                            products: state.products,
+                            onProductTap: (id) =>
+                                _showSnackBar('تم فتح تفاصيل المنتج'),
+                            onAddToCartTap: (id) {
+                              _controller.toggleCart(id);
+                              _showSnackBar('تحديث حالة السلة للمنتج');
+                            },
+                            onViewAllTap: () => _openCategoryListing('cat-tv'),
+                          ),
+                        ),
+
+                      const SliverToBoxAdapter(child: SizedBox(height: 140.0)),
+                    ],
+                  ),
                 ),
               );
             },
           ),
+        ),
+        bottomNavigationBar: AppBottomNavigation(
+          config: HomeAppliancesNavigationConfig.config,
+          currentIndex: _tabIndex,
+          onTabSelected: _onTabSelected,
+          notificationController: dependencies?.notificationController,
+          isVisible: _isNavVisible,
         ),
       ),
     );

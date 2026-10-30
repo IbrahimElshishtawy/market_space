@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/app_dependencies.dart';
+import '../../../../core/navigation/widgets/app_bottom_navigation/app_bottom_navigation.dart';
 import '../../../../core/routing/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
 import '../../../../shared/widgets/app_error_view.dart';
 import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../navigation/building_materials_navigation_config.dart';
 import '../controllers/building_materials_controller.dart';
 import '../../widgets/categories_grid/categories_grid.dart';
 import '../../widgets/contractor_projects_banner/contractor_projects_banner.dart';
@@ -18,10 +21,7 @@ import '../../widgets/search_bar/building_materials_search_bar.dart';
 class BuildingMaterialsPage extends StatefulWidget {
   final BuildingMaterialsController? controller;
 
-  const BuildingMaterialsPage({
-    super.key,
-    this.controller,
-  });
+  const BuildingMaterialsPage({super.key, this.controller});
 
   @override
   State<BuildingMaterialsPage> createState() => _BuildingMaterialsPageState();
@@ -29,6 +29,8 @@ class BuildingMaterialsPage extends StatefulWidget {
 
 class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
   late final BuildingMaterialsController _controller;
+  int _tabIndex = 0;
+  bool _isNavVisible = true;
 
   @override
   void initState() {
@@ -45,26 +47,61 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
     super.dispose();
   }
 
+  bool _onUserScroll(UserScrollNotification notification) {
+    if (notification.direction == ScrollDirection.reverse) {
+      if (_isNavVisible) {
+        setState(() {
+          _isNavVisible = false;
+        });
+      }
+    } else if (notification.direction == ScrollDirection.forward) {
+      if (!_isNavVisible) {
+        setState(() {
+          _isNavVisible = true;
+        });
+      }
+    }
+    return false;
+  }
+
+  void _onTabSelected(int index) {
+    setState(() {
+      _tabIndex = index;
+    });
+
+    final config = BuildingMaterialsNavigationConfig.config;
+    final item = config.items[index];
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('مواد البناء: تصفح ${item.label}'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
   Future<void> _handleRefresh() async {
     await _controller.loadData();
   }
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final dependencies = AppDependencies.maybeOf(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        extendBody: true,
         backgroundColor: AppColors.lightBackground,
         body: SafeArea(
+          bottom: false,
           child: ValueListenableBuilder<BuildingMaterialsState>(
             valueListenable: _controller,
             builder: (context, state, _) {
@@ -80,103 +117,111 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
                 );
               }
 
-              return RefreshIndicator(
-                color: AppColors.primary,
-                onRefresh: _handleRefresh,
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
+              return NotificationListener<UserScrollNotification>(
+                onNotification: _onUserScroll,
+                child: RefreshIndicator(
+                  color: AppColors.primary,
+                  onRefresh: _handleRefresh,
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
+                    slivers: [
+                      // 1. Header (User Info, Cart, Notifications)
+                      SliverToBoxAdapter(
+                        child: BuildingMaterialsHeader(
+                          onAvatarTap: () => _showSnackBar('الملف الشخصي'),
+                          onCartTap: () => _showSnackBar('سلة المشتريات'),
+                          onNotificationsTap: () =>
+                              _showSnackBar('التنبيهات الإشعارات'),
+                        ),
+                      ),
+
+                      // 2. Search & Filter Bar
+                      SliverToBoxAdapter(
+                        child: BuildingMaterialsSearchBar(
+                          onChanged: (query) =>
+                              _controller.setSearchQuery(query),
+                          onFilterTap: () => _showSnackBar('فتح تصفية المواد'),
+                        ),
+                      ),
+
+                      // 3. Hero Daily Price Banner ("تحديث يومي")
+                      if (state.dailyPriceBanner != null)
+                        SliverToBoxAdapter(
+                          child: DailyPriceBanner(
+                            banner: state.dailyPriceBanner!,
+                            onOrderTap: () =>
+                                _showSnackBar('طلب كمية أسمنت بسعر اليوم'),
+                          ),
+                        ),
+
+                      // 4. Building Materials Categories Grid
+                      if (state.categories.isNotEmpty)
+                        SliverToBoxAdapter(
+                          child: CategoriesGrid(
+                            categories: state.categories,
+                            selectedCategoryId: state.selectedCategoryId,
+                            onCategoryTap: (cat) {
+                              _controller.selectCategory(cat.id);
+                              if (GoRouter.maybeOf(context) != null) {
+                                context.push(
+                                  '${RouteNames.buildingMaterialCategoryDetail}?categoryId=${cat.id}',
+                                );
+                              } else {
+                                _showSnackBar('قسم: ${cat.title}');
+                              }
+                            },
+                            onViewAllTap: () =>
+                                _showSnackBar('عرض جميع أقسام مواد البناء'),
+                          ),
+                        ),
+
+                      // 5. Most Requested Materials Grid
+                      if (state.mostRequestedProducts.isNotEmpty)
+                        SliverToBoxAdapter(
+                          child: MostRequestedMaterialsGrid(
+                            products: state.mostRequestedProducts,
+                            onProductTap: (prod) =>
+                                _showSnackBar('تفاصيل: ${prod.title}'),
+                            onOrderTap: (prod) =>
+                                _showSnackBar('طلب توريد: ${prod.title}'),
+                            onViewAllTap: () =>
+                                _showSnackBar('عرض جميع الخامات الأكثر طلباً'),
+                          ),
+                        )
+                      else if (!state.isLoading)
+                        const SliverToBoxAdapter(
+                          child: AppEmptyState(
+                            title: 'لا توجد خامات متاحة',
+                            message: 'جرّب البحث عن مواد بناء أخرى',
+                          ),
+                        ),
+
+                      // 6. Contractor Projects Banner
+                      if (state.contractorBanner != null)
+                        SliverToBoxAdapter(
+                          child: ContractorProjectsBanner(
+                            banner: state.contractorBanner!,
+                            onRequestQuoteTap: () =>
+                                _showSnackBar('طلب مقايسة خاصة بمشروعك'),
+                          ),
+                        ),
+
+                      const SliverToBoxAdapter(child: SizedBox(height: 140.0)),
+                    ],
                   ),
-                  slivers: [
-                    // 1. Header (User Info, Cart, Notifications)
-                    SliverToBoxAdapter(
-                      child: BuildingMaterialsHeader(
-                        onAvatarTap: () => _showSnackBar('الملف الشخصي'),
-                        onCartTap: () => _showSnackBar('سلة المشتريات'),
-                        onNotificationsTap: () =>
-                            _showSnackBar('التنبيهات الإشعارات'),
-                      ),
-                    ),
-
-                    // 2. Search & Filter Bar
-                    SliverToBoxAdapter(
-                      child: BuildingMaterialsSearchBar(
-                        onChanged: (query) =>
-                            _controller.setSearchQuery(query),
-                        onFilterTap: () => _showSnackBar('فتح تصفية المواد'),
-                      ),
-                    ),
-
-                    // 3. Hero Daily Price Banner ("تحديث يومي")
-                    if (state.dailyPriceBanner != null)
-                      SliverToBoxAdapter(
-                        child: DailyPriceBanner(
-                          banner: state.dailyPriceBanner!,
-                          onOrderTap: () =>
-                              _showSnackBar('طلب كمية أسمنت بسعر اليوم'),
-                        ),
-                      ),
-
-                    // 4. Building Materials Categories Grid
-                    if (state.categories.isNotEmpty)
-                      SliverToBoxAdapter(
-                        child: CategoriesGrid(
-                          categories: state.categories,
-                          selectedCategoryId: state.selectedCategoryId,
-                          onCategoryTap: (cat) {
-                            _controller.selectCategory(cat.id);
-                            if (GoRouter.maybeOf(context) != null) {
-                              context.push(
-                                '${RouteNames.buildingMaterialCategoryDetail}?categoryId=${cat.id}',
-                              );
-                            } else {
-                              _showSnackBar('قسم: ${cat.title}');
-                            }
-                          },
-                          onViewAllTap: () =>
-                              _showSnackBar('عرض جميع أقسام مواد البناء'),
-                        ),
-                      ),
-
-                    // 5. Most Requested Materials Grid
-                    if (state.mostRequestedProducts.isNotEmpty)
-                      SliverToBoxAdapter(
-                        child: MostRequestedMaterialsGrid(
-                          products: state.mostRequestedProducts,
-                          onProductTap: (prod) =>
-                              _showSnackBar('تفاصيل: ${prod.title}'),
-                          onOrderTap: (prod) =>
-                              _showSnackBar('طلب توريد: ${prod.title}'),
-                          onViewAllTap: () =>
-                              _showSnackBar('عرض جميع الخامات الأكثر طلباً'),
-                        ),
-                      )
-                    else if (!state.isLoading)
-                      const SliverToBoxAdapter(
-                        child: AppEmptyState(
-                          title: 'لا توجد خامات متاحة',
-                          message: 'جرّب البحث عن مواد بناء أخرى',
-                        ),
-                      ),
-
-                    // 6. Contractor Projects Banner
-                    if (state.contractorBanner != null)
-                      SliverToBoxAdapter(
-                        child: ContractorProjectsBanner(
-                          banner: state.contractorBanner!,
-                          onRequestQuoteTap: () =>
-                              _showSnackBar('طلب مقايسة خاصة بمشروعك'),
-                        ),
-                      ),
-
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: 24.0),
-                    ),
-                  ],
                 ),
               );
             },
           ),
+        ),
+        bottomNavigationBar: AppBottomNavigation(
+          config: BuildingMaterialsNavigationConfig.config,
+          currentIndex: _tabIndex,
+          onTabSelected: _onTabSelected,
+          notificationController: dependencies?.notificationController,
+          isVisible: _isNavVisible,
         ),
       ),
     );

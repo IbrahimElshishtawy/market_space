@@ -25,9 +25,7 @@ class CategoryTile extends StatelessWidget {
         color: isSelected ? AppColors.primaryTint : Colors.white,
         borderRadius: AppRadii.lg,
         border: Border.all(
-          color: isSelected
-              ? AppColors.primary
-              : AppColors.lightBorder,
+          color: isSelected ? AppColors.primary : AppColors.lightBorder,
           width: isSelected ? 1.5 : 1.0,
         ),
         boxShadow: [

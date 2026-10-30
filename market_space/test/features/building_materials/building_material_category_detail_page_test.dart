@@ -70,7 +70,10 @@ void main() {
       expect(find.text('سعر طن الأسمنت اليوم'), findsOneWidget);
       expect(find.text('2,850 ج.م / طن'), findsWidgets);
       expect(find.text('أسمنت بورتلاندي عادي (شكارة 50كجم)'), findsOneWidget);
-      expect(find.text('أسمنت بني سويف مقاوم للأملاح والأساسات'), findsOneWidget);
+      expect(
+        find.text('أسمنت بني سويف مقاوم للأملاح والأساسات'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Renders Sand category page elements correctly', (

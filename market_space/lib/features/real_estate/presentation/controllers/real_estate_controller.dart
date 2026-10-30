@@ -62,6 +62,11 @@ class RealEstateController extends ValueNotifier<RealEstateState> {
     loadListings();
   }
 
+  void updateFilter(RealEstateFilterModel newFilter) {
+    value = value.copyWith(filter: newFilter);
+    loadListings();
+  }
+
   Future<void> toggleFavorite(String listingId) async {
     final isFav = await repository.toggleFavorite(listingId);
     final updatedListings = value.listings.map((item) {

@@ -19,6 +19,8 @@ class MockRealEstateData {
       areaM2: 175,
       bathsCount: 2,
       imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00',
+      latitude: 30.7865,
+      longitude: 31.0004,
     ),
     RealEstateListingModel(
       id: 'aqar-2',
@@ -36,6 +38,8 @@ class MockRealEstateData {
       areaM2: 210,
       bathsCount: 2,
       imageUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9',
+      latitude: 30.7920,
+      longitude: 31.0060,
     ),
     RealEstateListingModel(
       id: 'aqar-3',
@@ -53,6 +57,8 @@ class MockRealEstateData {
       areaM2: 320,
       bathsCount: 4,
       imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750',
+      latitude: 30.7810,
+      longitude: 30.9950,
     ),
     RealEstateListingModel(
       id: 'aqar-4',
@@ -70,6 +76,8 @@ class MockRealEstateData {
       areaM2: 120,
       bathsCount: 1,
       imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
+      latitude: 30.7980,
+      longitude: 31.0120,
     ),
   ];
 
@@ -93,9 +101,6 @@ class MockRealEstateData {
         'https://images.unsplash.com/photo-1512917774080-9991f1c4c750',
         'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c',
         'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b',
-        'https://images.unsplash.com/photo-1600585152220-90363fe7e115',
-        'https://images.unsplash.com/photo-1600573472550-8090b5e0745e',
-        'https://images.unsplash.com/photo-1600566752355-35792bedcfea',
         'https://images.unsplash.com/photo-1600585154526-990dced4db0d',
       ],
       isFavorite: listing.isFavorite,
@@ -146,6 +151,8 @@ class MockRealEstateData {
         phone: '+201000000000',
         whatsapp: '+201000000000',
       ),
+      latitude: listing.latitude,
+      longitude: listing.longitude,
     );
   }
 }

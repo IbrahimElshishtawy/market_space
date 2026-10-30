@@ -101,7 +101,8 @@ class BuildingMaterialsRepositoryImpl implements BuildingMaterialsRepository {
     if (networkDelay > Duration.zero) {
       await Future.delayed(networkDelay);
     }
-    final detail = MockAllCategoriesData.categoriesDetails[categoryId] ??
+    final detail =
+        MockAllCategoriesData.categoriesDetails[categoryId] ??
         MockAllCategoriesData.categoriesDetails['cat-steel']!;
 
     if (selectedFilter == null || selectedFilter == 'الكل') {

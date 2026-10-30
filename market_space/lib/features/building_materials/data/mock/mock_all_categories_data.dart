@@ -72,7 +72,13 @@ class MockAllCategoriesData {
       bannerSubtitle: 'شامل النقل والشكائر للطن - تحديث يومي',
       orderCtaText: 'اطلب كميتك',
       priceLogCtaText: 'سجل الأسعار',
-      filterChips: ['الكل', 'شكائر 50كجم', 'سائب / صبة', 'مقاوم شوائب', 'مونة جاهزة'],
+      filterChips: [
+        'الكل',
+        'شكائر 50كجم',
+        'سائب / صبة',
+        'مقاوم شوائب',
+        'مونة جاهزة',
+      ],
       products: [
         CategoryProductItemModel(
           id: 'suez-cement-50',
@@ -300,7 +306,13 @@ class MockAllCategoriesData {
       bannerSubtitle: 'تجهيز وتوريد شبكات الكهرباء والسباكة كاملة',
       orderCtaText: 'طلب تسعيرة',
       priceLogCtaText: 'سجل الأسعار',
-      filterChips: ['الكل', 'مواسير سباكة', 'كابلات كهرباء', 'لوحات توزيع', 'مستلزمات'],
+      filterChips: [
+        'الكل',
+        'مواسير سباكة',
+        'كابلات كهرباء',
+        'لوحات توزيع',
+        'مستلزمات',
+      ],
       products: [
         CategoryProductItemModel(
           id: 'aquatherm-pipe',

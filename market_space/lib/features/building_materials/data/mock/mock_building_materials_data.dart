@@ -94,8 +94,8 @@ class MockBuildingMaterialsData {
     ),
   ];
 
-  static const ContractorProjectBannerModel contractorBanner =
-      ContractorProjectBannerModel(
+  static const ContractorProjectBannerModel
+  contractorBanner = ContractorProjectBannerModel(
     id: 'contractor-banner-1',
     title: 'طلبيات المشاريع والمقاولات الخاصة',
     subtitle:

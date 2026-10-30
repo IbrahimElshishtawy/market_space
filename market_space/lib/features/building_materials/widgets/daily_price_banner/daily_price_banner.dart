@@ -11,11 +11,7 @@ class DailyPriceBanner extends StatelessWidget {
   final DailyPriceBannerModel banner;
   final VoidCallback? onOrderTap;
 
-  const DailyPriceBanner({
-    super.key,
-    required this.banner,
-    this.onOrderTap,
-  });
+  const DailyPriceBanner({super.key, required this.banner, this.onOrderTap});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +84,8 @@ class DailyPriceBanner extends StatelessWidget {
                             color: Colors.black.withValues(alpha: 0.55),
                             borderRadius: AppRadii.full,
                             border: Border.all(
-                              color: const Color(0xFFEF4444).withValues(alpha: 0.6),
+                              color: const Color(0xFFEF4444)
+                                  .withValues(alpha: 0.6),
                               width: 1.0,
                             ),
                           ),

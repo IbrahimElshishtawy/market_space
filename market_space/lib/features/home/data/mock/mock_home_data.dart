@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/hero_banner_data.dart';
 import '../models/home_category_data.dart';
 import '../models/home_header_data.dart';
+import '../models/home_nav_item_data.dart';
 import '../models/home_service_data.dart';
 
 class MockHomeData {
@@ -80,6 +81,40 @@ class MockHomeData {
       rating: 4.9,
       avatarStackText: '+115',
       imageUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3',
+    ),
+  ];
+
+  static const List<HomeNavItemData> navItems = [
+    HomeNavItemData(
+      id: 'home',
+      label: 'الرئيسية',
+      icon: Icons.home_outlined,
+      activeIcon: Icons.home_rounded,
+    ),
+    HomeNavItemData(
+      id: 'explore',
+      label: 'استكشف',
+      icon: Icons.explore_outlined,
+      activeIcon: Icons.explore_rounded,
+    ),
+    HomeNavItemData(
+      id: 'orders',
+      label: 'طلباتي',
+      icon: Icons.assignment_outlined,
+      activeIcon: Icons.assignment_rounded,
+    ),
+    HomeNavItemData(
+      id: 'favorites',
+      label: 'المفضلة',
+      icon: Icons.favorite_border_rounded,
+      activeIcon: Icons.favorite_rounded,
+    ),
+    HomeNavItemData(
+      id: 'profile',
+      label: 'حسابي',
+      icon: Icons.person_outline_rounded,
+      activeIcon: Icons.person_rounded,
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
     ),
   ];
 }

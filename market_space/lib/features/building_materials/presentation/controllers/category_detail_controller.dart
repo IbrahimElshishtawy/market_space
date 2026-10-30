@@ -38,8 +38,8 @@ class CategoryDetailController extends ValueNotifier<CategoryDetailState> {
   CategoryDetailController({
     required this.categoryId,
     BuildingMaterialsRepository? repository,
-  })  : repository = repository ?? const BuildingMaterialsRepositoryImpl(),
-        super(const CategoryDetailState());
+  }) : repository = repository ?? const BuildingMaterialsRepositoryImpl(),
+       super(const CategoryDetailState());
 
   Future<void> loadData() async {
     value = value.copyWith(isLoading: true, errorMessage: null);
@@ -49,10 +49,7 @@ class CategoryDetailController extends ValueNotifier<CategoryDetailState> {
         selectedFilter: value.selectedFilter,
       );
 
-      value = value.copyWith(
-        isLoading: false,
-        categoryDetail: detail,
-      );
+      value = value.copyWith(isLoading: false, categoryDetail: detail);
     } catch (e) {
       value = value.copyWith(isLoading: false, errorMessage: e.toString());
     }

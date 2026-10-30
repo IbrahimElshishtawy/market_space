@@ -42,6 +42,20 @@ class MockRealEstateRepository implements RealEstateRepository {
               item.location.toLowerCase().contains(query);
         }).toList();
       }
+
+      if (filter.selectedRoomCounts.isNotEmpty) {
+        results = results.where((item) {
+          final countStr = item.bedsCount.toString();
+          return filter.selectedRoomCounts.contains(countStr) ||
+              (filter.selectedRoomCounts.contains('+5') && item.bedsCount >= 5);
+        }).toList();
+      }
+
+      if (filter.selectedFinishTypes.isNotEmpty) {
+        results = results.where((item) {
+          return filter.selectedFinishTypes.contains(item.finishType);
+        }).toList();
+      }
     }
 
     return results;

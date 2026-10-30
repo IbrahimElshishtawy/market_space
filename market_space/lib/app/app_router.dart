@@ -10,8 +10,15 @@ import '../features/building_materials/presentation/pages/steel_rebar_listing_pa
 import '../features/home/presentation/pages/home_page.dart';
 import '../features/home_appliances/presentation/pages/appliance_category_listing_page.dart';
 import '../features/home_appliances/presentation/pages/home_appliances_page.dart';
+import '../features/home_services/presentation/pages/home_services_page.dart';
+import '../features/real_estate/favorites/presentation/pages/real_estate_favorites_page.dart';
+import '../features/real_estate/map/presentation/pages/real_estate_map_page.dart';
+import '../features/real_estate/notifications/presentation/pages/real_estate_notifications_page.dart';
 import '../features/real_estate/presentation/pages/real_estate_detail_page.dart';
 import '../features/real_estate/presentation/pages/real_estate_page.dart';
+import '../features/real_estate/reels/presentation/pages/reel_analytics_page.dart';
+import '../features/real_estate/reels/presentation/pages/reel_publish_page.dart';
+import '../features/real_estate/reels/presentation/pages/reels_page.dart';
 import '../shared/widgets/app_error_view.dart';
 import 'app_dependencies.dart';
 import 'app_localization.dart';
@@ -56,11 +63,61 @@ class AppRouter {
           },
         ),
         GoRoute(
+          path: '/real-estate/map',
+          name: 'real_estate_map',
+          builder: (context, state) {
+            return const RealEstateMapPage();
+          },
+        ),
+        GoRoute(
+          path: '/real-estate/favorites',
+          name: 'real_estate_favorites',
+          builder: (context, state) {
+            return const RealEstateFavoritesPage();
+          },
+        ),
+        GoRoute(
+          path: '/real-estate/notifications',
+          name: 'real_estate_notifications',
+          builder: (context, state) {
+            return const RealEstateNotificationsPage();
+          },
+        ),
+        GoRoute(
+          path: '/real-estate/reels',
+          name: 'real_estate_reels',
+          builder: (context, state) {
+            return const ReelsPage();
+          },
+        ),
+        GoRoute(
+          path: '/real-estate/reels/analytics',
+          name: 'real_estate_reels_analytics',
+          builder: (context, state) {
+            final ownerId = state.uri.queryParameters['ownerId'] ?? 'adv-1';
+            return ReelAnalyticsPage(ownerId: ownerId);
+          },
+        ),
+        GoRoute(
+          path: '/real-estate/reels/publish',
+          name: 'real_estate_reels_publish',
+          builder: (context, state) {
+            return const ReelPublishPage();
+          },
+        ),
+        GoRoute(
           path: RouteNames.realEstateDetail,
           name: RouteNames.realEstateDetailName,
           builder: (context, state) {
             final id = state.uri.queryParameters['id'] ?? 'aqar-1';
             return RealEstateDetailPage(listingId: id);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServices,
+          name: RouteNames.homeServicesName,
+          builder: (context, state) {
+            return const HomeServicesPage();
           },
         ),
         GoRoute(
