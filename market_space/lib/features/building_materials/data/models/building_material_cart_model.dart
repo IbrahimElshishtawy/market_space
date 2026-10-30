@@ -150,6 +150,8 @@ class BuildingMaterialCartModel {
     return total > 0 ? UnitConverter.roundCurrency(total) : 0.0;
   }
 
+  double get totalPrice => grandTotal;
+
   int get totalItemCount => items.length;
 
   bool get hasInvalidItems =>

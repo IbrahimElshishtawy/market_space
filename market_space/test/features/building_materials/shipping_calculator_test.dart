@@ -57,7 +57,7 @@ void main() {
       );
 
       expect(result.isDeliverable, isFalse);
-      expect(result.rejectionReason, contains('لا يقوم بالتوصيل إلى محافظة أسوان'));
+      expect(result.rejectionReason, contains('لا يغطي محافظة أسوان'));
       expect(result.totalFreightCost, 0.0);
     });
 

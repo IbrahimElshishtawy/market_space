@@ -21,6 +21,9 @@ class BuildingMaterialsCartController
         ),
       );
 
+  BuildingMaterialCartModel get cart => value;
+  int get itemCount => value.totalItemCount;
+
   Future<void> loadCart() async {
     isLoading = true;
     errorMessage = null;
@@ -102,6 +105,8 @@ class BuildingMaterialsCartController
       notifyListeners();
     }
   }
+
+  Future<void> removeItem(String itemId) => removeFromCart(itemId);
 
   Future<void> clearCart() async {
     isLoading = true;

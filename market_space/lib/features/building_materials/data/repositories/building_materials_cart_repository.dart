@@ -108,7 +108,7 @@ class BuildingMaterialsCartRepositoryImpl
     }
 
     final updatedItems = _cart.items.map((item) {
-      if (item.id == itemId) {
+      if (item.id == itemId || item.product.id == itemId) {
         return item.copyWith(quantity: newQuantity);
       }
       return item;
@@ -123,8 +123,9 @@ class BuildingMaterialsCartRepositoryImpl
   Future<BuildingMaterialCartModel> removeFromCart(String itemId) async {
     if (delay > Duration.zero) await Future.delayed(delay);
 
-    final updatedItems =
-        _cart.items.where((item) => item.id != itemId).toList();
+    final updatedItems = _cart.items
+        .where((item) => item.id != itemId && item.product.id != itemId)
+        .toList();
     _cart = _cart.copyWith(items: updatedItems);
     _recalculateFreight();
     return _cart;
@@ -157,7 +158,8 @@ class BuildingMaterialsCartRepositoryImpl
   @override
   Future<BuildingMaterialCartModel> applyCoupon(String couponCode) async {
     if (delay > Duration.zero) await Future.delayed(delay);
-    if (couponCode.trim().toUpperCase() == 'BUILD10') {
+    final normalized = couponCode.trim().toUpperCase();
+    if (normalized == 'BUILD10' || normalized == 'BINA10') {
       final discount = UnitConverter.roundCurrency(_cart.subtotal * 0.10);
       _cart = _cart.copyWith(
         couponCode: couponCode,

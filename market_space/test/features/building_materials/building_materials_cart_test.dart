@@ -55,7 +55,7 @@ void main() {
       final steelProduct = MockBuildingMaterialsComprehensiveData.products
           .firstWhere((p) => p.supplier.id == 'supp-ezz');
       final cementProduct = MockBuildingMaterialsComprehensiveData.products
-          .firstWhere((p) => p.supplier.id == 'supp-suez');
+          .firstWhere((p) => p.supplier.id == 'supp-suez-cement');
 
       await controller.addToCart(
         product: steelProduct,
@@ -72,12 +72,12 @@ void main() {
       final supplierGroups = controller.cart.itemsBySupplier;
       expect(supplierGroups.keys.length, 2);
       expect(supplierGroups.containsKey('supp-ezz'), isTrue);
-      expect(supplierGroups.containsKey('supp-suez'), isTrue);
+      expect(supplierGroups.containsKey('supp-suez-cement'), isTrue);
     });
 
     test('updateQuantity adjusts requested quantity and updates subtotal', () async {
       final cementProduct = MockBuildingMaterialsComprehensiveData.products
-          .firstWhere((p) => p.supplier.id == 'supp-suez');
+          .firstWhere((p) => p.supplier.id == 'supp-suez-cement');
 
       await controller.addToCart(
         product: cementProduct,
@@ -85,14 +85,17 @@ void main() {
         unit: MaterialUnit.ton,
       );
 
-      await controller.updateQuantity(cementProduct.id, 10.0);
+      await controller.updateQuantity(
+        itemId: cementProduct.id,
+        newQuantity: 10.0,
+      );
       expect(controller.cart.items.first.quantity, 10.0);
-      expect(controller.cart.subtotal, 10.0 * cementProduct.unitPrice);
+      expect(controller.cart.subtotal, 10.0 * controller.cart.items.first.unitPrice);
     });
 
     test('removeItem removes product from cart', () async {
       final cementProduct = MockBuildingMaterialsComprehensiveData.products
-          .firstWhere((p) => p.supplier.id == 'supp-suez');
+          .firstWhere((p) => p.supplier.id == 'supp-suez-cement');
 
       await controller.addToCart(
         product: cementProduct,

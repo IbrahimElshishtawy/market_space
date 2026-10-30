@@ -224,9 +224,11 @@ class _BuildingMaterialsCategoriesPageState
           ),
         ],
       ),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
+      child: Material(
+        color: Colors.transparent,
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
           leading: Container(
             padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
@@ -337,6 +339,7 @@ class _BuildingMaterialsCategoriesPageState
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 }

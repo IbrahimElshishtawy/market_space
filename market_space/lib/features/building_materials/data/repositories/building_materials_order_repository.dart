@@ -34,7 +34,9 @@ abstract class BuildingMaterialsOrderRepository {
 
   // RFQ
   Future<List<RfqRequestModel>> getRfqs();
+  Future<RfqRequestModel?> getRfqById(String rfqId);
   Future<RfqRequestModel> createRfq(RfqRequestModel rfq);
+  Future<void> addQuoteToRfq(String rfqId, SupplierQuoteModel quote);
   Future<RfqRequestModel> acceptQuote({
     required String rfqId,
     required String quoteId,
@@ -279,10 +281,29 @@ class BuildingMaterialsOrderRepositoryImpl
   }
 
   @override
+  Future<RfqRequestModel?> getRfqById(String rfqId) async {
+    if (delay > Duration.zero) await Future.delayed(delay);
+    final index = _rfqs.indexWhere((r) => r.id == rfqId);
+    return index != -1 ? _rfqs[index] : null;
+  }
+
+  @override
   Future<RfqRequestModel> createRfq(RfqRequestModel rfq) async {
     if (delay > Duration.zero) await Future.delayed(delay);
     _rfqs.insert(0, rfq);
     return rfq;
+  }
+
+  @override
+  Future<void> addQuoteToRfq(String rfqId, SupplierQuoteModel quote) async {
+    if (delay > Duration.zero) await Future.delayed(delay);
+    final index = _rfqs.indexWhere((r) => r.id == rfqId);
+    if (index != -1) {
+      final existing = _rfqs[index];
+      _rfqs[index] = existing.copyWith(
+        quotes: [...existing.quotes, quote],
+      );
+    }
   }
 
   @override

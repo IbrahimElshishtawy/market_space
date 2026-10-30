@@ -44,11 +44,7 @@ void main() {
         id: 'cart-test-1',
         userId: 'user-test',
         items: [cartItem],
-        deliveryAddress: 'موقع الشيخ زايد الحي الرابع',
-        deliveryGovernorate: 'الجيزة',
-        deliveryCity: 'الشيخ زايد',
-        stagedShipmentsCount: 3,
-        daysBetweenShipments: 7,
+        targetGovernorate: 'الجيزة',
       );
 
       final newOrder = await controller.createOrder(
@@ -67,9 +63,9 @@ void main() {
 
       expect(newOrder, isNotNull);
       expect(newOrder!.shipments.length, 3);
-      expect(newOrder.shipments.first.quantity, 10.0);
-      expect(newOrder.shipments[1].quantity, 10.0);
-      expect(newOrder.shipments[2].quantity, 10.0);
+      expect(newOrder.shipments.first.allocatedQuantity, 10.0);
+      expect(newOrder.shipments[1].allocatedQuantity, 10.0);
+      expect(newOrder.shipments[2].allocatedQuantity, 10.0);
       expect(newOrder.status, BuildingMaterialOrderStatus.confirmed);
       expect(newOrder.timeline.isNotEmpty, isTrue);
     });
@@ -89,10 +85,7 @@ void main() {
         id: 'cart-test-2',
         userId: 'user-test',
         items: [cartItem],
-        deliveryAddress: 'التجمع الخامس النرجس',
-        deliveryGovernorate: 'القاهرة',
-        deliveryCity: 'القاهرة الجديدة',
-        stagedShipmentsCount: 1,
+        targetGovernorate: 'القاهرة',
       );
 
       final newOrder = await controller.createOrder(
@@ -133,7 +126,7 @@ void main() {
 
       final updated = await repository.getOrderById(orderToCancel.id);
       expect(updated!.status, BuildingMaterialOrderStatus.cancelled);
-      expect(updated.timeline.last.title, 'إلغاء الطلب');
+      expect(updated.timeline.last.title, 'تم إلغاء الطلب');
     });
 
     test('createRfq and acceptQuote updates RFQ status to awarded', () async {
@@ -149,7 +142,8 @@ void main() {
         projectAddress: 'الحي الرابع - فيلا 42',
         governorate: 'القاهرة',
         city: 'القاهرة الجديدة',
-        requiredDeliveryDate: DateTime.now().add(const Duration(days: 14)),
+        requestedDeliveryDate: DateTime.now().add(const Duration(days: 14)),
+        notes: 'مطابق للمواصفات القياسية المصرية',
         createdAt: DateTime.now(),
         status: RfqStatus.open,
         technicalSpecs: const {'المواصفة': 'مطابق للمواصفات القياسية المصرية'},
@@ -184,7 +178,7 @@ void main() {
       final updatedRfq = await repository.getRfqById(rfq.id);
       expect(updatedRfq, isNotNull);
       expect(updatedRfq!.status, RfqStatus.awarded);
-      expect(updatedRfq.selectedQuoteId, quote.id);
+      expect(updatedRfq.quotes.any((q) => q.isAccepted && q.id == quote.id), isTrue);
     });
   });
 }

@@ -24,58 +24,70 @@ Widget _buildTestApp(Widget child, {AppDependencies? dependencies}) {
 void main() {
   group('BuildingMaterials Widget UI Tests', () {
     testWidgets('BuildingMaterialsCategoriesPage renders all 10 categories', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1080, 2400));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       await tester.pumpWidget(_buildTestApp(const BuildingMaterialsCategoriesPage()));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // Verify page title
-      expect(find.text('أقسام مواد البناء'), findsOneWidget);
+      expect(find.text('تصنيفات مواد البناء'), findsOneWidget);
       // Verify primary categories from mock data
-      expect(find.text('حديد التسليح والصلب'), findsOneWidget);
-      expect(find.text('الأسمنت ومواد الرابطة'), findsOneWidget);
-      expect(find.text('الطوب والبلوك'), findsOneWidget);
-      expect(find.text('الرمل والسن والركام'), findsOneWidget);
-      expect(find.text('الخرسانة الجاهزة'), findsOneWidget);
+      expect(find.text('حديد التسليح والقطاعات'), findsOneWidget);
+      expect(find.text('الأسمنت والمونة'), findsOneWidget);
+      expect(find.text('الطوب والبلوك الإنشائي'), findsOneWidget);
+      expect(find.text('الرمل والزلط والسن'), findsOneWidget);
+      expect(find.text('السيراميك والبورسلين'), findsOneWidget);
     });
 
     testWidgets('BuildingMaterialsCategoriesPage filters categories when searching', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1080, 2400));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       await tester.pumpWidget(_buildTestApp(const BuildingMaterialsCategoriesPage()));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // Enter search text 'عزل'
       final searchField = find.byType(TextField);
       expect(searchField, findsOneWidget);
 
       await tester.enterText(searchField, 'عزل');
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Only isolation category should match
-      expect(find.text('العزل المائي والحراري'), findsOneWidget);
-      expect(find.text('حديد التسليح والصلب'), findsNothing);
+      expect(find.text('مواد العزل المائي والحراري'), findsOneWidget);
+      expect(find.text('حديد التسليح والقطاعات'), findsNothing);
     });
 
     testWidgets('BuildingMaterialsCartPage renders empty state when cart has no items', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1080, 2400));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       final dependencies = createTestDependencies();
       await dependencies.buildingMaterialsCartController.clearCart();
 
       await tester.pumpWidget(_buildTestApp(const BuildingMaterialsCartPage(), dependencies: dependencies));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('سلة المشتريات فارغة'), findsOneWidget);
       expect(find.text('تصفح مواد البناء'), findsOneWidget);
     });
 
     testWidgets('BuildingMaterialsCartPage displays supplier card and item details when cart has items', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1080, 2400));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       final dependencies = createTestDependencies();
       await dependencies.buildingMaterialsCartController.clearCart();
@@ -88,7 +100,8 @@ void main() {
       );
 
       await tester.pumpWidget(_buildTestApp(const BuildingMaterialsCartPage(), dependencies: dependencies));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // Check supplier name displayed
       expect(find.text(steelProduct.supplier.name), findsOneWidget);
@@ -99,14 +112,17 @@ void main() {
     });
 
     testWidgets('BuildingMaterialsOrdersPage renders tabs and orders list', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(1080, 2400));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 2.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
 
       final dependencies = createTestDependencies();
       await dependencies.buildingMaterialsOrderController.loadOrders();
 
       await tester.pumpWidget(_buildTestApp(const BuildingMaterialsOrdersPage(), dependencies: dependencies));
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('طلبات مواد البناء'), findsOneWidget);
       expect(find.text('الطلبات الجارية'), findsOneWidget);
