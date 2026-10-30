@@ -14,5 +14,6 @@
   "loading": "جاري التحميل...",
   "initializationFailed": "فشل تهيئة التطبيق.",
   "pageNotFound": "الصفحة غير موجودة.",
-  "backToHome": "العودة للرئيسية"
+  "backToHome": "العودة للرئيسية",
+  "timeRemainingText": ""
 }

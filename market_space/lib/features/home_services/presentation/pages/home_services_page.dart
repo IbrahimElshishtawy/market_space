@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/app_dependencies.dart';
 import '../../../../core/navigation/widgets/app_bottom_navigation/app_bottom_navigation.dart';
+import '../../../../core/routing/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -180,6 +182,12 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
     );
   }
 
+  void _safePush(String route) {
+    if (GoRouter.maybeOf(context) != null) {
+      context.push(route);
+    }
+  }
+
   Widget _buildServiceCard(String title, IconData icon, Color color) {
     return Container(
       decoration: BoxDecoration(
@@ -187,27 +195,38 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
         borderRadius: AppRadii.lg,
         border: Border.all(color: AppColors.lightBorder),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 28.0),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: AppRadii.lg,
+          onTap: () {
+            if (title.contains('تكييف')) {
+              _safePush(RouteNames.acServiceDetail);
+            }
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 28.0),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.neutral,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8.0),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 13.0,
-              fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

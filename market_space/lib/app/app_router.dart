@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:market_space/features/home_services/presentation/pages/ac_service_detail_page.dart';
 
 import '../core/routing/route_guards.dart';
 import '../core/routing/route_names.dart';
@@ -133,6 +134,13 @@ class AppRouter {
           },
         ),
         GoRoute(
+          path: RouteNames.acServiceDetail,
+          name: RouteNames.acServiceDetailName,
+          builder: (context, state) {
+            return const AcServiceDetailPage();
+          },
+        ),
+        GoRoute(
           path: RouteNames.homeAppliances,
           name: RouteNames.homeAppliancesName,
           builder: (context, state) {
@@ -238,7 +246,8 @@ class AppRouter {
           path: RouteNames.buildingMaterialsOrderDetail,
           name: RouteNames.buildingMaterialsOrderDetailName,
           builder: (context, state) {
-            final orderId = state.uri.queryParameters['orderId'] ?? 'ord-bm-901';
+            final orderId =
+                state.uri.queryParameters['orderId'] ?? 'ord-bm-901';
             return BuildingMaterialsOrderDetailPage(orderId: orderId);
           },
         ),
@@ -253,7 +262,8 @@ class AppRouter {
           path: RouteNames.buildingMaterialsProductDetail,
           name: RouteNames.buildingMaterialsProductDetailName,
           builder: (context, state) {
-            final productId = state.uri.queryParameters['productId'] ?? 'prod-steel-ezz-12';
+            final productId =
+                state.uri.queryParameters['productId'] ?? 'prod-steel-ezz-12';
             return BuildingMaterialProductDetailPage(productId: productId);
           },
         ),

@@ -25,7 +25,7 @@ class AcFilterChipsBar extends StatelessWidget {
         ),
         scrollDirection: Axis.horizontal,
         itemCount: chips.length,
-        separatorBuilder: (_, __) =>
+        separatorBuilder: (_, _) =>
             const SizedBox(width: AcFilterChipsLayout.horizontalSpacing),
         itemBuilder: (context, index) {
           final chip = chips[index];
@@ -56,8 +56,9 @@ class AcFilterChipsBar extends StatelessWidget {
                     chip,
                     style: TextStyle(
                       fontSize: 12.5,
-                      fontWeight:
-                          isSelected ? FontWeight.w800 : FontWeight.w600,
+                      fontWeight: isSelected
+                          ? FontWeight.w800
+                          : FontWeight.w600,
                       color: isSelected
                           ? Colors.white
                           : AppColors.lightTextPrimary,

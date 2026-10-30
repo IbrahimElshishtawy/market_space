@@ -62,7 +62,7 @@ class AcServicesListSection extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: services.length,
-            separatorBuilder: (_, __) =>
+            separatorBuilder: (_, _) =>
                 const SizedBox(height: AcServicesListLayout.itemSpacing),
             itemBuilder: (context, index) {
               final service = services[index];

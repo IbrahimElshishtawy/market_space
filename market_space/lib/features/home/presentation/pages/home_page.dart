@@ -166,8 +166,14 @@ class _HomePageState extends State<HomePage> {
                   SliverToBoxAdapter(
                     child: MostRequestedServicesSection(
                       services: _services,
-                      onServiceTap: (service) =>
-                          _safePush(RouteNames.buildingMaterials),
+                      onServiceTap: (service) {
+                        if (service.id == 'srv-ac' ||
+                            service.title.contains('تكييف')) {
+                          _safePush(RouteNames.acServiceDetail);
+                        } else {
+                          _safePush(RouteNames.buildingMaterials);
+                        }
+                      },
                       onViewAllTap: () =>
                           _safePush(RouteNames.buildingMaterials),
                     ),
