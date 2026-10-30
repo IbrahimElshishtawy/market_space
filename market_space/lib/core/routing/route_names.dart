@@ -22,6 +22,7 @@ class RouteNames {
   static const String buildingMaterialsProductDetail =
       '/building-materials/product-detail';
   static const String buildingMaterialsRfq = '/building-materials/rfq';
+  static const String acServiceDetail = '/home-services/ac-service-detail';
   static const String notFound = '/not-found';
 
   static const String rootName = 'root';
@@ -48,5 +49,6 @@ class RouteNames {
   static const String buildingMaterialsProductDetailName =
       'building_materials_product_detail';
   static const String buildingMaterialsRfqName = 'building_materials_rfq';
+  static const String acServiceDetailName = 'ac_service_detail';
   static const String notFoundName = 'not_found';
 }

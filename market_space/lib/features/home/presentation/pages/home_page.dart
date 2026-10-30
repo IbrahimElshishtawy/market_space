@@ -75,6 +75,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onCategorySelected(HomeCategoryData category) {
+    if (GoRouter.maybeOf(context) == null) return;
+
     if (category.id == 'cat-real-estate' || category.title == 'عقارات') {
       context.push(RouteNames.realEstate);
     } else if (category.id == 'cat-appliances' ||
@@ -97,6 +99,12 @@ class _HomePageState extends State<HomePage> {
           duration: const Duration(seconds: 2),
         ),
       );
+    }
+  }
+
+  void _safePush(String route) {
+    if (GoRouter.maybeOf(context) != null) {
+      context.push(route);
     }
   }
 
@@ -133,8 +141,7 @@ class _HomePageState extends State<HomePage> {
                   SliverToBoxAdapter(
                     child: HomeSearchBar(
                       onFilterTap: () {},
-                      onSearchTap: () =>
-                          context.push(RouteNames.homeAppliances),
+                      onSearchTap: () => _safePush(RouteNames.homeAppliances),
                     ),
                   ),
 
@@ -142,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                   SliverToBoxAdapter(
                     child: HeroCarousel(
                       banners: _banners,
-                      onCtaTap: () => context.push(RouteNames.homeAppliances),
+                      onCtaTap: () => _safePush(RouteNames.homeAppliances),
                     ),
                   ),
 
@@ -151,8 +158,7 @@ class _HomePageState extends State<HomePage> {
                     child: MainCategoriesSection(
                       categories: _categories,
                       onCategoryTap: _onCategorySelected,
-                      onViewAllTap: () =>
-                          context.push(RouteNames.homeAppliances),
+                      onViewAllTap: () => _safePush(RouteNames.homeAppliances),
                     ),
                   ),
 
@@ -161,9 +167,9 @@ class _HomePageState extends State<HomePage> {
                     child: MostRequestedServicesSection(
                       services: _services,
                       onServiceTap: (service) =>
-                          context.push(RouteNames.buildingMaterials),
+                          _safePush(RouteNames.buildingMaterials),
                       onViewAllTap: () =>
-                          context.push(RouteNames.buildingMaterials),
+                          _safePush(RouteNames.buildingMaterials),
                     ),
                   ),
 
