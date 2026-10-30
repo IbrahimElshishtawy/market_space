@@ -536,9 +536,11 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'الإجمالي النهائي للطلب',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.slate900),
+              const Expanded(
+                child: Text(
+                  'الإجمالي النهائي للطلب',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.slate900),
+                ),
               ),
               Text(
                 '${cart.grandTotal.toStringAsFixed(0)} ج.م',
@@ -562,7 +564,10 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontSize: 13, color: AppColors.slate600)),
+          Expanded(
+            child: Text(label, style: TextStyle(fontSize: 13, color: AppColors.slate600)),
+          ),
+          const SizedBox(width: AppSpacing.sm),
           Text(
             value,
             style: TextStyle(

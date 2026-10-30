@@ -14,6 +14,10 @@ import 'package:market_space/core/platform/platform_info.dart';
 import 'package:market_space/core/security/secure_token_provider.dart';
 import 'package:market_space/core/storage/preferences_service.dart';
 import 'package:market_space/core/storage/secure_storage_service.dart';
+import 'package:market_space/features/building_materials/data/repositories/building_materials_cart_repository.dart';
+import 'package:market_space/features/building_materials/data/repositories/building_materials_order_repository.dart';
+import 'package:market_space/features/building_materials/presentation/controllers/building_materials_cart_controller.dart';
+import 'package:market_space/features/building_materials/presentation/controllers/building_materials_order_controller.dart';
 import 'package:market_space/features/home/presentation/pages/home_page.dart';
 import 'package:market_space/shared/state/sector_controller.dart';
 
@@ -107,6 +111,12 @@ AppDependencies createTestDependencies() {
     localeController: localeController,
     themeController: themeController,
     sectorController: sectorController,
+    buildingMaterialsCartController: BuildingMaterialsCartController(
+      repository: BuildingMaterialsCartRepositoryImpl(delay: Duration.zero),
+    ),
+    buildingMaterialsOrderController: BuildingMaterialsOrderController(
+      repository: BuildingMaterialsOrderRepositoryImpl(delay: Duration.zero),
+    ),
   );
 }
 

@@ -112,8 +112,7 @@ void main() {
       expect(success, isTrue);
 
       final updatedOrder = await repository.getOrderById(newOrder.id);
-      expect(updatedOrder, isNotNull);
-      expect(updatedOrder!.shipments.first.status, ShipmentStatus.delivered);
+      expect(updatedOrder.shipments.first.status, ShipmentStatus.delivered);
       expect(updatedOrder.status, BuildingMaterialOrderStatus.delivered);
     });
 
@@ -125,7 +124,7 @@ void main() {
       expect(success, isTrue);
 
       final updated = await repository.getOrderById(orderToCancel.id);
-      expect(updated!.status, BuildingMaterialOrderStatus.cancelled);
+      expect(updated.status, BuildingMaterialOrderStatus.cancelled);
       expect(updated.timeline.last.title, 'تم إلغاء الطلب');
     });
 

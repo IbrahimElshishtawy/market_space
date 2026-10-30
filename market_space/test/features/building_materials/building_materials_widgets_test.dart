@@ -108,7 +108,7 @@ void main() {
       // Check product name displayed
       expect(find.text(steelProduct.name), findsOneWidget);
       // Check checkout action button is present
-      expect(find.text('متابعة إتمام الطلب'), findsOneWidget);
+      expect(find.text('متابعة إتمام الطلب والتسليم'), findsOneWidget);
     });
 
     testWidgets('BuildingMaterialsOrdersPage renders tabs and orders list', (tester) async {
@@ -124,13 +124,14 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('طلبات مواد البناء'), findsOneWidget);
-      expect(find.text('الطلبات الجارية'), findsOneWidget);
-      expect(find.text('عروض الأسعار (RFQ)'), findsOneWidget);
-      expect(find.text('السجل'), findsOneWidget);
+      expect(find.text('طلبيات مواد البناء والتوريد'), findsOneWidget);
+      expect(find.text('الكل'), findsOneWidget);
+      expect(find.text('قيد التوريد'), findsOneWidget);
+      expect(find.text('المكتملة'), findsOneWidget);
+      expect(find.text('عروض الأسعار'), findsOneWidget);
 
       // Verify at least one order card from mock orders is present
-      expect(find.text('شركة حديد عز لتجارة وتوزيع الصلب'), findsWidgets);
+      expect(find.textContaining('شركة حديد عز لتجارة وتوزيع الصلب'), findsWidgets);
     });
   });
 }
