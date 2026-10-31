@@ -11,10 +11,12 @@ import '../core/notifications/presentation/state/notification_controller.dart';
 import '../core/platform/platform_info.dart';
 import '../core/security/token_provider.dart';
 import '../core/storage/preferences_service.dart';
-import '../core/storage/secure_storage_service.dart';
+import '../features/activity/presentation/controllers/unified_activity_controller.dart';
 import '../features/building_materials/presentation/controllers/building_materials_cart_controller.dart';
 import '../features/building_materials/presentation/controllers/building_materials_notification_controller.dart';
 import '../features/building_materials/presentation/controllers/building_materials_order_controller.dart';
+import '../features/explore/presentation/controllers/explore_controller.dart';
+import '../features/favorites/presentation/controllers/unified_favorites_controller.dart';
 import '../features/home_appliances/cart/presentation/controllers/home_appliances_cart_controller.dart';
 import '../features/home_appliances/notifications/presentation/controllers/home_appliances_notification_controller.dart';
 import '../features/home_appliances/orders/presentation/controllers/home_appliances_order_controller.dart';
@@ -24,6 +26,7 @@ import '../features/home_services/data/repositories/home_services_repository.dar
 import '../features/home_services/presentation/controllers/home_services_booking_controller.dart';
 import '../features/home_services/presentation/controllers/home_services_catalog_controller.dart';
 import '../features/home_services/presentation/controllers/home_services_favorites_controller.dart';
+import '../features/profile/presentation/controllers/profile_controller.dart';
 import '../features/real_estate/favorites/presentation/controllers/real_estate_favorites_controller.dart';
 import '../features/real_estate/notifications/presentation/controllers/real_estate_notification_controller.dart';
 import '../shared/state/sector_controller.dart';
@@ -60,6 +63,10 @@ class AppDependencies {
   final HomeServicesCatalogController homeServicesCatalogController;
   final HomeServicesBookingController homeServicesBookingController;
   final HomeServicesFavoritesController homeServicesFavoritesController;
+  final ExploreController exploreController;
+  final UnifiedActivityController unifiedActivityController;
+  final UnifiedFavoritesController unifiedFavoritesController;
+  final ProfileController profileController;
 
   AppDependencies({
     required this.appConfig,
@@ -91,6 +98,10 @@ class AppDependencies {
     HomeServicesCatalogController? homeServicesCatalogController,
     HomeServicesBookingController? homeServicesBookingController,
     HomeServicesFavoritesController? homeServicesFavoritesController,
+    ExploreController? exploreController,
+    UnifiedActivityController? unifiedActivityController,
+    UnifiedFavoritesController? unifiedFavoritesController,
+    ProfileController? profileController,
   }) : sectorController =
            sectorController ??
            SectorController(preferencesService: preferencesService),
@@ -150,7 +161,13 @@ class AppDependencies {
                  HomeServicesFavoritesRepositoryImpl(),
              servicesRepository:
                  homeServicesRepository ?? HomeServicesRepositoryImpl(),
-           );
+           ),
+       exploreController = exploreController ?? ExploreController(),
+       unifiedActivityController =
+           unifiedActivityController ?? UnifiedActivityController(),
+       unifiedFavoritesController =
+           unifiedFavoritesController ?? UnifiedFavoritesController(),
+       profileController = profileController ?? ProfileController();
 
   static AppDependencies of(BuildContext context) {
     final scope = context
