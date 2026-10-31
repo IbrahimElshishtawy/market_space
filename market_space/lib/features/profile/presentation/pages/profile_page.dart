@@ -434,9 +434,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                addr.title,
-                                style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
+                              Flexible(
+                                child: Text(
+                                  addr.title,
+                                  style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                               const SizedBox(width: 6.0),
                               Container(
@@ -488,44 +491,47 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: AppRadii.lg,
         border: Border.all(color: const Color(0x14000000)),
       ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.payment_rounded, size: 20.0, color: AppColors.primary),
-              SizedBox(width: 6.0),
-              Text(
-                'طرق الدفع المعتمدة',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
-              ),
-            ],
-          ),
-          SizedBox(height: AppSpacing.sm),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.local_shipping_outlined, color: Colors.teal),
-            title: Text('الدفع عند الاستلام (COD)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
-            subtitle: Text('متاح لطلبيات الأجهزة ومواد البناء والخدمات', style: TextStyle(fontSize: 11.5)),
-            trailing: Icon(Icons.check_circle_rounded, color: Colors.green, size: 18.0),
-          ),
-          Divider(height: 12.0),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.credit_card_rounded, color: Colors.blue),
-            title: Text('البطاقات الائتمانية والبنكية (Visa / Mastercard)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
-            subtitle: Text('بوابات دفع إلكترونية آمنة ومعتمدة من البنك المركزي', style: TextStyle(fontSize: 11.5)),
-            trailing: Icon(Icons.lock_outline_rounded, size: 18.0, color: Colors.grey),
-          ),
-          Divider(height: 12.0),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.store_rounded, color: Colors.amber),
-            title: Text('فوري ومحافظ المحمول (Fawry / Vodafone Cash)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
-            subtitle: Text('سداد فوري عبر منافذ فوري والمحافظ الذكية', style: TextStyle(fontSize: 11.5)),
-            trailing: Icon(Icons.check_circle_rounded, color: Colors.green, size: 18.0),
-          ),
-        ],
+      child: const Material(
+        color: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.payment_rounded, size: 20.0, color: AppColors.primary),
+                SizedBox(width: 6.0),
+                Text(
+                  'طرق الدفع المعتمدة',
+                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                ),
+              ],
+            ),
+            SizedBox(height: AppSpacing.sm),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.local_shipping_outlined, color: Colors.teal),
+              title: Text('الدفع عند الاستلام (COD)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
+              subtitle: Text('متاح لطلبيات الأجهزة ومواد البناء والخدمات', style: TextStyle(fontSize: 11.5)),
+              trailing: Icon(Icons.check_circle_rounded, color: Colors.green, size: 18.0),
+            ),
+            Divider(height: 12.0),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.credit_card_rounded, color: Colors.blue),
+              title: Text('البطاقات الائتمانية والبنكية (Visa / Mastercard)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
+              subtitle: Text('بوابات دفع إلكترونية آمنة ومعتمدة من البنك المركزي', style: TextStyle(fontSize: 11.5)),
+              trailing: Icon(Icons.lock_outline_rounded, size: 18.0, color: Colors.grey),
+            ),
+            Divider(height: 12.0),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.store_rounded, color: Colors.amber),
+              title: Text('فوري ومحافظ المحمول (Fawry / Vodafone Cash)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
+              subtitle: Text('سداد فوري عبر منافذ فوري والمحافظ الذكية', style: TextStyle(fontSize: 11.5)),
+              trailing: Icon(Icons.check_circle_rounded, color: Colors.green, size: 18.0),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -541,45 +547,48 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: AppRadii.lg,
         border: Border.all(color: const Color(0x14000000)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.notifications_active_rounded, size: 20.0, color: AppColors.primary),
-              SizedBox(width: 6.0),
-              Text(
-                'تفضيلات الإشعارات',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('تحديثات الطلبات والشحنات', style: TextStyle(fontSize: 13.0)),
-            value: prefs.orderUpdates,
-            onChanged: (v) => _controller.updateNotificationPreferences(prefs.copyWith(orderUpdates: v)),
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('تأكيدات مواعيد الحجوزات والفنيين', style: TextStyle(fontSize: 13.0)),
-            value: prefs.bookingUpdates,
-            onChanged: (v) => _controller.updateNotificationPreferences(prefs.copyWith(bookingUpdates: v)),
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('العروض والخصومات الحصرية', style: TextStyle(fontSize: 13.0)),
-            value: prefs.promotionalOffers,
-            onChanged: (v) => _controller.updateNotificationPreferences(prefs.copyWith(promotionalOffers: v)),
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('تنبيهات أسعار الحديد ومواد البناء اليومية', style: TextStyle(fontSize: 13.0)),
-            value: prefs.priceAlerts,
-            onChanged: (v) => _controller.updateNotificationPreferences(prefs.copyWith(priceAlerts: v)),
-          ),
-        ],
+      child: Material(
+        color: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.notifications_active_rounded, size: 20.0, color: AppColors.primary),
+                SizedBox(width: 6.0),
+                Text(
+                  'تفضيلات الإشعارات',
+                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('تحديثات الطلبات والشحنات', style: TextStyle(fontSize: 13.0)),
+              value: prefs.orderUpdates,
+              onChanged: (v) => _controller.updateNotificationPreferences(prefs.copyWith(orderUpdates: v)),
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('تأكيدات مواعيد الحجوزات والفنيين', style: TextStyle(fontSize: 13.0)),
+              value: prefs.bookingUpdates,
+              onChanged: (v) => _controller.updateNotificationPreferences(prefs.copyWith(bookingUpdates: v)),
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('العروض والخصومات الحصرية', style: TextStyle(fontSize: 13.0)),
+              value: prefs.promotionalOffers,
+              onChanged: (v) => _controller.updateNotificationPreferences(prefs.copyWith(promotionalOffers: v)),
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('تنبيهات أسعار الحديد ومواد البناء اليومية', style: TextStyle(fontSize: 13.0)),
+              value: prefs.priceAlerts,
+              onChanged: (v) => _controller.updateNotificationPreferences(prefs.copyWith(priceAlerts: v)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -593,59 +602,62 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: AppRadii.lg,
         border: Border.all(color: const Color(0x14000000)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.tune_rounded, size: 20.0, color: AppColors.primary),
-              SizedBox(width: 6.0),
-              Text(
-                'إعدادات التطبيق والمعلومات',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.language_rounded, size: 20.0),
-            title: const Text('لغة التطبيق', style: TextStyle(fontSize: 13.0)),
-            subtitle: const Text('العربية (المعتمدة حالياً)', style: TextStyle(fontSize: 11.5)),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
-            onTap: () => dependencies?.localeController.toggleLocale(),
-          ),
-          const Divider(height: 12.0),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.dark_mode_outlined, size: 20.0),
-            title: const Text('المظهر الليلي / الفاتح', style: TextStyle(fontSize: 13.0)),
-            trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
-            onTap: () => dependencies?.themeController.toggleTheme(),
-          ),
-          const Divider(height: 12.0),
-          const ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.privacy_tip_outlined, size: 20.0),
-            title: Text('سياسة الخصوصية والشروط والأحكام', style: TextStyle(fontSize: 13.0)),
-            trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
-          ),
-          const Divider(height: 12.0),
-          const ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.support_agent_rounded, size: 20.0),
-            title: Text('الدعم الفني والشكاوى', style: TextStyle(fontSize: 13.0)),
-            subtitle: Text('خدمة العملاء متاحة 24/7', style: TextStyle(fontSize: 11.5)),
-            trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
-          ),
-          const Divider(height: 12.0),
-          const ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.info_outline_rounded, size: 20.0),
-            title: Text('إصدار التطبيق', style: TextStyle(fontSize: 13.0)),
-            trailing: Text('v1.0.0+1', style: TextStyle(fontSize: 12.0, color: Colors.grey)),
-          ),
-        ],
+      child: Material(
+        color: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.tune_rounded, size: 20.0, color: AppColors.primary),
+                SizedBox(width: 6.0),
+                Text(
+                  'إعدادات التطبيق والمعلومات',
+                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.language_rounded, size: 20.0),
+              title: const Text('لغة التطبيق', style: TextStyle(fontSize: 13.0)),
+              subtitle: const Text('العربية (المعتمدة حالياً)', style: TextStyle(fontSize: 11.5)),
+              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
+              onTap: () => dependencies?.localeController.toggleLocale(),
+            ),
+            const Divider(height: 12.0),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.dark_mode_outlined, size: 20.0),
+              title: const Text('المظهر الليلي / الفاتح', style: TextStyle(fontSize: 13.0)),
+              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
+              onTap: () => dependencies?.themeController.toggleTheme(),
+            ),
+            const Divider(height: 12.0),
+            const ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.privacy_tip_outlined, size: 20.0),
+              title: Text('سياسة الخصوصية والشروط والأحكام', style: TextStyle(fontSize: 13.0)),
+              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
+            ),
+            const Divider(height: 12.0),
+            const ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.support_agent_rounded, size: 20.0),
+              title: Text('الدعم الفني والشكاوى', style: TextStyle(fontSize: 13.0)),
+              subtitle: Text('خدمة العملاء متاحة 24/7', style: TextStyle(fontSize: 11.5)),
+              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
+            ),
+            const Divider(height: 12.0),
+            const ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.info_outline_rounded, size: 20.0),
+              title: Text('إصدار التطبيق', style: TextStyle(fontSize: 13.0)),
+              trailing: Text('v1.0.0+1', style: TextStyle(fontSize: 12.0, color: Colors.grey)),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../features/home_services/presentation/pages/home_services_page.dart';
 import '../features/home_services/presentation/pages/home_service_detail_page.dart';
 import '../features/home_services/presentation/pages/service_provider_detail_page.dart';
 import '../features/home_services/presentation/pages/home_services_booking_wizard_page.dart';
 import '../features/home_services/presentation/pages/home_service_booking_detail_page.dart';
 import '../features/home_services/presentation/pages/technician_tracking_page.dart';
+
 import 'package:market_space/features/home_services/presentation/pages/ac_service_detail_page.dart';
 
 import '../core/routing/route_guards.dart';
@@ -72,7 +74,8 @@ class AppRouter {
           path: RouteNames.root,
           name: RouteNames.rootName,
           builder: (context, state) {
-            final tab = int.tryParse(state.uri.queryParameters['tab'] ?? '') ?? 0;
+            final tab =
+                int.tryParse(state.uri.queryParameters['tab'] ?? '') ?? 0;
             return GlobalNavigationScaffold(initialIndex: tab);
           },
         ),

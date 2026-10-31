@@ -712,13 +712,14 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
                 final reason = reasonCtrl.text.trim();
                 Navigator.pop(ctx);
                 await bookingCtrl.cancelBooking(
                   booking.id,
                   reason.isEmpty ? 'تم الإلغاء بواسطة العميل' : reason,
                 );
-                ScaffoldMessenger.of(context).showSnackBar(
+                messenger.showSnackBar(
                   const SnackBar(content: Text('تم إلغاء الحجز بنجاح.')),
                 );
               },
@@ -738,6 +739,7 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     HomeServiceBookingModel booking,
     HomeServicesBookingController bookingCtrl,
   ) async {
+    final messenger = ScaffoldMessenger.of(context);
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: booking.scheduledDate.add(const Duration(days: 1)),
@@ -745,13 +747,13 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
       lastDate: DateTime.now().add(const Duration(days: 30)),
     );
 
-    if (pickedDate != null && context.mounted) {
+    if (pickedDate != null) {
       await bookingCtrl.rescheduleBooking(
         booking.id,
         pickedDate,
         '03:00 م - 05:00 م',
       );
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         const SnackBar(content: Text('تمت إعادة جدولة الموعد بنجاح.')),
       );
     }
@@ -816,6 +818,7 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
                   Navigator.pop(ctx);
                   final review = ServiceReviewModel(
                     id: 'rev-${DateTime.now().millisecondsSinceEpoch}',
@@ -834,7 +837,7 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                     createdAt: DateTime.now(),
                   );
                   await bookingCtrl.submitReview(review);
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  messenger.showSnackBar(
                     const SnackBar(
                       content: Text('شكراً لتقييمك! تم حفظ المراجعة بنجاح.'),
                     ),
@@ -921,6 +924,7 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
                   Navigator.pop(ctx);
                   final complaint = ServiceComplaintModel(
                     id: 'CMP-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}',
@@ -934,7 +938,7 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                     createdAt: DateTime.now(),
                   );
                   await bookingCtrl.submitComplaint(complaint);
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  messenger.showSnackBar(
                     SnackBar(
                       content: Text(
                         'تم فتح الشكوى برقم مرجعي: ${complaint.id}. سيتواصل معك الدعم الفني.',

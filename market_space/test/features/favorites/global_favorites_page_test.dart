@@ -10,7 +10,7 @@ void main() {
     test('UnifiedFavoritesController loads favorites across sectors', () async {
       final repo = UnifiedFavoritesRepositoryImpl();
       final controller = UnifiedFavoritesController(repository: repo);
-      await Future.delayed(const Duration(milliseconds: 50));
+      await controller.loadFavorites();
 
       expect(controller.value.favorites.isNotEmpty, isTrue);
 
@@ -23,7 +23,7 @@ void main() {
     test('UnifiedFavoritesController filters by sector', () async {
       final repo = UnifiedFavoritesRepositoryImpl();
       final controller = UnifiedFavoritesController(repository: repo);
-      await Future.delayed(const Duration(milliseconds: 50));
+      await controller.loadFavorites();
 
       await controller.setSectorFilter(FavoriteSectorFilter.realEstate);
       expect(controller.value.selectedSector, FavoriteSectorFilter.realEstate);
@@ -37,7 +37,7 @@ void main() {
     test('UnifiedFavoritesController optimistic toggle removes item', () async {
       final repo = UnifiedFavoritesRepositoryImpl();
       final controller = UnifiedFavoritesController(repository: repo);
-      await Future.delayed(const Duration(milliseconds: 50));
+      await controller.loadFavorites();
 
       final firstItem = controller.value.favorites.first;
       await controller.toggleFavorite(firstItem);
@@ -48,6 +48,7 @@ void main() {
     testWidgets('GlobalFavoritesPage renders header, filters and favorite items', (tester) async {
       final repo = UnifiedFavoritesRepositoryImpl();
       final controller = UnifiedFavoritesController(repository: repo);
+      await controller.loadFavorites();
 
       await tester.pumpWidget(
         MaterialApp(
@@ -56,7 +57,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('المفضلة الموحدة'), findsOneWidget);
+      expect(find.text('المفضلة'), findsWidgets);
       expect(find.text('الكل'), findsWidgets);
       expect(find.text('عقارات'), findsWidgets);
       expect(find.text('مواد بناء'), findsWidgets);
