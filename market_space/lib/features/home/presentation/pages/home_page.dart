@@ -17,7 +17,12 @@ import '../../widgets/main_categories/main_categories_section.dart';
 import '../../widgets/most_requested_services/most_requested_services_section.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final bool showBottomNav;
+
+  const HomePage({
+    super.key,
+    this.showBottomNav = true,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();

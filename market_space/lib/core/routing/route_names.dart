@@ -23,6 +23,11 @@ class RouteNames {
       '/building-materials/product-detail';
   static const String buildingMaterialsRfq = '/building-materials/rfq';
   static const String acServiceDetail = '/home-services/ac-service-detail';
+  static const String explore = '/explore';
+  static const String myActivity = '/my-activity';
+  static const String favorites = '/favorites';
+  static const String profile = '/profile';
+  static const String globalNotifications = '/notifications';
   static const String notFound = '/not-found';
 
   static const String rootName = 'root';
@@ -50,5 +55,10 @@ class RouteNames {
       'building_materials_product_detail';
   static const String buildingMaterialsRfqName = 'building_materials_rfq';
   static const String acServiceDetailName = 'ac_service_detail';
+  static const String exploreName = 'explore';
+  static const String myActivityName = 'my_activity';
+  static const String favoritesName = 'favorites';
+  static const String profileName = 'profile';
+  static const String globalNotificationsName = 'global_notifications';
   static const String notFoundName = 'not_found';
 }
