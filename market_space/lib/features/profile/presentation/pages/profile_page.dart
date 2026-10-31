@@ -127,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 12.0),
                   DropdownButtonFormField<AddressType>(
-                    value: selectedType,
+                    initialValue: selectedType,
                     decoration: const InputDecoration(labelText: 'نوع العنوان'),
                     items: AddressType.values.map((t) {
                       return DropdownMenuItem(value: t, child: Text(t.label));

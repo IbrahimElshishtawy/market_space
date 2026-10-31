@@ -23,6 +23,16 @@ class RouteNames {
       '/building-materials/product-detail';
   static const String buildingMaterialsRfq = '/building-materials/rfq';
   static const String acServiceDetail = '/home-services/ac-service-detail';
+  static const String homeServicesCatalog = '/home-services/catalog';
+  static const String homeServicesBookings = '/home-services/bookings';
+  static const String homeServicesFavorites = '/home-services/favorites';
+  static const String homeServicesNotifications = '/home-services/notifications';
+  static const String homeServiceDetail = '/home-services/service-detail';
+  static const String homeServiceProviderDetail = '/home-services/provider-detail';
+  static const String homeServicesBookingWizard = '/home-services/book';
+  static const String homeServicesBookingDetail = '/home-services/booking-detail';
+  static const String homeServicesTechnicianTracking = '/home-services/tracking';
+
   static const String explore = '/explore';
   static const String myActivity = '/my-activity';
   static const String favorites = '/favorites';
@@ -55,6 +65,15 @@ class RouteNames {
       'building_materials_product_detail';
   static const String buildingMaterialsRfqName = 'building_materials_rfq';
   static const String acServiceDetailName = 'ac_service_detail';
+  static const String homeServicesCatalogName = 'home_services_catalog';
+  static const String homeServicesBookingsName = 'home_services_bookings';
+  static const String homeServicesFavoritesName = 'home_services_favorites';
+  static const String homeServicesNotificationsName = 'home_services_notifications';
+  static const String homeServiceDetailName = 'home_service_detail';
+  static const String homeServiceProviderDetailName = 'home_service_provider_detail';
+  static const String homeServicesBookingWizardName = 'home_services_booking_wizard';
+  static const String homeServicesBookingDetailName = 'home_services_booking_detail';
+  static const String homeServicesTechnicianTrackingName = 'home_services_technician_tracking';
   static const String exploreName = 'explore';
   static const String myActivityName = 'my_activity';
   static const String favoritesName = 'favorites';
@@ -62,3 +81,4 @@ class RouteNames {
   static const String globalNotificationsName = 'global_notifications';
   static const String notFoundName = 'not_found';
 }
+

@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../features/home_services/presentation/pages/home_services_page.dart';
+import '../features/home_services/presentation/pages/home_service_detail_page.dart';
+import '../features/home_services/presentation/pages/service_provider_detail_page.dart';
+import '../features/home_services/presentation/pages/home_services_booking_wizard_page.dart';
+import '../features/home_services/presentation/pages/home_service_booking_detail_page.dart';
+import '../features/home_services/presentation/pages/technician_tracking_page.dart';
 import 'package:market_space/features/home_services/presentation/pages/ac_service_detail_page.dart';
 
 import '../core/routing/route_guards.dart';
 import '../core/routing/route_names.dart';
 import '../core/theme/app_spacing.dart';
+import '../features/activity/presentation/pages/my_activity_page.dart';
 import '../features/building_materials/presentation/pages/building_material_category_detail_page.dart';
 import '../features/building_materials/presentation/pages/building_material_product_detail_page.dart';
 import '../features/building_materials/presentation/pages/building_materials_cart_page.dart';
@@ -16,7 +23,13 @@ import '../features/building_materials/presentation/pages/building_materials_ord
 import '../features/building_materials/presentation/pages/building_materials_page.dart';
 import '../features/building_materials/presentation/pages/rfq_create_page.dart';
 import '../features/building_materials/presentation/pages/steel_rebar_listing_page.dart';
+import '../features/explore/presentation/pages/explore_page.dart';
+import '../features/favorites/presentation/pages/global_favorites_page.dart';
 import '../features/home/presentation/pages/home_page.dart';
+import '../features/home_services/presentation/pages/home_services_page.dart';
+import '../features/navigation/presentation/pages/global_navigation_scaffold.dart';
+import '../features/notifications/presentation/pages/global_notifications_page.dart';
+import '../features/profile/presentation/pages/profile_page.dart';
 import '../features/home_appliances/cart/presentation/pages/home_appliances_cart_page.dart';
 import '../features/home_appliances/categories/presentation/pages/home_appliances_categories_page.dart';
 import '../features/home_appliances/checkout/presentation/pages/home_appliances_checkout_page.dart';
@@ -65,7 +78,43 @@ class AppRouter {
           path: RouteNames.root,
           name: RouteNames.rootName,
           builder: (context, state) {
-            return const HomePage();
+            final tab = int.tryParse(state.uri.queryParameters['tab'] ?? '') ?? 0;
+            return GlobalNavigationScaffold(initialIndex: tab);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.explore,
+          name: RouteNames.exploreName,
+          builder: (context, state) {
+            return const GlobalNavigationScaffold(initialIndex: 1);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.myActivity,
+          name: RouteNames.myActivityName,
+          builder: (context, state) {
+            return const GlobalNavigationScaffold(initialIndex: 2);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.favorites,
+          name: RouteNames.favoritesName,
+          builder: (context, state) {
+            return const GlobalNavigationScaffold(initialIndex: 3);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.profile,
+          name: RouteNames.profileName,
+          builder: (context, state) {
+            return const GlobalNavigationScaffold(initialIndex: 4);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.globalNotifications,
+          name: RouteNames.globalNotificationsName,
+          builder: (context, state) {
+            return const GlobalNotificationsPage();
           },
         ),
         GoRoute(
@@ -130,7 +179,79 @@ class AppRouter {
           path: RouteNames.homeServices,
           name: RouteNames.homeServicesName,
           builder: (context, state) {
-            return const BuildingMaterialsPage();
+            return const HomeServicesPage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServicesCatalog,
+          name: RouteNames.homeServicesCatalogName,
+          builder: (context, state) {
+            return const HomeServicesPage(initialTabIndex: 1);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServicesBookings,
+          name: RouteNames.homeServicesBookingsName,
+          builder: (context, state) {
+            return const HomeServicesPage(initialTabIndex: 2);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServicesFavorites,
+          name: RouteNames.homeServicesFavoritesName,
+          builder: (context, state) {
+            return const HomeServicesPage(initialTabIndex: 3);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServicesNotifications,
+          name: RouteNames.homeServicesNotificationsName,
+          builder: (context, state) {
+            return const HomeServicesPage(initialTabIndex: 4);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServiceDetail,
+          name: RouteNames.homeServiceDetailName,
+          builder: (context, state) {
+            final id = state.uri.queryParameters['id'] ?? 'srv-ac-wash';
+            return HomeServiceDetailPage(serviceId: id);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServiceProviderDetail,
+          name: RouteNames.homeServiceProviderDetailName,
+          builder: (context, state) {
+            final id = state.uri.queryParameters['id'] ?? 'prov-fixit';
+            return ServiceProviderDetailPage(providerId: id);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServicesBookingWizard,
+          name: RouteNames.homeServicesBookingWizardName,
+          builder: (context, state) {
+            final serviceId = state.uri.queryParameters['serviceId'];
+            final providerId = state.uri.queryParameters['providerId'];
+            return HomeServicesBookingWizardPage(
+              serviceId: serviceId,
+              providerId: providerId,
+            );
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServicesBookingDetail,
+          name: RouteNames.homeServicesBookingDetailName,
+          builder: (context, state) {
+            final id = state.uri.queryParameters['id'] ?? 'HS-BK-88421';
+            return HomeServiceBookingDetailPage(bookingId: id);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.homeServicesTechnicianTracking,
+          name: RouteNames.homeServicesTechnicianTrackingName,
+          builder: (context, state) {
+            final id = state.uri.queryParameters['id'] ?? 'HS-BK-88421';
+            return TechnicianTrackingPage(bookingId: id);
           },
         ),
         GoRoute(
