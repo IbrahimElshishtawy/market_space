@@ -27,6 +27,11 @@ import '../features/home_services/data/repositories/home_services_repository.dar
 import '../features/home_services/presentation/controllers/home_services_booking_controller.dart';
 import '../features/home_services/presentation/controllers/home_services_catalog_controller.dart';
 import '../features/home_services/presentation/controllers/home_services_favorites_controller.dart';
+import '../features/cars/data/repositories/cars_repository.dart';
+import '../features/cars/presentation/controllers/cars_controller.dart';
+import '../features/fashion/data/repositories/fashion_repository.dart';
+import '../features/fashion/presentation/controllers/fashion_cart_controller.dart';
+import '../features/fashion/presentation/controllers/fashion_controller.dart';
 import '../features/profile/presentation/controllers/profile_controller.dart';
 import '../features/real_estate/favorites/presentation/controllers/real_estate_favorites_controller.dart';
 import '../features/real_estate/notifications/presentation/controllers/real_estate_notification_controller.dart';
@@ -64,6 +69,11 @@ class AppDependencies {
   final HomeServicesCatalogController homeServicesCatalogController;
   final HomeServicesBookingController homeServicesBookingController;
   final HomeServicesFavoritesController homeServicesFavoritesController;
+  final CarsRepository carsRepository;
+  final CarsController carsController;
+  final FashionRepository fashionRepository;
+  final FashionController fashionController;
+  final FashionCartController fashionCartController;
   final ExploreController exploreController;
   final UnifiedActivityController unifiedActivityController;
   final UnifiedFavoritesController unifiedFavoritesController;
@@ -99,6 +109,11 @@ class AppDependencies {
     HomeServicesCatalogController? homeServicesCatalogController,
     HomeServicesBookingController? homeServicesBookingController,
     HomeServicesFavoritesController? homeServicesFavoritesController,
+    CarsRepository? carsRepository,
+    CarsController? carsController,
+    FashionRepository? fashionRepository,
+    FashionController? fashionController,
+    FashionCartController? fashionCartController,
     ExploreController? exploreController,
     UnifiedActivityController? unifiedActivityController,
     UnifiedFavoritesController? unifiedFavoritesController,
@@ -163,6 +178,20 @@ class AppDependencies {
              servicesRepository:
                  homeServicesRepository ?? HomeServicesRepositoryImpl(),
            ),
+       carsRepository = carsRepository ?? MockCarsRepository(),
+       carsController =
+           carsController ??
+           CarsController(
+             repository: carsRepository ?? MockCarsRepository(),
+           ),
+       fashionRepository = fashionRepository ?? MockFashionRepository(),
+       fashionController =
+           fashionController ??
+           FashionController(
+             repository: fashionRepository ?? MockFashionRepository(),
+           ),
+       fashionCartController =
+           fashionCartController ?? FashionCartController(),
        exploreController = exploreController ?? ExploreController(),
        unifiedActivityController =
            unifiedActivityController ?? UnifiedActivityController(),

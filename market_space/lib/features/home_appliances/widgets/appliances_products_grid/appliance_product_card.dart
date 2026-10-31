@@ -137,8 +137,8 @@ class ApplianceProductCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 10.5,
-                              color: AppColors.lightTextMuted,
+                              fontSize: 11.5,
+                              color: AppColors.textSecondary,
                             ),
                           ),
 
@@ -153,9 +153,9 @@ class ApplianceProductCard extends StatelessWidget {
                                 Text(
                                   product.priceFormatted,
                                   style: const TextStyle(
-                                    fontSize: 13.0,
+                                    fontSize: 13.5,
                                     fontWeight: FontWeight.w900,
-                                    color: Color(0xFFD97706),
+                                    color: AppColors.textPrimary,
                                   ),
                                 ),
                                 if (product.oldPriceFormatted != null) ...[
@@ -163,8 +163,8 @@ class ApplianceProductCard extends StatelessWidget {
                                   Text(
                                     product.oldPriceFormatted!,
                                     style: const TextStyle(
-                                      fontSize: 10.0,
-                                      color: Color(0xFF94A3B8),
+                                      fontSize: 11.0,
+                                      color: AppColors.textMuted,
                                       decoration: TextDecoration.lineThrough,
                                     ),
                                   ),
@@ -180,9 +180,9 @@ class ApplianceProductCard extends StatelessWidget {
                             Text(
                               product.monthlyInstallmentFormatted!,
                               style: const TextStyle(
-                                fontSize: 10.0,
+                                fontSize: 11.0,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.neutral,
+                                color: AppColors.textSecondary,
                               ),
                             ),
                         ],
@@ -199,8 +199,11 @@ class ApplianceProductCard extends StatelessWidget {
                           height: 32.0,
                           decoration: BoxDecoration(
                             color: product.inCart
-                                ? AppColors.secondaryDark
-                                : AppColors.neutral,
+                                ? AppColors.surfaceSecondary
+                                : AppColors.primary,
+                            border: product.inCart
+                                ? Border.all(color: AppColors.border)
+                                : null,
                             borderRadius: AppRadii.md,
                           ),
                           child: Row(
@@ -208,8 +211,10 @@ class ApplianceProductCard extends StatelessWidget {
                             children: [
                               Text(
                                 product.inCart ? 'تمت الإضافة' : 'أضف للسلة',
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: product.inCart
+                                      ? AppColors.textPrimary
+                                      : Colors.white,
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -217,10 +222,12 @@ class ApplianceProductCard extends StatelessWidget {
                               const SizedBox(width: 4.0),
                               Icon(
                                 product.inCart
-                                    ? Icons.check_circle_outline_rounded
+                                    ? Icons.check_circle_rounded
                                     : Icons.shopping_cart_outlined,
                                 size: 14.0,
-                                color: Colors.white,
+                                color: product.inCart
+                                    ? AppColors.textPrimary
+                                    : Colors.white,
                               ),
                             ],
                           ),

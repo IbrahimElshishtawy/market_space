@@ -5,6 +5,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/home_service_booking_model.dart';
 import '../../data/models/home_service_model.dart';
 import '../../data/models/service_provider_model.dart';
@@ -230,15 +231,13 @@ class _HomeServicesBookingWizardPageState
               ),
             ),
             child: ListTile(
-              leading: ClipRRect(
+              leading: AppNetworkImage(
+                imageUrl: service.images.isNotEmpty ? service.images.first : '',
+                width: 50,
+                height: 50,
                 borderRadius: AppRadii.md,
-                child: Image.network(
-                  service.images.isNotEmpty ? service.images.first : '',
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => const Icon(Icons.handyman_rounded),
-                ),
+                fit: BoxFit.cover,
+                fallbackIcon: Icons.handyman_rounded,
               ),
               title: Text(service.title, style: const TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Text(service.formattedPrice, style: const TextStyle(color: AppColors.primary)),
@@ -294,15 +293,13 @@ class _HomeServicesBookingWizardPageState
                 children: [
                   Row(
                     children: [
-                      ClipRRect(
+                      AppNetworkImage(
+                        imageUrl: provider.logoUrl,
+                        width: 45,
+                        height: 45,
                         borderRadius: AppRadii.md,
-                        child: Image.network(
-                          provider.logoUrl,
-                          width: 45,
-                          height: 45,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => const Icon(Icons.business_rounded),
-                        ),
+                        fit: BoxFit.cover,
+                        fallbackIcon: Icons.business_rounded,
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(

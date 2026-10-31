@@ -5,6 +5,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 
 class ServiceProviderDetailPage extends StatelessWidget {
   final String providerId;
@@ -75,17 +76,12 @@ class ServiceProviderDetailPage extends StatelessWidget {
                           children: [
                             ClipRRect(
                               borderRadius: AppRadii.lg,
-                              child: Image.network(
-                                provider.logoUrl,
+                              child: AppNetworkImage(
+                                imageUrl: provider.logoUrl,
                                 width: 70.0,
                                 height: 70.0,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, _, _) => Container(
-                                  width: 70.0,
-                                  height: 70.0,
-                                  color: Colors.grey.shade200,
-                                  child: const Icon(Icons.business_rounded, size: 36.0),
-                                ),
+                                fallbackIcon: Icons.business_rounded,
                               ),
                             ),
                             const SizedBox(width: AppSpacing.md),
@@ -227,12 +223,12 @@ class ServiceProviderDetailPage extends StatelessWidget {
                       child: ListTile(
                         leading: ClipRRect(
                           borderRadius: AppRadii.md,
-                          child: Image.network(
-                            service.images.isNotEmpty ? service.images.first : '',
+                          child: AppNetworkImage(
+                            imageUrl: service.images.isNotEmpty ? service.images.first : '',
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => const Icon(Icons.handyman_rounded),
+                            fallbackIcon: Icons.handyman_rounded,
                           ),
                         ),
                         title: Text(

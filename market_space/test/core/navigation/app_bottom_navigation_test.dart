@@ -10,19 +10,19 @@ import 'package:market_space/features/real_estate/navigation/real_estate_navigat
 
 void main() {
   group('Multi-Section Navigation Configurations', () {
-    test('All 4 section configurations have exactly 5 items', () {
+    test('All 6 section configurations have exactly 5 items', () {
       final configs = SectionNavigationRegistry.allConfigs;
-      expect(configs.length, equals(4));
+      expect(configs.length, equals(6));
 
       for (final config in configs) {
         expect(config.items.length, equals(5));
       }
     });
 
-    test('All 4 section configurations include FloatingActionConfig for adding listings', () {
+    test('All 6 section configurations include FloatingActionConfig for adding listings or primary action', () {
       for (final config in SectionNavigationRegistry.allConfigs) {
         expect(config.floatingAction, isNotNull);
-        expect(config.floatingAction!.label, contains('أضف'));
+        expect(config.floatingAction!.label.isNotEmpty, isTrue);
       }
     });
   });

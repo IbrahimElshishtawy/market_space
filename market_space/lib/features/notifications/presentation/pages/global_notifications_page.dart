@@ -27,6 +27,8 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
     {'id': 'building_materials', 'label': 'مواد البناء'},
     {'id': 'services', 'label': 'الخدمات المنزلية'},
     {'id': 'home_appliances', 'label': 'الأجهزة المنزلية'},
+    {'id': 'cars', 'label': 'السيارات'},
+    {'id': 'fashion', 'label': 'الملابس والأزياء'},
   ];
 
   void _handleNotificationTap(AppNotification notif) {
@@ -48,6 +50,8 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
         controller.markAllAsRead('building_materials');
         controller.markAllAsRead('services');
         controller.markAllAsRead('home_appliances');
+        controller.markAllAsRead('cars');
+        controller.markAllAsRead('fashion');
       } else {
         controller.markAllAsRead(_selectedSector);
       }
@@ -59,10 +63,8 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
   Widget build(BuildContext context) {
     final controller = widget.controller ?? AppDependencies.of(context).notificationController;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
+    return Scaffold(
+      backgroundColor: AppColors.lightBackground,
         appBar: AppBar(
           title: const Text('الإشعارات والتنبيهات', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
           centerTitle: false,
@@ -163,6 +165,8 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
                         ...controller.getNotifications('building_materials'),
                         ...controller.getNotifications('services'),
                         ...controller.getNotifications('home_appliances'),
+                        ...controller.getNotifications('cars'),
+                        ...controller.getNotifications('fashion'),
                       ];
                     } else {
                       items = controller.getNotifications(_selectedSector);
@@ -192,7 +196,6 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -216,6 +219,14 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
       case 'home_appliances':
         sectorColor = const Color(0xFF0284C7);
         sectorName = 'الأجهزة المنزلية';
+        break;
+      case 'cars':
+        sectorColor = const Color(0xFF0F766E);
+        sectorName = 'السيارات';
+        break;
+      case 'fashion':
+        sectorColor = const Color(0xFFBE185D);
+        sectorName = 'الملابس والأزياء';
         break;
       default:
         sectorColor = AppColors.primary;

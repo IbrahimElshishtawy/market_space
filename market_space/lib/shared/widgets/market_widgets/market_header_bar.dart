@@ -63,7 +63,6 @@ class MarketHeaderBar extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 22.0,
                 fontWeight: FontWeight.w900,
-                fontFamily: 'sans-serif',
               ),
             ),
           ),
@@ -92,8 +91,8 @@ class MarketHeaderBar extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.lightTextSecondary,
-                  fontSize: isCompact ? 9.0 : 10.5,
+                  color: AppColors.textSecondary,
+                  fontSize: isCompact ? 11.0 : 12.0,
                   fontWeight: FontWeight.w500,
                   height: 1.2,
                 ),
@@ -115,9 +114,9 @@ class MarketHeaderBar extends StatelessWidget {
           vertical: 5.0,
         ),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F5F9),
+          color: AppColors.surfaceSecondary,
           borderRadius: AppRadii.full,
-          border: Border.all(color: AppColors.lightBorder),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -134,8 +133,8 @@ class MarketHeaderBar extends StatelessWidget {
                 selectedCity,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.lightTextPrimary,
-                  fontSize: isCompact ? 11.0 : 12.0,
+                  color: AppColors.textPrimary,
+                  fontSize: isCompact ? 11.5 : 12.5,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -144,7 +143,7 @@ class MarketHeaderBar extends StatelessWidget {
             const Icon(
               Icons.keyboard_arrow_down_rounded,
               size: 16.0,
-              color: AppColors.lightTextSecondary,
+              color: AppColors.iconSecondary,
             ),
           ],
         ),
@@ -160,7 +159,7 @@ class MarketHeaderBar extends StatelessWidget {
           onPressed: onNotificationsTap,
           icon: const Icon(
             Icons.notifications_none_rounded,
-            color: AppColors.lightTextPrimary,
+            color: AppColors.iconPrimary,
             size: 24.0,
           ),
           padding: EdgeInsets.zero,

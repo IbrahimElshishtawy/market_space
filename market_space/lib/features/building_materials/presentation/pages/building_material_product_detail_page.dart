@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/material_product_model.dart';
 import '../../data/models/unit_of_measurement.dart';
 import '../../data/repositories/building_materials_repository.dart';
@@ -228,19 +229,12 @@ class _BuildingMaterialProductDetailPageState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // صورة المنتج
-          ClipRRect(
+          AppNetworkImage(
+            imageUrl: product.primaryImageUrl,
+            aspectRatio: 16 / 9,
             borderRadius: AppRadii.lg,
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.network(
-                product.primaryImageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: AppColors.slate200,
-                  child: const Icon(Icons.broken_image_rounded, size: 48, color: AppColors.slate500),
-                ),
-              ),
-            ),
+            fit: BoxFit.cover,
+            fallbackIcon: Icons.broken_image_rounded,
           ),
           const SizedBox(height: AppSpacing.md),
 
@@ -733,14 +727,12 @@ class _BuildingMaterialProductDetailPageState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
+            AppNetworkImage(
+              imageUrl: product.primaryImageUrl,
+              height: 100,
+              width: double.infinity,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadii.mdValue)),
-              child: Image.network(
-                product.primaryImageUrl,
-                height: 100,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              fit: BoxFit.cover,
             ),
             Padding(
               padding: const EdgeInsets.all(8),

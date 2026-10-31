@@ -5,6 +5,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/home_service_model.dart';
 import '../controllers/home_services_catalog_controller.dart';
 import '../controllers/home_services_favorites_controller.dart';
@@ -177,19 +178,14 @@ class HomeServicesCatalogView extends StatelessWidget {
                   // Image
                   ClipRRect(
                     borderRadius: AppRadii.md,
-                    child: Image.network(
-                      service.images.isNotEmpty
+                    child: AppNetworkImage(
+                      imageUrl: service.images.isNotEmpty
                           ? service.images.first
                           : 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=300',
                       width: 90.0,
                       height: 90.0,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => Container(
-                        width: 90.0,
-                        height: 90.0,
-                        color: Colors.grey.shade200,
-                        child: const Icon(Icons.handyman_rounded, color: Colors.grey),
-                      ),
+                      fallbackIcon: Icons.handyman_rounded,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),

@@ -77,7 +77,7 @@ class RealEstateCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.lightTextMuted,
+                        color: AppColors.textSecondary,
                       ),
                     ),
 
@@ -90,9 +90,9 @@ class RealEstateCard extends StatelessWidget {
                           TextSpan(
                             text: item.priceFormatted,
                             style: const TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFFD97706),
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.textPrimary,
                             ),
                           ),
                           if (item.pricePeriod != null) ...[
@@ -100,9 +100,9 @@ class RealEstateCard extends StatelessWidget {
                             TextSpan(
                               text: item.pricePeriod,
                               style: const TextStyle(
-                                fontSize: 12.5,
+                                fontSize: 13.0,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFFD97706),
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -177,7 +177,7 @@ class RealEstateCard extends StatelessWidget {
                 width: 32.0,
                 height: 32.0,
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: item.isFavorite ? Colors.white : Colors.black.withValues(alpha: 0.35),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(

@@ -49,12 +49,10 @@ class _MyActivityPageState extends State<MyActivityPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
-        body: SafeArea(
-          bottom: false,
+    return Scaffold(
+      backgroundColor: AppColors.lightBackground,
+      body: SafeArea(
+        bottom: false,
           child: ValueListenableBuilder<UnifiedActivityState>(
             valueListenable: _controller,
             builder: (context, state, _) {
@@ -81,10 +79,10 @@ class _MyActivityPageState extends State<MyActivityPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Column(
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'طلباتي ومعاملاتي',
                                       style: TextStyle(
                                         fontSize: 22.0,
@@ -92,12 +90,12 @@ class _MyActivityPageState extends State<MyActivityPage> {
                                         color: AppColors.neutral,
                                       ),
                                     ),
-                                    SizedBox(height: 2.0),
-                                    Text(
+                                    const SizedBox(height: 2.0),
+                                    const Text(
                                       'متابعة حية لجميع الطلبات، الحجوزات، والمعاينات',
                                       style: TextStyle(
                                         fontSize: 12.5,
-                                        color: AppColors.lightTextSecondary,
+                                        color: AppColors.textSecondary,
                                       ),
                                     ),
                                   ],
@@ -192,12 +190,12 @@ class _MyActivityPageState extends State<MyActivityPage> {
                                     ),
                                   ],
                                 ),
-                                backgroundColor: Colors.white,
+                                backgroundColor: AppColors.surfaceSecondary,
                                 selectedColor: AppColors.primary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: AppRadii.full,
                                   side: BorderSide(
-                                    color: isSelected ? AppColors.primary : const Color(0x1A000000),
+                                    color: isSelected ? AppColors.primary : AppColors.border,
                                   ),
                                 ),
                                 onSelected: (_) => _controller.setSectorFilter(sector),
@@ -308,8 +306,7 @@ class _MyActivityPageState extends State<MyActivityPage> {
             },
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildActivityCard(UnifiedActivityItem item) {

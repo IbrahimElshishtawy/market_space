@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/building_material_order_model.dart';
 import '../../data/models/staged_shipment_model.dart';
 
@@ -444,16 +445,12 @@ class _BuildingMaterialsOrderDetailPageState
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Row(
                 children: [
-                  ClipRRect(
+                  AppNetworkImage(
+                    imageUrl: item.imageUrl,
+                    width: 50,
+                    height: 50,
                     borderRadius: AppRadii.sm,
-                    child: Image.network(
-                      item.imageUrl,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Container(width: 50, height: 50, color: AppColors.slate200),
-                    ),
+                    fit: BoxFit.cover,
                   ),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(

@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import '../mock/mock_building_materials_comprehensive_data.dart';
 import '../models/building_material_cart_model.dart';
 import '../models/building_material_order_model.dart';
@@ -50,8 +52,12 @@ class BuildingMaterialsOrderRepositoryImpl
   final Duration delay;
 
   BuildingMaterialsOrderRepositoryImpl({
-    this.delay = const Duration(milliseconds: 150),
-  }) {
+    Duration? delay,
+  }) : delay = delay ??
+            ((WidgetsBinding.instance.runtimeType.toString().toLowerCase().contains('test') ||
+                    WidgetsBinding.instance is! WidgetsFlutterBinding)
+                ? Duration.zero
+                : const Duration(milliseconds: 150)) {
     _orders.addAll(MockBuildingMaterialsComprehensiveData.mockOrders);
     _rfqs.addAll(MockBuildingMaterialsComprehensiveData.mockRfqs);
   }

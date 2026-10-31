@@ -7,6 +7,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/home_service_booking_model.dart';
 import '../../data/models/service_support_models.dart';
 import '../controllers/home_services_booking_controller.dart';
@@ -178,13 +179,12 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: AppRadii.md,
-                child: Image.network(
-                  booking.serviceImageUrl ?? '',
+                child: AppNetworkImage(
+                  imageUrl: booking.serviceImageUrl ?? '',
                   width: 55,
                   height: 55,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) =>
-                      const Icon(Icons.handyman_rounded, size: 40),
+                  fallbackIcon: Icons.handyman_rounded,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -264,10 +264,15 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           const Divider(height: 16.0),
           Row(
             children: [
-              CircleAvatar(
-                radius: 24.0,
-                backgroundImage: NetworkImage(
-                  booking.technicianAvatar ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+              ClipRRect(
+                borderRadius: BorderRadius.circular(24.0),
+                child: AppNetworkImage(
+                  imageUrl: booking.technicianAvatar ??
+                      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+                  width: 48.0,
+                  height: 48.0,
+                  fit: BoxFit.cover,
+                  fallbackIcon: Icons.person_rounded,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -418,11 +423,12 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 8.0),
                       child: ClipRRect(
                         borderRadius: AppRadii.md,
-                        child: Image.network(
-                          img,
+                        child: AppNetworkImage(
+                          imageUrl: img,
                           width: 60,
                           height: 60,
                           fit: BoxFit.cover,
+                          fallbackIcon: Icons.image_rounded,
                         ),
                       ),
                     ),

@@ -98,7 +98,7 @@ class MarketBottomNavBar extends StatelessWidget {
     int? badgeCount,
   }) {
     final isSelected = currentIndex == index;
-    final color = isSelected ? AppColors.primary : AppColors.lightTextSecondary;
+    final color = isSelected ? AppColors.primary : AppColors.iconSecondary;
 
     return InkWell(
       onTap: () => onIndexChanged?.call(index),
@@ -145,7 +145,7 @@ class MarketBottomNavBar extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 9.0,
+                          fontSize: 10.0,
                           fontWeight: FontWeight.bold,
                           height: 1.0,
                         ),
@@ -160,8 +160,8 @@ class MarketBottomNavBar extends StatelessWidget {
               child: Text(
                 label,
                 style: TextStyle(
-                  fontSize: isCompact ? 10.0 : 11.0,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  fontSize: isCompact ? 11.0 : 12.0,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                   color: color,
                 ),
               ),
@@ -206,9 +206,9 @@ class MarketBottomNavBar extends StatelessWidget {
             child: Text(
               'أضف إعلانك',
               style: TextStyle(
-                fontSize: isCompact ? 9.0 : 10.5,
+                fontSize: isCompact ? 10.5 : 11.5,
                 fontWeight: FontWeight.w700,
-                color: AppColors.lightTextPrimary,
+                color: AppColors.textPrimary,
               ),
             ),
           ),

@@ -50,13 +50,11 @@ class _ExplorePageState extends State<ExplorePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
-        body: SafeArea(
-          bottom: false,
-          child: ValueListenableBuilder<ExploreState>(
+    return Scaffold(
+      backgroundColor: AppColors.lightBackground,
+      body: SafeArea(
+        bottom: false,
+        child: ValueListenableBuilder<ExploreState>(
             valueListenable: _controller,
             builder: (context, state, _) {
               if (state.isLoading && state.searchResults.isEmpty && state.categories.isEmpty) {
@@ -169,7 +167,6 @@ class _ExplorePageState extends State<ExplorePage> {
             },
           ),
         ),
-      ),
     );
   }
 
@@ -178,7 +175,7 @@ class _ExplorePageState extends State<ExplorePage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0x1F000000)),
+        border: Border.all(color: AppColors.border),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0A000000),
@@ -197,11 +194,11 @@ class _ExplorePageState extends State<ExplorePage> {
           hintText: 'ابحث عن عقار، حديد تسليح، تكييف، فني سباكة...',
           hintStyle: const TextStyle(
             fontSize: 13.5,
-            color: AppColors.lightTextSecondary,
+            color: AppColors.textMuted,
           ),
           prefixIcon: const Icon(
             Icons.search_rounded,
-            color: AppColors.primary,
+            color: AppColors.iconPrimary,
             size: 22.0,
           ),
           suffixIcon: state.searchQuery.isNotEmpty
@@ -258,12 +255,12 @@ class _ExplorePageState extends State<ExplorePage> {
                   ),
                 ],
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.surfaceSecondary,
               selectedColor: AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: AppRadii.full,
                 side: BorderSide(
-                  color: isSelected ? AppColors.primary : const Color(0x1F000000),
+                  color: isSelected ? AppColors.primary : AppColors.border,
                 ),
               ),
               onSelected: (_) => _controller.setSectorFilter(sector),

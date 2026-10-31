@@ -1,4 +1,6 @@
 import '../../../features/building_materials/navigation/building_materials_navigation_config.dart';
+import '../../../features/cars/navigation/cars_navigation_config.dart';
+import '../../../features/fashion/navigation/fashion_navigation_config.dart';
 import '../../../features/home_appliances/navigation/home_appliances_navigation_config.dart';
 import '../../../features/home_services/navigation/home_services_navigation_config.dart';
 import '../../../features/real_estate/navigation/real_estate_navigation_config.dart';
@@ -12,6 +14,8 @@ class SectionNavigationRegistry {
     HomeServicesNavigationConfig.sectionId: HomeServicesNavigationConfig.config,
     HomeAppliancesNavigationConfig.sectionId:
         HomeAppliancesNavigationConfig.config,
+    CarsNavigationConfig.sectionId: CarsNavigationConfig.config,
+    FashionNavigationConfig.sectionId: FashionNavigationConfig.config,
   };
 
   static SectionNavigationConfig getConfig(String sectionId) {

@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import '../../../data/mock/mock_home_appliances_data.dart';
 import '../models/appliance_order_model.dart';
 
@@ -10,6 +12,15 @@ abstract class HomeAppliancesOrderRepository {
 
 class MockHomeAppliancesOrderRepository
     implements HomeAppliancesOrderRepository {
+  final Duration simulatedDelay;
+
+  MockHomeAppliancesOrderRepository({
+    Duration? simulatedDelay,
+  }) : simulatedDelay = simulatedDelay ??
+            ((WidgetsBinding.instance.runtimeType.toString().toLowerCase().contains('test') ||
+                    WidgetsBinding.instance is! WidgetsFlutterBinding)
+                ? Duration.zero
+                : const Duration(milliseconds: 150));
   static final List<ApplianceOrderModel> _ordersStore = [
     ApplianceOrderModel(
       id: 'ord-101',
@@ -63,13 +74,17 @@ class MockHomeAppliancesOrderRepository
 
   @override
   Future<List<ApplianceOrderModel>> getOrders({String? userId}) async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    if (simulatedDelay > Duration.zero) {
+      await Future.delayed(simulatedDelay);
+    }
     return List.from(_ordersStore);
   }
 
   @override
   Future<ApplianceOrderModel?> getOrderById(String orderId) async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    if (simulatedDelay > Duration.zero) {
+      await Future.delayed(simulatedDelay);
+    }
     try {
       return _ordersStore.firstWhere(
         (o) => o.id == orderId || o.orderNumber == orderId,
@@ -81,14 +96,18 @@ class MockHomeAppliancesOrderRepository
 
   @override
   Future<ApplianceOrderModel> placeOrder(ApplianceOrderModel order) async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    if (simulatedDelay > Duration.zero) {
+      await Future.delayed(simulatedDelay);
+    }
     _ordersStore.insert(0, order);
     return order;
   }
 
   @override
   Future<bool> cancelOrder(String orderId) async {
-    await Future.delayed(const Duration(milliseconds: 150));
+    if (simulatedDelay > Duration.zero) {
+      await Future.delayed(simulatedDelay);
+    }
     final index = _ordersStore.indexWhere((o) => o.id == orderId);
     if (index != -1) {
       _ordersStore[index] = _ordersStore[index].copyWith(

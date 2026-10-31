@@ -15,8 +15,8 @@ class HomeNavBarLayout {
   static double getBarHeight(bool isCompact) => isCompact ? 62.0 : 68.0;
   static double getIconSize(bool isCompact) => isCompact ? 22.0 : 25.0;
 
-  static const Color activeColor = AppColors.neutral;
-  static const Color inactiveColor = AppColors.lightTextSecondary;
+  static const Color activeColor = AppColors.primary;
+  static const Color inactiveColor = AppColors.iconSecondary;
   static const Color backgroundColor = Colors.white;
 
   static const List<BoxShadow> containerShadow = [
@@ -32,7 +32,7 @@ class HomeNavBarLayout {
     BorderSide(color: Color(0x12000000), width: 1.0),
   );
 
-  static double getFontSize(bool isCompact) => isCompact ? 10.5 : 11.5;
+  static double getFontSize(bool isCompact) => isCompact ? 11.0 : 12.0;
 
   static const double indicatorHeight = 3.0;
   static const double indicatorWidth = 22.0;

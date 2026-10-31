@@ -48,26 +48,23 @@ class _GlobalNavigationScaffoldState extends State<GlobalNavigationScaffold> {
           });
         }
       },
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Scaffold(
-          extendBody: true,
-          backgroundColor: AppColors.lightBackground,
-          body: IndexedStack(
-            index: _currentIndex,
-            children: const [
-              HomePage(showBottomNav: false),
-              ExplorePage(),
-              MyActivityPage(),
-              GlobalFavoritesPage(),
-              ProfilePage(),
-            ],
-          ),
-          bottomNavigationBar: HomeNavBar(
-            currentIndex: _currentIndex,
-            onIndexChanged: _onNavIndexChanged,
-            isVisible: true,
-          ),
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: AppColors.lightBackground,
+        body: IndexedStack(
+          index: _currentIndex,
+          children: const [
+            HomePage(showBottomNav: false),
+            ExplorePage(),
+            MyActivityPage(),
+            GlobalFavoritesPage(),
+            ProfilePage(),
+          ],
+        ),
+        bottomNavigationBar: HomeNavBar(
+          currentIndex: _currentIndex,
+          onIndexChanged: _onNavIndexChanged,
+          isVisible: true,
         ),
       ),
     );

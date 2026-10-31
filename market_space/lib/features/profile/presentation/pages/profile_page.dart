@@ -44,53 +44,50 @@ class _ProfilePageState extends State<ProfilePage> {
 
     showDialog(
       context: context,
-      builder: (ctx) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: AppRadii.lg),
-          title: const Text('تعديل البيانات الشخصية', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameCtrl,
-                  decoration: const InputDecoration(labelText: 'الاسم الكامل'),
-                ),
-                TextField(
-                  controller: emailCtrl,
-                  decoration: const InputDecoration(labelText: 'البريد الإلكتروني'),
-                ),
-                TextField(
-                  controller: phoneCtrl,
-                  decoration: const InputDecoration(labelText: 'رقم الهاتف'),
-                ),
-                TextField(
-                  controller: cityCtrl,
-                  decoration: const InputDecoration(labelText: 'المدينة'),
-                ),
-              ],
-            ),
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.lg),
+        title: const Text('تعديل البيانات الشخصية', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: const InputDecoration(labelText: 'الاسم الكامل'),
+              ),
+              TextField(
+                controller: emailCtrl,
+                decoration: const InputDecoration(labelText: 'البريد الإلكتروني'),
+              ),
+              TextField(
+                controller: phoneCtrl,
+                decoration: const InputDecoration(labelText: 'رقم الهاتف'),
+              ),
+              TextField(
+                controller: cityCtrl,
+                decoration: const InputDecoration(labelText: 'المدينة'),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _controller.updateProfile(
-                  fullName: nameCtrl.text.trim(),
-                  email: emailCtrl.text.trim(),
-                  phone: phoneCtrl.text.trim(),
-                  city: cityCtrl.text.trim(),
-                );
-                Navigator.pop(ctx);
-              },
-              child: const Text('حفظ التعديلات'),
-            ),
-          ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _controller.updateProfile(
+                fullName: nameCtrl.text.trim(),
+                email: emailCtrl.text.trim(),
+                phone: phoneCtrl.text.trim(),
+                city: cityCtrl.text.trim(),
+              );
+              Navigator.pop(ctx);
+            },
+            child: const Text('حفظ التعديلات'),
+          ),
+        ],
       ),
     );
   }
@@ -104,9 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => Directionality(
-          textDirection: TextDirection.rtl,
-          child: AlertDialog(
+        builder: (ctx, setDialogState) => AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: AppRadii.lg),
             title: const Text('إضافة عنوان جديد', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
             content: SingleChildScrollView(
@@ -167,20 +162,17 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   @override
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
-        body: SafeArea(
-          bottom: false,
+    return Scaffold(
+      backgroundColor: AppColors.lightBackground,
+      body: SafeArea(
+        bottom: false,
           child: ValueListenableBuilder<ProfileState>(
             valueListenable: _controller,
             builder: (context, state, _) {
@@ -243,8 +235,7 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildProfileHeader(UserProfile user) {
@@ -291,7 +282,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: const Icon(
                           Icons.verified_rounded,
                           size: 18.0,
-                          color: Colors.blue,
+                          color: AppColors.primary,
                         ),
                       ),
                     ),
@@ -316,16 +307,28 @@ class _ProfilePageState extends State<ProfilePage> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                           decoration: BoxDecoration(
-                            color: Colors.green.shade50,
+                            color: AppColors.surfaceSecondary,
                             borderRadius: AppRadii.xs,
+                            border: Border.all(color: AppColors.border),
                           ),
-                          child: const Text(
-                            'حساب موثق',
-                            style: TextStyle(
-                              fontSize: 10.5,
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.check_circle_rounded,
+                                size: 12.0,
+                                color: AppColors.primary,
+                              ),
+                              SizedBox(width: 3.0),
+                              Text(
+                                'حساب موثق',
+                                style: TextStyle(
+                                  fontSize: 10.5,
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -335,14 +338,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       user.phone,
                       style: const TextStyle(
                         fontSize: 12.5,
-                        color: AppColors.lightTextSecondary,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                     Text(
                       user.email,
                       style: const TextStyle(
                         fontSize: 12.0,
-                        color: AppColors.lightTextSecondary,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -622,7 +625,12 @@ class _ProfilePageState extends State<ProfilePage> {
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.language_rounded, size: 20.0),
               title: const Text('لغة التطبيق', style: TextStyle(fontSize: 13.0)),
-              subtitle: const Text('العربية (المعتمدة حالياً)', style: TextStyle(fontSize: 11.5)),
+              subtitle: Text(
+                dependencies?.localeController.value.languageCode == 'en'
+                    ? 'English (Active)'
+                    : 'العربية (المعتمدة حالياً)',
+                style: const TextStyle(fontSize: 11.5),
+              ),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
               onTap: () => dependencies?.localeController.toggleLocale(),
             ),

@@ -84,6 +84,15 @@ class _HomePageState extends State<HomePage> {
 
     if (category.id == 'cat-real-estate' || category.title == 'عقارات') {
       context.push(RouteNames.realEstate);
+    } else if (category.id == 'cat-cars' ||
+        category.title.contains('سيارات') ||
+        category.title.contains('سيارة')) {
+      context.push(RouteNames.cars);
+    } else if (category.id == 'cat-fashion' ||
+        category.title.contains('ملابس') ||
+        category.title.contains('أزياء') ||
+        category.title.contains('موضة')) {
+      context.push(RouteNames.fashion);
     } else if (category.id == 'cat-appliances' ||
         category.title.contains('أجهزة') ||
         category.title.contains('كهربائية')) {
@@ -115,14 +124,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        extendBody: true,
-        backgroundColor: AppColors.lightBackground,
-        body: SafeArea(
-          bottom: false,
-          child: NotificationListener<UserScrollNotification>(
+    return Scaffold(
+      extendBody: true,
+      backgroundColor: AppColors.lightBackground,
+      body: SafeArea(
+        bottom: false,
+        child: NotificationListener<UserScrollNotification>(
             onNotification: _onUserScroll,
             child: RefreshIndicator(
               color: AppColors.primary,
@@ -197,7 +204,6 @@ class _HomePageState extends State<HomePage> {
                 isVisible: _isNavBarVisible,
               )
             : null,
-      ),
     );
   }
 }

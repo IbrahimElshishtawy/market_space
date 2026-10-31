@@ -15,7 +15,7 @@ Widget _buildTestApp(Widget child, {AppDependencies? dependencies}) {
     child: MaterialApp(
       home: Directionality(
         textDirection: TextDirection.rtl,
-        child: child,
+        child: Scaffold(body: child),
       ),
     ),
   );

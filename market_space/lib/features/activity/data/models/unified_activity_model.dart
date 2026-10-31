@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 enum ActivitySectorFilter {
   all('all', 'الكل', Icons.all_inbox_rounded),
   realEstate('real_estate', 'العقارات', Icons.business_rounded),
+  cars('cars', 'السيارات', Icons.directions_car_rounded),
+  fashion('fashion', 'الملابس والأزياء', Icons.checkroom_rounded),
   buildingMaterials('building_materials', 'مواد البناء', Icons.foundation_rounded),
   services('services', 'الخدمات المنزلية', Icons.build_rounded),
   homeAppliances('home_appliances', 'الأجهزة المنزلية', Icons.kitchen_rounded);
@@ -29,6 +31,8 @@ enum ActivityStatusGroup {
 enum ActivityType {
   realEstateInquiry('طلب استفسار عقاري'),
   realEstateViewing('طلب معاينة عقار'),
+  carTestDrive('طلب تجربة قيادة سيارة'),
+  fashionOrder('طلب شراء ملابس وأزياء'),
   buildingMaterialSupply('أمر توريد مواد بناء'),
   serviceBooking('حجز خدمة منزلية'),
   applianceOrder('طلب شراء أجهزة منزلية');

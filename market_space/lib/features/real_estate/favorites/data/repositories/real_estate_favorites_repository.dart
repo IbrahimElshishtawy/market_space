@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 import '../../../data/mock/mock_real_estate_data.dart';
 import '../../../data/models/real_estate_listing_model.dart';
 import '../models/favorite_property_model.dart';
@@ -18,6 +20,16 @@ abstract class RealEstateFavoritesRepository {
 
 class MockRealEstateFavoritesRepository
     implements RealEstateFavoritesRepository {
+  final Duration simulatedDelay;
+
+  MockRealEstateFavoritesRepository({
+    Duration? simulatedDelay,
+  }) : simulatedDelay = simulatedDelay ??
+            ((WidgetsBinding.instance.runtimeType.toString().toLowerCase().contains('test') ||
+                    WidgetsBinding.instance is! WidgetsFlutterBinding)
+                ? Duration.zero
+                : const Duration(milliseconds: 150));
+
   static final List<FavoritePropertyModel> _favoritesStore = [
     FavoritePropertyModel(
       id: 'fav-3',
@@ -29,7 +41,9 @@ class MockRealEstateFavoritesRepository
 
   @override
   Future<List<FavoritePropertyModel>> getFavorites({String? userId}) async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    if (simulatedDelay > Duration.zero) {
+      await Future.delayed(simulatedDelay);
+    }
     final currentUserId = userId ?? 'user-1';
     return _favoritesStore
         .where((item) => item.userId == currentUserId)
@@ -49,7 +63,9 @@ class MockRealEstateFavoritesRepository
     RealEstateListingModel property, {
     String? userId,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 150));
+    if (simulatedDelay > Duration.zero) {
+      await Future.delayed(simulatedDelay);
+    }
     final currentUserId = userId ?? 'user-1';
 
     final existingIndex = _favoritesStore.indexWhere(
@@ -73,7 +89,9 @@ class MockRealEstateFavoritesRepository
 
   @override
   Future<bool> removeFavorite(String propertyId, {String? userId}) async {
-    await Future.delayed(const Duration(milliseconds: 150));
+    if (simulatedDelay > Duration.zero) {
+      await Future.delayed(simulatedDelay);
+    }
     final currentUserId = userId ?? 'user-1';
 
     _favoritesStore.removeWhere(

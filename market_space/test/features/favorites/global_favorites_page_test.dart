@@ -48,7 +48,7 @@ void main() {
     testWidgets('GlobalFavoritesPage renders header, filters and favorite items', (tester) async {
       final repo = UnifiedFavoritesRepositoryImpl();
       final controller = UnifiedFavoritesController(repository: repo);
-      await controller.loadFavorites();
+      await tester.runAsync(() => controller.loadFavorites());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -60,8 +60,8 @@ void main() {
 
       expect(find.text('المفضلة'), findsWidgets);
       expect(find.text('الكل'), findsWidgets);
-      expect(find.text('عقارات'), findsWidgets);
-      expect(find.text('مواد بناء'), findsWidgets);
+      expect(find.text('العقارات'), findsWidgets);
+      expect(find.text('مواد البناء'), findsWidgets);
     });
   });
 }

@@ -41,6 +41,12 @@ import '../features/real_estate/presentation/pages/real_estate_page.dart';
 import '../features/real_estate/reels/presentation/pages/reel_analytics_page.dart';
 import '../features/real_estate/reels/presentation/pages/reel_publish_page.dart';
 import '../features/real_estate/reels/presentation/pages/reels_page.dart';
+import '../features/cars/presentation/pages/cars_page.dart';
+import '../features/cars/presentation/pages/car_detail_page.dart';
+import '../features/fashion/presentation/pages/fashion_page.dart';
+import '../features/fashion/presentation/pages/fashion_product_detail_page.dart';
+import '../features/fashion/presentation/pages/fashion_cart_page.dart';
+import '../features/fashion/presentation/pages/fashion_categories_page.dart';
 import '../shared/widgets/app_error_view.dart';
 import 'app_dependencies.dart';
 import 'app_localization.dart';
@@ -390,6 +396,82 @@ class AppRouter {
           name: RouteNames.buildingMaterialsRfqName,
           builder: (context, state) {
             return const RfqCreatePage();
+          },
+        ),
+        GoRoute(
+          path: RouteNames.cars,
+          name: RouteNames.carsName,
+          builder: (context, state) {
+            final dependencies = AppDependencies.of(context);
+            return CarsPage(controller: dependencies.carsController);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.carsDetail,
+          name: RouteNames.carsDetailName,
+          builder: (context, state) {
+            final dependencies = AppDependencies.of(context);
+            final carId = state.uri.queryParameters['id'] ?? 'car-01';
+            return CarDetailPage(
+              carId: carId,
+              repository: dependencies.carsRepository,
+            );
+          },
+        ),
+        GoRoute(
+          path: RouteNames.carsBrowse,
+          name: RouteNames.carsBrowseName,
+          builder: (context, state) {
+            final dependencies = AppDependencies.of(context);
+            return CarsPage(controller: dependencies.carsController);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.fashion,
+          name: RouteNames.fashionName,
+          builder: (context, state) {
+            final dependencies = AppDependencies.of(context);
+            return FashionPage(
+              controller: dependencies.fashionController,
+              cartController: dependencies.fashionCartController,
+            );
+          },
+        ),
+        GoRoute(
+          path: RouteNames.fashionDetail,
+          name: RouteNames.fashionDetailName,
+          builder: (context, state) {
+            final dependencies = AppDependencies.of(context);
+            final productId = state.uri.queryParameters['id'] ?? 'f-m01';
+            return FutureBuilder(
+              future: dependencies.fashionRepository.getProductById(productId),
+              builder: (ctx, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Scaffold(body: Center(child: CircularProgressIndicator()));
+                }
+                return FashionProductDetailPage(
+                  product: snapshot.data!,
+                  repository: dependencies.fashionRepository,
+                  cartController: dependencies.fashionCartController,
+                );
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: RouteNames.fashionCart,
+          name: RouteNames.fashionCartName,
+          builder: (context, state) {
+            final dependencies = AppDependencies.of(context);
+            return FashionCartPage(cartController: dependencies.fashionCartController);
+          },
+        ),
+        GoRoute(
+          path: RouteNames.fashionCategories,
+          name: RouteNames.fashionCategoriesName,
+          builder: (context, state) {
+            final dependencies = AppDependencies.of(context);
+            return FashionCategoriesPage(controller: dependencies.fashionController);
           },
         ),
       ],

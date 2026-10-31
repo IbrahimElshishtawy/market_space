@@ -69,12 +69,10 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
-        body: SafeArea(
-          bottom: false,
+    return Scaffold(
+      backgroundColor: AppColors.lightBackground,
+      body: SafeArea(
+        bottom: false,
           child: ValueListenableBuilder<UnifiedFavoritesState>(
             valueListenable: _controller,
             builder: (context, state, _) {
@@ -115,8 +113,8 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                       horizontal: 10.0,
                                       vertical: 4.0,
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary.withValues(alpha: 0.1),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
                                       borderRadius: AppRadii.full,
                                     ),
                                     child: Text(
@@ -124,7 +122,7 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                       style: const TextStyle(
                                         fontSize: 11.5,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.primary,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
@@ -135,7 +133,7 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                               'جميع العقارات، المواد، الخدمات والأجهزة التي قمت بحفظها',
                               style: TextStyle(
                                 fontSize: 12.5,
-                                color: AppColors.lightTextSecondary,
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -179,12 +177,12 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                     ),
                                   ],
                                 ),
-                                backgroundColor: Colors.white,
+                                backgroundColor: AppColors.surfaceSecondary,
                                 selectedColor: AppColors.primary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: AppRadii.full,
                                   side: BorderSide(
-                                    color: isSelected ? AppColors.primary : const Color(0x1A000000),
+                                    color: isSelected ? AppColors.primary : AppColors.border,
                                   ),
                                 ),
                                 onSelected: (_) => _controller.setSectorFilter(sector),
@@ -243,8 +241,7 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
             },
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildFavoriteCard(BuildContext context, UnifiedFavoriteItem item) {
@@ -253,7 +250,7 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0x14000000)),
+        border: Border.all(color: AppColors.border),
         boxShadow: const [
           BoxShadow(
             color: Color(0x06000000),
@@ -306,7 +303,7 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                 style: const TextStyle(
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.neutral,
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ),
@@ -314,7 +311,7 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                             IconButton(
                               icon: const Icon(
                                 Icons.favorite_rounded,
-                                color: Colors.red,
+                                color: AppColors.primary,
                                 size: 22.0,
                               ),
                               constraints: const BoxConstraints(),
@@ -341,8 +338,8 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 11.5,
-                            color: AppColors.lightTextSecondary,
+                            fontSize: 12.0,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 6.0),
@@ -352,9 +349,9 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                             Text(
                               item.formattedPrice,
                               style: const TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w900,
+                                color: AppColors.textPrimary,
                               ),
                             ),
                             if (item.rating != null)
@@ -363,7 +360,7 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                   const Icon(
                                     Icons.star_rounded,
                                     size: 14.0,
-                                    color: Colors.amber,
+                                    color: AppColors.textPrimary,
                                   ),
                                   const SizedBox(width: 2.0),
                                   Text(

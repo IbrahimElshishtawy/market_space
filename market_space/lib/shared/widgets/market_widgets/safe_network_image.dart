@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../app_network_image.dart';
 
-/// Renders a network image with a smooth shimmer-like loading placeholder and a clean fallback icon.
+/// Legacy SafeNetworkImage component, now fully powered by the unified
+/// professional [AppNetworkImage] system.
 class SafeNetworkImage extends StatelessWidget {
   final String imageUrl;
   final double? width;
@@ -10,6 +11,8 @@ class SafeNetworkImage extends StatelessWidget {
   final BoxFit fit;
   final BorderRadius? borderRadius;
   final IconData fallbackIcon;
+  final Widget? placeholder;
+  final Widget? errorWidget;
 
   const SafeNetworkImage({
     super.key,
@@ -18,58 +21,22 @@ class SafeNetworkImage extends StatelessWidget {
     this.height,
     this.fit = BoxFit.cover,
     this.borderRadius,
-    this.fallbackIcon = Icons.image_rounded,
+    this.fallbackIcon = Icons.image_outlined,
+    this.placeholder,
+    this.errorWidget,
   });
 
   @override
   Widget build(BuildContext context) {
-    final imageWidget = Image.network(
-      imageUrl,
+    return AppNetworkImage(
+      imageUrl: imageUrl,
       width: width,
       height: height,
       fit: fit,
-      errorBuilder: (context, error, stackTrace) {
-        return _buildFallback();
-      },
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return _buildLoading();
-      },
-    );
-
-    if (borderRadius != null) {
-      return ClipRRect(borderRadius: borderRadius!, child: imageWidget);
-    }
-
-    return imageWidget;
-  }
-
-  Widget _buildLoading() {
-    return Container(
-      width: width,
-      height: height,
-      color: AppColors.lightBorder.withValues(alpha: 0.5),
-      child: const Center(
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.0,
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFallback() {
-    return Container(
-      width: width,
-      height: height,
-      color: const Color(0xFFF1F5F9),
-      child: Center(
-        child: Icon(fallbackIcon, size: 32, color: AppColors.lightTextMuted),
-      ),
+      borderRadius: borderRadius,
+      fallbackIcon: fallbackIcon,
+      placeholder: placeholder,
+      errorWidget: errorWidget,
     );
   }
 }

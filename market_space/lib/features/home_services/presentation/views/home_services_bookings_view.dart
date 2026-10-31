@@ -5,6 +5,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/home_service_booking_model.dart';
 import '../controllers/home_services_booking_controller.dart';
 
@@ -195,18 +196,13 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                 children: [
                   ClipRRect(
                     borderRadius: AppRadii.md,
-                    child: Image.network(
-                      booking.serviceImageUrl ??
+                    child: AppNetworkImage(
+                      imageUrl: booking.serviceImageUrl ??
                           'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=300',
                       width: 60.0,
                       height: 60.0,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => Container(
-                        width: 60.0,
-                        height: 60.0,
-                        color: Colors.grey.shade200,
-                        child: const Icon(Icons.handyman_rounded, color: Colors.grey),
-                      ),
+                      fallbackIcon: Icons.handyman_rounded,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),

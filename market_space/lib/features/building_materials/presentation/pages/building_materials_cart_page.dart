@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_empty_state.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/building_material_cart_model.dart';
 import '../controllers/building_materials_cart_controller.dart';
 import '../../navigation/building_materials_navigation_config.dart';
@@ -331,20 +332,13 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
+              AppNetworkImage(
+                imageUrl: item.product.primaryImageUrl,
+                width: 70,
+                height: 70,
                 borderRadius: AppRadii.md,
-                child: Image.network(
-                  item.product.primaryImageUrl,
-                  width: 70,
-                  height: 70,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 70,
-                    height: 70,
-                    color: AppColors.slate200,
-                    child: const Icon(Icons.broken_image, size: 24),
-                  ),
-                ),
+                fit: BoxFit.cover,
+                fallbackIcon: Icons.broken_image,
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(

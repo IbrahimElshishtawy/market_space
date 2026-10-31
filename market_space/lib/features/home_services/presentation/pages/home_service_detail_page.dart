@@ -5,6 +5,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/home_service_model.dart';
 
 class HomeServiceDetailPage extends StatelessWidget {
@@ -67,15 +68,12 @@ class HomeServiceDetailPage extends StatelessWidget {
                     background: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.network(
-                          service.images.isNotEmpty
+                        AppNetworkImage(
+                          imageUrl: service.images.isNotEmpty
                               ? service.images.first
                               : 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=600',
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => Container(
-                            color: Colors.grey.shade300,
-                            child: const Icon(Icons.handyman_rounded, size: 64, color: Colors.grey),
-                          ),
+                          fallbackIcon: Icons.handyman_rounded,
                         ),
                         Container(
                           decoration: BoxDecoration(

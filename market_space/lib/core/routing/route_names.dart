@@ -33,6 +33,14 @@ class RouteNames {
   static const String homeServicesBookingDetail = '/home-services/booking-detail';
   static const String homeServicesTechnicianTracking = '/home-services/tracking';
 
+  static const String cars = '/cars';
+  static const String carsDetail = '/cars/detail';
+  static const String carsBrowse = '/cars/browse';
+  static const String fashion = '/fashion';
+  static const String fashionDetail = '/fashion/detail';
+  static const String fashionCart = '/fashion/cart';
+  static const String fashionCategories = '/fashion/categories';
+
   static const String explore = '/explore';
   static const String myActivity = '/my-activity';
   static const String favorites = '/favorites';
@@ -74,6 +82,13 @@ class RouteNames {
   static const String homeServicesBookingWizardName = 'home_services_booking_wizard';
   static const String homeServicesBookingDetailName = 'home_services_booking_detail';
   static const String homeServicesTechnicianTrackingName = 'home_services_technician_tracking';
+  static const String carsName = 'cars';
+  static const String carsDetailName = 'cars_detail';
+  static const String carsBrowseName = 'cars_browse';
+  static const String fashionName = 'fashion';
+  static const String fashionDetailName = 'fashion_detail';
+  static const String fashionCartName = 'fashion_cart';
+  static const String fashionCategoriesName = 'fashion_categories';
   static const String exploreName = 'explore';
   static const String myActivityName = 'my_activity';
   static const String favoritesName = 'favorites';

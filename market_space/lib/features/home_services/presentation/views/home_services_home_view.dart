@@ -5,6 +5,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 import '../../data/models/home_service_booking_model.dart';
 import '../../data/models/home_service_model.dart';
 import '../../data/models/service_provider_model.dart';
@@ -524,18 +525,14 @@ class HomeServicesHomeView extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12.0)),
-                child: Image.network(
-                  service.images.isNotEmpty
+                child: AppNetworkImage(
+                  imageUrl: service.images.isNotEmpty
                       ? service.images.first
                       : 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400',
                   height: 110.0,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
-                    height: 110.0,
-                    color: Colors.grey.shade200,
-                    child: const Icon(Icons.handyman_rounded, color: Colors.grey),
-                  ),
+                  fallbackIcon: Icons.handyman_rounded,
                 ),
               ),
               Positioned(
@@ -656,17 +653,12 @@ class HomeServicesHomeView extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: AppRadii.md,
-                child: Image.network(
-                  provider.logoUrl,
+                child: AppNetworkImage(
+                  imageUrl: provider.logoUrl,
                   width: 44.0,
                   height: 44.0,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
-                    width: 44.0,
-                    height: 44.0,
-                    color: Colors.grey.shade200,
-                    child: const Icon(Icons.business_rounded, color: Colors.grey),
-                  ),
+                  fallbackIcon: Icons.business_rounded,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),

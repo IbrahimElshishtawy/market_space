@@ -5,6 +5,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 
 class HomeServicesFavoritesView extends StatefulWidget {
   final VoidCallback onExploreServicesTap;
@@ -64,7 +65,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                                 : null,
                           ),
                           child: Text(
-                            'الخدمات المحفوظة (${services.length})',
+                            'الخدمات المحفوظة',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13.0,
@@ -94,7 +95,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                                 : null,
                           ),
                           child: Text(
-                            'مقدمو الخدمة (${providers.length})',
+                            'مزودو الخدمة',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13.0,
@@ -135,17 +136,12 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                               ),
                               leading: ClipRRect(
                                 borderRadius: AppRadii.md,
-                                child: Image.network(
-                                  s.images.isNotEmpty ? s.images.first : '',
+                                child: AppNetworkImage(
+                                  imageUrl: s.images.isNotEmpty ? s.images.first : '',
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, _, _) => Container(
-                                    width: 50,
-                                    height: 50,
-                                    color: Colors.grey.shade200,
-                                    child: const Icon(Icons.handyman_rounded),
-                                  ),
+                                  fallbackIcon: Icons.handyman_rounded,
                                 ),
                               ),
                               title: Text(
@@ -203,17 +199,12 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                               ),
                               leading: ClipRRect(
                                 borderRadius: AppRadii.md,
-                                child: Image.network(
-                                  p.logoUrl,
+                                child: AppNetworkImage(
+                                  imageUrl: p.logoUrl,
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, _, _) => Container(
-                                    width: 50,
-                                    height: 50,
-                                    color: Colors.grey.shade200,
-                                    child: const Icon(Icons.business_rounded),
-                                  ),
+                                  fallbackIcon: Icons.business_rounded,
                                 ),
                               ),
                               title: Text(

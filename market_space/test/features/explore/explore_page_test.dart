@@ -12,7 +12,7 @@ void main() {
       final controller = ExploreController(repository: repo);
       await Future.delayed(const Duration(milliseconds: 50));
 
-      expect(controller.value.categories.length, equals(4));
+      expect(controller.value.categories.length, equals(6));
       expect(controller.value.mostRequested.isNotEmpty, isTrue);
       expect(controller.value.currentOffers.isNotEmpty, isTrue);
       expect(controller.value.latestAdditions.isNotEmpty, isTrue);
@@ -44,13 +44,15 @@ void main() {
     testWidgets('ExplorePage renders search bar, sector filter chips, and categories', (tester) async {
       final repo = ExploreRepositoryImpl();
       final controller = ExploreController(repository: repo);
+      await tester.runAsync(() => controller.loadInitialData());
 
       await tester.pumpWidget(
         MaterialApp(
           home: ExplorePage(controller: controller),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('استكشف المنصة'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
@@ -59,6 +61,8 @@ void main() {
       expect(find.text('مواد البناء'), findsWidgets);
       expect(find.text('الخدمات المنزلية'), findsWidgets);
       expect(find.text('الأجهزة المنزلية'), findsWidgets);
+      expect(find.text('السيارات'), findsWidgets);
+      expect(find.text('الملابس والأزياء'), findsWidgets);
     });
   });
 }

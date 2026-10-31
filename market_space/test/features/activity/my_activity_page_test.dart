@@ -7,10 +7,10 @@ import 'package:market_space/features/activity/presentation/pages/my_activity_pa
 
 void main() {
   group('My Activity Controller & Page Tests', () {
-    test('UnifiedActivityController aggregates activities across all 4 sectors', () async {
+    test('UnifiedActivityController aggregates activities across all 6 sectors', () async {
       final repo = UnifiedActivityRepositoryImpl();
       final controller = UnifiedActivityController(repository: repo);
-      await Future.delayed(const Duration(milliseconds: 50));
+      await controller.loadActivities();
 
       expect(controller.value.activities.isNotEmpty, isTrue);
 
@@ -18,12 +18,14 @@ void main() {
       final sectors = controller.value.activities.map((a) => a.sectorId).toSet();
       expect(sectors.contains('services'), isTrue);
       expect(sectors.contains('real_estate'), isTrue);
+      expect(sectors.contains('cars'), isTrue);
+      expect(sectors.contains('fashion'), isTrue);
     });
 
     test('UnifiedActivityController filters by status and sector', () async {
       final repo = UnifiedActivityRepositoryImpl();
       final controller = UnifiedActivityController(repository: repo);
-      await Future.delayed(const Duration(milliseconds: 50));
+      await controller.loadActivities();
 
       // Filter by active status
       await controller.setStatusFilter(ActivityStatusGroup.active);

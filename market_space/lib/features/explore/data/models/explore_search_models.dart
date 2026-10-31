@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 enum SectorType {
   all('all', 'الكل', Icons.apps_rounded),
   realEstate('real_estate', 'العقارات', Icons.business_rounded),
+  cars('cars', 'السيارات', Icons.directions_car_rounded),
+  fashion('fashion', 'الملابس والأزياء', Icons.checkroom_rounded),
   buildingMaterials('building_materials', 'مواد البناء', Icons.foundation_rounded),
   services('services', 'الخدمات المنزلية', Icons.build_rounded),
   homeAppliances('home_appliances', 'الأجهزة المنزلية', Icons.kitchen_rounded);

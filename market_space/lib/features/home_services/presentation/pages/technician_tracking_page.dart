@@ -7,6 +7,7 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/app_network_image.dart';
 
 class TechnicianTrackingPage extends StatefulWidget {
   final String bookingId;
@@ -209,12 +210,14 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: 26.0,
-                          backgroundImage: NetworkImage(
-                            booking.technicianAvatar ??
-                                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                          ),
+                        AppNetworkImage(
+                          imageUrl: booking.technicianAvatar ??
+                              'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+                          width: 52.0,
+                          height: 52.0,
+                          shape: BoxShape.circle,
+                          fit: BoxFit.cover,
+                          fallbackIcon: Icons.person_rounded,
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
