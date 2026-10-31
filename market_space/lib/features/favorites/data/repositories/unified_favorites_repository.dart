@@ -1,5 +1,7 @@
+import 'package:market_space/features/real_estate/favorites/data/repositories/real_estate_favorites_repository.dart';
+
 import '../../../../core/routing/route_names.dart';
-import '../../real_estate/favorites/data/repositories/real_estate_favorites_repository.dart';
+
 import '../models/unified_favorite_item_model.dart';
 
 abstract class UnifiedFavoritesRepository {
@@ -16,8 +18,10 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
   final RealEstateFavoritesRepository realEstateFavoritesRepo;
   final List<UnifiedFavoriteItem> _inMemoryFavorites = [];
 
-  UnifiedFavoritesRepositoryImpl({RealEstateFavoritesRepository? realEstateRepo})
-      : realEstateFavoritesRepo = realEstateRepo ?? MockRealEstateFavoritesRepository() {
+  UnifiedFavoritesRepositoryImpl({
+    RealEstateFavoritesRepository? realEstateRepo,
+  }) : realEstateFavoritesRepo =
+           realEstateRepo ?? MockRealEstateFavoritesRepository() {
     _initMockFavorites();
   }
 
@@ -31,7 +35,8 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
         sectorName: 'مواد البناء',
         title: 'حديد عز تسليح 12 مم',
         subtitle: 'المورد: شركة الدلتا لتجارة المعادن',
-        imageUrl: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd',
+        imageUrl:
+            'https://images.unsplash.com/photo-1504307651254-35680f356dfd',
         price: 39500,
         priceUnit: 'ج.م/طن',
         rating: 4.9,
@@ -45,7 +50,8 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
         sectorName: 'مواد البناء',
         title: 'أسمنت السويدي البورتلاندي 42.5N',
         subtitle: 'أعلى مقاومة للخرسانة المسلحة',
-        imageUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3',
+        imageUrl:
+            'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3',
         price: 2750,
         priceUnit: 'ج.م/طن',
         rating: 4.8,
@@ -61,7 +67,8 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
         sectorName: 'الخدمات المنزلية',
         title: 'صيانة دورية وغسيل تكييفات',
         subtitle: 'مهندسون معتمدون وقطع غيار أصلية',
-        imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e',
+        imageUrl:
+            'https://images.unsplash.com/photo-1621905251189-08b45d6a269e',
         price: 350,
         rating: 4.9,
         deepLinkRoute: RouteNames.acServiceDetail,
@@ -74,7 +81,8 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
         sectorName: 'الخدمات المنزلية',
         title: 'كشف تسريبات وصيانة شبكة مياه',
         subtitle: 'أحدث أجهزة الكشف الإلكتروني دون تكسير',
-        imageUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
+        imageUrl:
+            'https://images.unsplash.com/photo-1581578731548-c64695cc6952',
         price: 250,
         rating: 4.8,
         deepLinkRoute: RouteNames.homeServices,
@@ -89,7 +97,8 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
         sectorName: 'الأجهزة المنزلية',
         title: 'شاشة سامسونج 55 بوصة 4K UHD',
         subtitle: 'ضمان سنتين من الوكيل المعتمد',
-        imageUrl: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1',
+        imageUrl:
+            'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1',
         price: 18999,
         rating: 4.7,
         deepLinkRoute: RouteNames.homeAppliances,
@@ -102,7 +111,8 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
         sectorName: 'الأجهزة المنزلية',
         title: 'تكييف شارب 1.5 حصان بارد/ساخن',
         subtitle: 'إنفرتر موفر للكهرباء وبلازما كلاستر',
-        imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e',
+        imageUrl:
+            'https://images.unsplash.com/photo-1621905251189-08b45d6a269e',
         price: 28500,
         rating: 4.9,
         deepLinkRoute: RouteNames.homeAppliances,
@@ -130,9 +140,10 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
               sectorId: 'real_estate',
               sectorName: 'العقارات',
               title: ref.property.title,
-              subtitle: '${ref.property.location} • ${ref.property.specsSummary}',
+              subtitle:
+                  '${ref.property.location} • ${ref.property.areaM2} م²',
               imageUrl: ref.property.imageUrl,
-              price: ref.property.price,
+              customPriceFormatted: ref.property.priceFormatted,
               rating: 4.9,
               deepLinkRoute: RouteNames.realEstateDetail,
               canAddToCart: false,
@@ -151,7 +162,8 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
     if (searchQuery != null && searchQuery.trim().isNotEmpty) {
       final q = searchQuery.trim().toLowerCase();
       filtered = filtered.where((e) {
-        return e.title.toLowerCase().contains(q) || e.subtitle.toLowerCase().contains(q);
+        return e.title.toLowerCase().contains(q) ||
+            e.subtitle.toLowerCase().contains(q);
       }).toList();
     }
 

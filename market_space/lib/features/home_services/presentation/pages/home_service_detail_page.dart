@@ -6,7 +6,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../data/models/home_service_model.dart';
-import '../controllers/home_services_favorites_controller.dart';
 
 class HomeServiceDetailPage extends StatelessWidget {
   final String serviceId;
@@ -73,7 +72,7 @@ class HomeServiceDetailPage extends StatelessWidget {
                               ? service.images.first
                               : 'https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=600',
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
+                          errorBuilder: (_, _, _) => Container(
                             color: Colors.grey.shade300,
                             child: const Icon(Icons.handyman_rounded, size: 64, color: Colors.grey),
                           ),

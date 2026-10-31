@@ -33,10 +33,10 @@ abstract class HomeServicesRepository {
 }
 
 class HomeServicesRepositoryImpl implements HomeServicesRepository {
-  List<HomeServiceCategoryModel> _categories = MockHomeServicesData.categories;
-  List<HomeServiceModel> _services = MockHomeServicesData.services;
-  List<ServiceProviderModel> _providers = MockHomeServicesData.providers;
-  List<TechnicianModel> _technicians = MockHomeServicesData.technicians;
+  final List<HomeServiceCategoryModel> _categories = MockHomeServicesData.categories;
+  final List<HomeServiceModel> _services = MockHomeServicesData.services;
+  final List<ServiceProviderModel> _providers = MockHomeServicesData.providers;
+  final List<TechnicianModel> _technicians = MockHomeServicesData.technicians;
 
   @override
   Future<List<HomeServiceCategoryModel>> getCategories() async {

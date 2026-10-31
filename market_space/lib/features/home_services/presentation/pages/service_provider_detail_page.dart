@@ -5,7 +5,6 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../controllers/home_services_favorites_controller.dart';
 
 class ServiceProviderDetailPage extends StatelessWidget {
   final String providerId;
@@ -81,7 +80,7 @@ class ServiceProviderDetailPage extends StatelessWidget {
                                 width: 70.0,
                                 height: 70.0,
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
+                                errorBuilder: (_, _, _) => Container(
                                   width: 70.0,
                                   height: 70.0,
                                   color: Colors.grey.shade200,
@@ -233,7 +232,7 @@ class ServiceProviderDetailPage extends StatelessWidget {
                             width: 50,
                             height: 50,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.handyman_rounded),
+                            errorBuilder: (_, _, _) => const Icon(Icons.handyman_rounded),
                           ),
                         ),
                         title: Text(

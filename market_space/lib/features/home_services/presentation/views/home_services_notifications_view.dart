@@ -142,7 +142,7 @@ class _HomeServicesNotificationsViewState
                   ),
                   physics: const BouncingScrollPhysics(),
                   itemCount: filtered.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+                  separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     final item = filtered[index];
                     return _buildNotificationCard(item);

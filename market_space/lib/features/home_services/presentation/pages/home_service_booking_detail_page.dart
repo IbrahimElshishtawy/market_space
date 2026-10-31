@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,10 +14,7 @@ import '../controllers/home_services_booking_controller.dart';
 class HomeServiceBookingDetailPage extends StatelessWidget {
   final String bookingId;
 
-  const HomeServiceBookingDetailPage({
-    super.key,
-    required this.bookingId,
-  });
+  const HomeServiceBookingDetailPage({super.key, required this.bookingId});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +45,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                 ),
               ),
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_rounded, color: AppColors.neutral),
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: AppColors.neutral,
+                ),
                 onPressed: () => context.pop(),
               ),
             ),
@@ -98,20 +100,29 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusCard(BuildContext context, HomeServiceBookingModel booking) {
+  Widget _buildStatusCard(
+    BuildContext context,
+    HomeServiceBookingModel booking,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: booking.status.statusColor.withValues(alpha: 0.08),
         borderRadius: AppRadii.lg,
-        border: Border.all(color: booking.status.statusColor.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: booking.status.statusColor.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [
           CircleAvatar(
             backgroundColor: booking.status.statusColor,
             radius: 20.0,
-            child: const Icon(Icons.info_outline_rounded, color: Colors.white, size: 22.0),
+            child: const Icon(
+              Icons.info_outline_rounded,
+              color: Colors.white,
+              size: 22.0,
+            ),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
@@ -131,7 +142,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   booking.cancellationReason != null
                       ? 'تم الإلغاء: ${booking.cancellationReason}'
                       : 'تاريخ الإنشاء: ${booking.createdAt.day}/${booking.createdAt.month}/${booking.createdAt.year}',
-                  style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                    color: AppColors.lightTextSecondary,
+                  ),
                 ),
               ],
             ),
@@ -141,7 +155,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceCard(BuildContext context, HomeServiceBookingModel booking) {
+  Widget _buildServiceCard(
+    BuildContext context,
+    HomeServiceBookingModel booking,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -152,7 +169,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('الخدمة ومقدم الصيانة', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold)),
+          const Text(
+            'الخدمة ومقدم الصيانة',
+            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+          ),
           const Divider(height: 16.0),
           Row(
             children: [
@@ -163,7 +183,8 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   width: 55,
                   height: 55,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(Icons.handyman_rounded, size: 40),
+                  errorBuilder: (_, _, _) =>
+                      const Icon(Icons.handyman_rounded, size: 40),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -173,12 +194,18 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   children: [
                     Text(
                       booking.serviceTitle,
-                      style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 2.0),
                     Text(
                       booking.providerName ?? 'الشركة الهندسية للصيانة',
-                      style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                        color: AppColors.lightTextSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -190,7 +217,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTechnicianCard(BuildContext context, HomeServiceBookingModel booking) {
+  Widget _buildTechnicianCard(
+    BuildContext context,
+    HomeServiceBookingModel booking,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -204,16 +234,25 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('الفني المسؤول', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold)),
+              const Text(
+                'الفني المسؤول',
+                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+              ),
               if (booking.status == BookingStatus.technicianOnTheWay ||
                   booking.status == BookingStatus.technicianAssigned)
                 OutlinedButton.icon(
                   icon: const Icon(Icons.location_on_rounded, size: 14.0),
-                  label: const Text('تتبع موقعه', style: TextStyle(fontSize: 12.0)),
+                  label: const Text(
+                    'تتبع موقعه',
+                    style: TextStyle(fontSize: 12.0),
+                  ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primary),
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 4.0,
+                    ),
                     minimumSize: const Size(60, 30),
                   ),
                   onPressed: () {
@@ -228,8 +267,7 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
               CircleAvatar(
                 radius: 24.0,
                 backgroundImage: NetworkImage(
-                  booking.technicianAvatar ??
-                      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+                  booking.technicianAvatar ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -239,22 +277,36 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   children: [
                     Text(
                       booking.technicianName!,
-                      style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 2.0),
                     const Text(
                       'فني معتمد • تم التحقق من الهوية والصحيفة الجنائية',
-                      style: TextStyle(fontSize: 11.0, color: Colors.green, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 11.0,
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.phone_in_talk_rounded, color: AppColors.primary),
+                icon: const Icon(
+                  Icons.phone_in_talk_rounded,
+                  color: AppColors.primary,
+                ),
                 tooltip: 'اتصال بالفني',
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('جارٍ الاتصال بالفني: ${booking.technicianPhone ?? "01012345678"}')),
+                    SnackBar(
+                      content: Text(
+                        'جارٍ الاتصال بالفني: ${booking.technicianPhone ?? "01012345678"}',
+                      ),
+                    ),
                   );
                 },
               ),
@@ -265,7 +317,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAppointmentAndAddressCard(BuildContext context, HomeServiceBookingModel booking) {
+  Widget _buildAppointmentAndAddressCard(
+    BuildContext context,
+    HomeServiceBookingModel booking,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -276,15 +331,25 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('الموعد والعنوان', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold)),
+          const Text(
+            'الموعد والعنوان',
+            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+          ),
           const Divider(height: 16.0),
           Row(
             children: [
-              const Icon(Icons.calendar_month_rounded, size: 20.0, color: AppColors.primary),
+              const Icon(
+                Icons.calendar_month_rounded,
+                size: 20.0,
+                color: AppColors.primary,
+              ),
               const SizedBox(width: AppSpacing.xs),
               Text(
                 '${booking.scheduledDate.year}/${booking.scheduledDate.month}/${booking.scheduledDate.day} — ${booking.scheduledTimeSlot}',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.0),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13.0,
+                ),
               ),
             ],
           ),
@@ -292,7 +357,11 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.location_on_rounded, size: 20.0, color: AppColors.primary),
+              const Icon(
+                Icons.location_on_rounded,
+                size: 20.0,
+                color: AppColors.primary,
+              ),
               const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: Text(
@@ -306,7 +375,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
             const SizedBox(height: 6.0),
             Text(
               'ملاحظات الوصول: ${booking.address.specialInstructions}',
-              style: const TextStyle(fontSize: 11.0, color: AppColors.lightTextSecondary),
+              style: const TextStyle(
+                fontSize: 11.0,
+                color: AppColors.lightTextSecondary,
+              ),
             ),
           ],
         ],
@@ -314,7 +386,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProblemDescriptionCard(BuildContext context, HomeServiceBookingModel booking) {
+  Widget _buildProblemDescriptionCard(
+    BuildContext context,
+    HomeServiceBookingModel booking,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -325,9 +400,15 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('تفاصيل المشكلة والطلب', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold)),
+          const Text(
+            'تفاصيل المشكلة والطلب',
+            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+          ),
           const Divider(height: 16.0),
-          Text(booking.problemDescription, style: const TextStyle(fontSize: 13.0, height: 1.4)),
+          Text(
+            booking.problemDescription,
+            style: const TextStyle(fontSize: 13.0, height: 1.4),
+          ),
           if (booking.problemImages.isNotEmpty) ...[
             const SizedBox(height: 10.0),
             Row(
@@ -337,7 +418,12 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 8.0),
                       child: ClipRRect(
                         borderRadius: AppRadii.md,
-                        child: Image.network(img, width: 60, height: 60, fit: BoxFit.cover),
+                        child: Image.network(
+                          img,
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   )
@@ -349,7 +435,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInvoiceCard(BuildContext context, HomeServiceBookingModel booking) {
+  Widget _buildInvoiceCard(
+    BuildContext context,
+    HomeServiceBookingModel booking,
+  ) {
     final p = booking.pricing;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -361,7 +450,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('الفاتورة والدفع', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold)),
+          const Text(
+            'الفاتورة والدفع',
+            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+          ),
           const Divider(height: 16.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -394,7 +486,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('خصم:', style: TextStyle(color: Colors.green)),
-                Text('-${p.discountAmount.toStringAsFixed(0)} ج.م', style: const TextStyle(color: Colors.green)),
+                Text(
+                  '-${p.discountAmount.toStringAsFixed(0)} ج.م',
+                  style: const TextStyle(color: Colors.green),
+                ),
               ],
             ),
           ],
@@ -402,10 +497,17 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('الإجمالي المستحق:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),
+              const Text(
+                'الإجمالي المستحق:',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
+              ),
               Text(
                 '${p.total.toStringAsFixed(0)} ج.م',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0, color: AppColors.primary),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                  color: AppColors.primary,
+                ),
               ),
             ],
           ),
@@ -414,7 +516,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTimelineCard(BuildContext context, HomeServiceBookingModel booking) {
+  Widget _buildTimelineCard(
+    BuildContext context,
+    HomeServiceBookingModel booking,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -425,7 +530,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('الخط الزمني للحجز', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold)),
+          const Text(
+            'الخط الزمني للحجز',
+            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+          ),
           const Divider(height: 16.0),
           ...booking.timeline.map((event) {
             return Padding(
@@ -452,18 +560,27 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                           children: [
                             Text(
                               event.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.0),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13.0,
+                              ),
                             ),
                             Text(
                               '${event.timestamp.hour}:${event.timestamp.minute.toString().padLeft(2, '0')}',
-                              style: const TextStyle(fontSize: 10.0, color: Colors.grey),
+                              style: const TextStyle(
+                                fontSize: 10.0,
+                                color: Colors.grey,
+                              ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 2.0),
                         Text(
                           event.description,
-                          style: const TextStyle(fontSize: 11.0, color: AppColors.lightTextSecondary),
+                          style: const TextStyle(
+                            fontSize: 11.0,
+                            color: AppColors.lightTextSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -496,7 +613,8 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                       side: const BorderSide(color: Colors.red),
                       padding: const EdgeInsets.symmetric(vertical: 12.0),
                     ),
-                    onPressed: () => _showCancelDialog(context, booking, bookingCtrl),
+                    onPressed: () =>
+                        _showCancelDialog(context, booking, bookingCtrl),
                     child: const Text('إلغاء الحجز'),
                   ),
                 ),
@@ -510,7 +628,8 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                       side: const BorderSide(color: AppColors.primary),
                       padding: const EdgeInsets.symmetric(vertical: 12.0),
                     ),
-                    onPressed: () => _showRescheduleDialog(context, booking, bookingCtrl),
+                    onPressed: () =>
+                        _showRescheduleDialog(context, booking, bookingCtrl),
                     child: const Text('تغيير الموعد'),
                   ),
                 ),
@@ -532,7 +651,8 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                 ),
-                onPressed: () => _showReviewDialog(context, booking, bookingCtrl),
+                onPressed: () =>
+                    _showReviewDialog(context, booking, bookingCtrl),
               ),
             ),
           const SizedBox(height: AppSpacing.xs),
@@ -542,9 +662,17 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: TextButton.icon(
-            icon: const Icon(Icons.report_problem_outlined, size: 16.0, color: Colors.grey),
-            label: const Text('تقديم شكوى أو طلب مساعدة', style: TextStyle(color: Colors.grey, fontSize: 13.0)),
-            onPressed: () => _showComplaintDialog(context, booking, bookingCtrl),
+            icon: const Icon(
+              Icons.report_problem_outlined,
+              size: 16.0,
+              color: Colors.grey,
+            ),
+            label: const Text(
+              'تقديم شكوى أو طلب مساعدة',
+              style: TextStyle(color: Colors.grey, fontSize: 13.0),
+            ),
+            onPressed: () =>
+                _showComplaintDialog(context, booking, bookingCtrl),
           ),
         ),
       ],
@@ -566,7 +694,9 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('هل أنت متأكد من رغبتك في إلغاء الحجز؟ يرجى توضيح السبب:'),
+              const Text(
+                'هل أنت متأكد من رغبتك في إلغاء الحجز؟ يرجى توضيح السبب:',
+              ),
               const SizedBox(height: 10.0),
               TextField(
                 controller: reasonCtrl,
@@ -575,7 +705,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('تراجع')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('تراجع'),
+            ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () async {
@@ -589,7 +722,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   const SnackBar(content: Text('تم إلغاء الحجز بنجاح.')),
                 );
               },
-              child: const Text('تأكيد الإلغاء', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'تأكيد الإلغاء',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -610,7 +746,11 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     );
 
     if (pickedDate != null && context.mounted) {
-      await bookingCtrl.rescheduleBooking(booking.id, pickedDate, '03:00 م - 05:00 م');
+      await bookingCtrl.rescheduleBooking(
+        booking.id,
+        pickedDate,
+        '03:00 م - 05:00 م',
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('تمت إعادة جدولة الموعد بنجاح.')),
       );
@@ -643,7 +783,9 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                     children: List.generate(5, (index) {
                       return IconButton(
                         icon: Icon(
-                          index < overallRating ? Icons.star_rounded : Icons.star_border_rounded,
+                          index < overallRating
+                              ? Icons.star_rounded
+                              : Icons.star_border_rounded,
                           color: Colors.amber,
                           size: 32.0,
                         ),
@@ -668,7 +810,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('إلغاء'),
+              ),
               ElevatedButton(
                 onPressed: () async {
                   Navigator.pop(ctx);
@@ -683,12 +828,16 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                     qualityRating: 5.0,
                     professionalismRating: 5.0,
                     valueForMoneyRating: 5.0,
-                    comment: commentCtrl.text.trim().isEmpty ? 'خدمة ممتازة وفني محترف' : commentCtrl.text.trim(),
+                    comment: commentCtrl.text.trim().isEmpty
+                        ? 'خدمة ممتازة وفني محترف'
+                        : commentCtrl.text.trim(),
                     createdAt: DateTime.now(),
                   );
                   await bookingCtrl.submitReview(review);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('شكراً لتقييمك! تم حفظ المراجعة بنجاح.')),
+                    const SnackBar(
+                      content: Text('شكراً لتقييمك! تم حفظ المراجعة بنجاح.'),
+                    ),
                   );
                 },
                 child: const Text('إرسال التقييم'),
@@ -720,7 +869,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('نوع المشكلة:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    'نوع المشكلة:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 6.0),
                   DropdownButton<ComplaintType>(
                     isExpanded: true,
@@ -729,7 +881,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                         .map(
                           (t) => DropdownMenuItem(
                             value: t,
-                            child: Text(t.labelAr, style: const TextStyle(fontSize: 13.0)),
+                            child: Text(
+                              t.labelAr,
+                              style: const TextStyle(fontSize: 13.0),
+                            ),
                           ),
                         )
                         .toList(),
@@ -742,7 +897,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 10.0),
-                  const Text('التفاصيل:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    'التفاصيل:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 6.0),
                   TextField(
                     controller: compDescCtrl,
@@ -756,7 +914,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('إلغاء'),
+              ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () async {
@@ -766,18 +927,25 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                     bookingId: booking.id,
                     customerId: booking.customerId,
                     type: selectedType,
-                    description: compDescCtrl.text.trim().isEmpty ? 'شكوى بخصوص الخدمة' : compDescCtrl.text.trim(),
+                    description: compDescCtrl.text.trim().isEmpty
+                        ? 'شكوى بخصوص الخدمة'
+                        : compDescCtrl.text.trim(),
                     status: ComplaintStatus.open,
                     createdAt: DateTime.now(),
                   );
                   await bookingCtrl.submitComplaint(complaint);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('تم فتح الشكوى برقم مرجعي: ${complaint.id}. سيتواصل معك الدعم الفني.'),
+                      content: Text(
+                        'تم فتح الشكوى برقم مرجعي: ${complaint.id}. سيتواصل معك الدعم الفني.',
+                      ),
                     ),
                   );
                 },
-                child: const Text('إرسال الشكوى', style: TextStyle(color: Colors.white)),
+                child: const Text(
+                  'إرسال الشكوى',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),

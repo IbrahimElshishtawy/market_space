@@ -10,7 +10,7 @@ import '../../../../shared/widgets/app_error_view.dart';
 import '../../../../shared/widgets/app_loading_indicator.dart';
 import '../../../../shared/widgets/market_widgets/safe_network_image.dart';
 import '../controllers/unified_favorites_controller.dart';
-import '../models/unified_favorite_item_model.dart';
+import '../../data/models/unified_favorite_item_model.dart';
 
 class GlobalFavoritesPage extends StatefulWidget {
   final UnifiedFavoritesController? controller;

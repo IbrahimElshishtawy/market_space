@@ -10,10 +10,9 @@ class HomeServicesFavoritesController extends ChangeNotifier {
   final HomeServicesRepository _servicesRepository;
 
   HomeServicesFavoritesController({
-    required HomeServicesFavoritesRepository favoritesRepository,
-    required HomeServicesRepository servicesRepository,
-  })  : _favoritesRepository = favoritesRepository,
-        _servicesRepository = servicesRepository {
+    required this._favoritesRepository,
+    required this._servicesRepository,
+  }) {
     loadFavorites();
   }
 

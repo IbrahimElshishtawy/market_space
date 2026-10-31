@@ -8,7 +8,7 @@ import '../../../../shared/widgets/app_error_view.dart';
 import '../../../../shared/widgets/app_loading_indicator.dart';
 import '../../../../shared/widgets/market_widgets/safe_network_image.dart';
 import '../controllers/profile_controller.dart';
-import '../models/user_profile_model.dart';
+import '../../data/models/user_profile_model.dart';
 
 class ProfilePage extends StatefulWidget {
   final ProfileController? controller;

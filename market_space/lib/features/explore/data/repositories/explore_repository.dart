@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../../../../core/routing/route_names.dart';
@@ -28,11 +29,16 @@ class ExploreRepositoryImpl implements ExploreRepository {
     if (preferencesService == null) {
       return ['تكييف', 'حديد عز', 'شقة للبيع بطنطا', 'صيانة غسالات'];
     }
-    final raw = preferencesService!.getStringList(_recentSearchesKey);
+    final raw = await preferencesService!.getString(_recentSearchesKey);
     if (raw == null || raw.isEmpty) {
       return ['تكييف', 'حديد عز', 'شقة للبيع بطنطا', 'صيانة غسالات'];
     }
-    return raw;
+    try {
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      return decoded.map((e) => e.toString()).toList();
+    } catch (_) {
+      return ['تكييف', 'حديد عز', 'شقة للبيع بطنطا', 'صيانة غسالات'];
+    }
   }
 
   @override
@@ -41,14 +47,14 @@ class ExploreRepositoryImpl implements ExploreRepository {
     if (clean.isEmpty) return;
     final current = await getRecentSearches();
     final updated = [clean, ...current.where((e) => e != clean)].take(8).toList();
-    await preferencesService?.setStringList(_recentSearchesKey, updated);
+    await preferencesService?.setString(_recentSearchesKey, jsonEncode(updated));
   }
 
   @override
   Future<void> removeRecentSearch(String query) async {
     final current = await getRecentSearches();
     final updated = current.where((e) => e != query).toList();
-    await preferencesService?.setStringList(_recentSearchesKey, updated);
+    await preferencesService?.setString(_recentSearchesKey, jsonEncode(updated));
   }
 
   @override

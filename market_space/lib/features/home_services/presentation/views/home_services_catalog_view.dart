@@ -101,7 +101,7 @@ class HomeServicesCatalogView extends StatelessWidget {
                       ),
                       physics: const BouncingScrollPhysics(),
                       itemCount: services.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+                      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
                       itemBuilder: (context, index) {
                         final service = services[index];
                         return _buildCatalogServiceCard(context, service, favCtrl);
@@ -184,7 +184,7 @@ class HomeServicesCatalogView extends StatelessWidget {
                       width: 90.0,
                       height: 90.0,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         width: 90.0,
                         height: 90.0,
                         color: Colors.grey.shade200,
@@ -474,7 +474,7 @@ class SliverCategoryFilterBar extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         itemCount: categories.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.xs),
+        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.xs),
         itemBuilder: (context, index) {
           if (index == 0) {
             final isAll = selectedCategoryId == null;

@@ -27,6 +27,7 @@ class UnifiedFavoriteItem {
   final double? rating;
   final bool isAvailable;
   final String deepLinkRoute;
+  final String? customPriceFormatted;
   final bool canAddToCart;
   final bool canBookService;
 
@@ -40,6 +41,7 @@ class UnifiedFavoriteItem {
     required this.imageUrl,
     this.price,
     this.priceUnit,
+    this.customPriceFormatted,
     this.rating,
     this.isAvailable = true,
     required this.deepLinkRoute,
@@ -48,6 +50,7 @@ class UnifiedFavoriteItem {
   });
 
   String get formattedPrice {
+    if (customPriceFormatted != null) return customPriceFormatted!;
     if (price == null) return 'حسب الطلب';
     final unit = priceUnit != null ? ' $priceUnit' : ' ج.م';
     return '${price!.toStringAsFixed(0)}$unit';

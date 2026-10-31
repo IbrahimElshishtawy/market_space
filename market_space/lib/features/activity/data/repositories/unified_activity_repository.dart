@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/routing/route_names.dart';
-import '../../building_materials/data/repositories/building_materials_order_repository.dart';
-import '../../home_appliances/orders/data/repositories/home_appliances_order_repository.dart';
+import '../../../building_materials/data/repositories/building_materials_order_repository.dart';
+import '../../../home_appliances/orders/data/repositories/home_appliances_order_repository.dart';
 import '../models/unified_activity_model.dart';
 
 abstract class UnifiedActivityRepository {
@@ -20,8 +20,8 @@ class UnifiedActivityRepositoryImpl implements UnifiedActivityRepository {
   UnifiedActivityRepositoryImpl({
     BuildingMaterialsOrderRepository? bmOrderRepo,
     HomeAppliancesOrderRepository? haOrderRepo,
-  })  : bmOrderRepo = bmOrderRepo ?? MockBuildingMaterialsOrderRepository(),
-        haOrderRepo = haOrderRepo ?? HomeAppliancesOrderRepositoryImpl();
+  })  : bmOrderRepo = bmOrderRepo ?? BuildingMaterialsOrderRepositoryImpl(),
+        haOrderRepo = haOrderRepo ?? MockHomeAppliancesOrderRepository();
 
   @override
   Future<List<UnifiedActivityItem>> getActivities({
@@ -61,9 +61,9 @@ class UnifiedActivityRepositoryImpl implements UnifiedActivityRepository {
             sectorName: 'مواد البناء',
             activityType: ActivityType.buildingMaterialSupply,
             title: itemSummary,
-            subtitle: 'المورد: ${o.supplier.name} • الموقع: ${o.deliverySite.projectName}',
+            subtitle: 'المورد: ${o.supplier.name} • الموقع: ${o.deliveryAddress}',
             imageUrl: o.items.isNotEmpty ? o.items.first.imageUrl : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd',
-            date: o.orderDate,
+            date: o.createdAt,
             statusGroup: statusGroup,
             statusLabel: o.status.label,
             statusColor: statusColor,
@@ -72,7 +72,7 @@ class UnifiedActivityRepositoryImpl implements UnifiedActivityRepository {
             deepLinkRoute: '${RouteNames.buildingMaterialsOrderDetail}?orderId=${o.id}',
             details: {
               'الشحنات': '${o.shipments.where((s) => s.status.code == 'delivered').length}/${o.shipments.length} شحنة مستلمة',
-              'طريقة الدفع': o.paymentMethod.label,
+              'طريقة الدفع': o.paymentMethod,
             },
           ),
         );

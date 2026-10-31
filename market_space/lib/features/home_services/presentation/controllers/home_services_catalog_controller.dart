@@ -7,8 +7,7 @@ import '../../data/repositories/home_services_repository.dart';
 class HomeServicesCatalogController extends ChangeNotifier {
   final HomeServicesRepository _repository;
 
-  HomeServicesCatalogController({required HomeServicesRepository repository})
-      : _repository = repository {
+  HomeServicesCatalogController({required this._repository}) {
     loadCatalog();
   }
 

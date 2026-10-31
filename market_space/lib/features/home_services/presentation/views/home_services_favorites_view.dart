@@ -5,7 +5,6 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../controllers/home_services_favorites_controller.dart';
 
 class HomeServicesFavoritesView extends StatefulWidget {
   final VoidCallback onExploreServicesTap;
@@ -125,7 +124,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                           ),
                           physics: const BouncingScrollPhysics(),
                           itemCount: services.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+                          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
                           itemBuilder: (context, index) {
                             final s = services[index];
                             return ListTile(
@@ -141,7 +140,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => Container(
+                                  errorBuilder: (_, _, _) => Container(
                                     width: 50,
                                     height: 50,
                                     color: Colors.grey.shade200,
@@ -193,7 +192,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                           ),
                           physics: const BouncingScrollPhysics(),
                           itemCount: providers.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+                          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
                           itemBuilder: (context, index) {
                             final p = providers[index];
                             return ListTile(
@@ -209,7 +208,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) => Container(
+                                  errorBuilder: (_, _, _) => Container(
                                     width: 50,
                                     height: 50,
                                     color: Colors.grey.shade200,

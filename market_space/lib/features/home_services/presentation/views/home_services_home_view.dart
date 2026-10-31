@@ -8,7 +8,6 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../data/models/home_service_booking_model.dart';
 import '../../data/models/home_service_model.dart';
 import '../../data/models/service_provider_model.dart';
-import '../controllers/home_services_booking_controller.dart';
 import '../controllers/home_services_catalog_controller.dart';
 import '../controllers/home_services_favorites_controller.dart';
 
@@ -109,7 +108,7 @@ class HomeServicesHomeView extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemCount: catalogCtrl.categories.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+                  separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     final cat = catalogCtrl.categories[index];
                     return _buildCategoryChip(context, cat, catalogCtrl);
@@ -134,7 +133,7 @@ class HomeServicesHomeView extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemCount: catalogCtrl.popularServices.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+                  separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     final service = catalogCtrl.popularServices[index];
                     return _buildServiceCard(context, service, favCtrl);
@@ -158,7 +157,7 @@ class HomeServicesHomeView extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemCount: catalogCtrl.featuredProviders.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+                  separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     final provider = catalogCtrl.featuredProviders[index];
                     return _buildProviderCard(context, provider);
@@ -183,7 +182,7 @@ class HomeServicesHomeView extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemCount: catalogCtrl.newServices.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+                  separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     final service = catalogCtrl.newServices[index];
                     return _buildServiceCard(context, service, favCtrl);
@@ -532,7 +531,7 @@ class HomeServicesHomeView extends StatelessWidget {
                   height: 110.0,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     height: 110.0,
                     color: Colors.grey.shade200,
                     child: const Icon(Icons.handyman_rounded, color: Colors.grey),
@@ -662,7 +661,7 @@ class HomeServicesHomeView extends StatelessWidget {
                   width: 44.0,
                   height: 44.0,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     width: 44.0,
                     height: 44.0,
                     color: Colors.grey.shade200,

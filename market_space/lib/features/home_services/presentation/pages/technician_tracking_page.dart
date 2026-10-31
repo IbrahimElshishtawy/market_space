@@ -7,7 +7,6 @@ import '../../../../app/app_dependencies.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radii.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../data/models/home_service_booking_model.dart';
 
 class TechnicianTrackingPage extends StatefulWidget {
   final String bookingId;
@@ -77,7 +76,6 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
                       points: [_technicianLocation, _customerLocation],
                       strokeWidth: 4.0,
                       color: AppColors.primary,
-                      isDotted: true,
                     ),
                   ],
                 ),

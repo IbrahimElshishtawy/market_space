@@ -10,8 +10,8 @@ class HomeServicesBookingController extends ChangeNotifier {
   final HomeServicesBookingRepository _repository;
 
   HomeServicesBookingController({
-    required HomeServicesBookingRepository repository,
-  }) : _repository = repository {
+    required this._repository,
+  }) {
     loadBookings();
   }
 

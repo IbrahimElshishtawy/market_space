@@ -78,7 +78,7 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                           parent: BouncingScrollPhysics(),
                         ),
                         itemCount: filteredBookings.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+                        separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
                         itemBuilder: (context, index) {
                           final booking = filteredBookings[index];
                           return _buildBookingCard(context, booking, bookingCtrl);
@@ -201,7 +201,7 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                       width: 60.0,
                       height: 60.0,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         width: 60.0,
                         height: 60.0,
                         color: Colors.grey.shade200,

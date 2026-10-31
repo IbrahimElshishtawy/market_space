@@ -11,7 +11,6 @@ import 'package:market_space/features/home_services/presentation/pages/ac_servic
 import '../core/routing/route_guards.dart';
 import '../core/routing/route_names.dart';
 import '../core/theme/app_spacing.dart';
-import '../features/activity/presentation/pages/my_activity_page.dart';
 import '../features/building_materials/presentation/pages/building_material_category_detail_page.dart';
 import '../features/building_materials/presentation/pages/building_material_product_detail_page.dart';
 import '../features/building_materials/presentation/pages/building_materials_cart_page.dart';
@@ -23,13 +22,8 @@ import '../features/building_materials/presentation/pages/building_materials_ord
 import '../features/building_materials/presentation/pages/building_materials_page.dart';
 import '../features/building_materials/presentation/pages/rfq_create_page.dart';
 import '../features/building_materials/presentation/pages/steel_rebar_listing_page.dart';
-import '../features/explore/presentation/pages/explore_page.dart';
-import '../features/favorites/presentation/pages/global_favorites_page.dart';
-import '../features/home/presentation/pages/home_page.dart';
-import '../features/home_services/presentation/pages/home_services_page.dart';
 import '../features/navigation/presentation/pages/global_navigation_scaffold.dart';
 import '../features/notifications/presentation/pages/global_notifications_page.dart';
-import '../features/profile/presentation/pages/profile_page.dart';
 import '../features/home_appliances/cart/presentation/pages/home_appliances_cart_page.dart';
 import '../features/home_appliances/categories/presentation/pages/home_appliances_categories_page.dart';
 import '../features/home_appliances/checkout/presentation/pages/home_appliances_checkout_page.dart';
