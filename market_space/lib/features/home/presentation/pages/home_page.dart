@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
       context.push(RouteNames.buildingMaterials);
     } else if (category.id == 'cat-services' ||
         category.title.contains('خدمات')) {
-      context.push(RouteNames.buildingMaterials);
+      context.push(RouteNames.homeServices);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -136,9 +136,9 @@ class _HomePageState extends State<HomePage> {
                   SliverToBoxAdapter(
                     child: HomeHeader(
                       data: _headerData,
-                      onAvatarTap: () {},
-                      onCartTap: () {},
-                      onNotificationsTap: () {},
+                      onAvatarTap: () => _safePush(RouteNames.profile),
+                      onCartTap: () => _safePush(RouteNames.homeAppliances),
+                      onNotificationsTap: () => _safePush(RouteNames.globalNotifications),
                     ),
                   ),
 
@@ -190,11 +190,13 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        bottomNavigationBar: HomeNavBar(
-          currentIndex: _navIndex,
-          onIndexChanged: _onNavIndexChanged,
-          isVisible: _isNavBarVisible,
-        ),
+        bottomNavigationBar: widget.showBottomNav
+            ? HomeNavBar(
+                currentIndex: _navIndex,
+                onIndexChanged: _onNavIndexChanged,
+                isVisible: _isNavBarVisible,
+              )
+            : null,
       ),
     );
   }
