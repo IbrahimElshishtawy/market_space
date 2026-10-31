@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
+import 'package:market_space/features/home_services/presentation/views/home_services_notifications_view.dart';
 
 import '../../../../app/app_dependencies.dart';
 import '../../../../core/navigation/widgets/app_bottom_navigation/app_bottom_navigation.dart';
@@ -10,15 +11,11 @@ import '../views/home_services_bookings_view.dart';
 import '../views/home_services_catalog_view.dart';
 import '../views/home_services_favorites_view.dart';
 import '../views/home_services_home_view.dart';
-import '../views/home_services_notifications_view.dart';
 
 class HomeServicesPage extends StatefulWidget {
   final int initialTabIndex;
 
-  const HomeServicesPage({
-    super.key,
-    this.initialTabIndex = 0,
-  });
+  const HomeServicesPage({super.key, this.initialTabIndex = 0});
 
   @override
   State<HomeServicesPage> createState() => _HomeServicesPageState();
@@ -76,7 +73,10 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
           backgroundColor: Colors.white,
           elevation: 0.5,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: AppColors.neutral),
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: AppColors.neutral,
+            ),
             onPressed: () {
               if (Navigator.of(context).canPop()) {
                 context.pop();
@@ -95,12 +95,17 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.location_on_outlined, color: AppColors.primary),
+              icon: const Icon(
+                Icons.location_on_outlined,
+                color: AppColors.primary,
+              ),
               tooltip: 'الموقع الحالي: القاهرة',
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('المنطقة المحددة لخدمات الصيانة: القاهرة الكبرى'),
+                    content: Text(
+                      'المنطقة المحددة لخدمات الصيانة: القاهرة الكبرى',
+                    ),
                     duration: Duration(seconds: 2),
                   ),
                 );
@@ -116,9 +121,7 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
               index: _tabIndex,
               children: [
                 // Tab 0: Home View
-                HomeServicesHomeView(
-                  onExploreServicesTap: () => _switchTab(1),
-                ),
+                HomeServicesHomeView(onExploreServicesTap: () => _switchTab(1)),
                 // Tab 1: Catalog View
                 const HomeServicesCatalogView(),
                 // Tab 2: Bookings View

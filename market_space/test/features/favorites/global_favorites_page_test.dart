@@ -55,7 +55,8 @@ void main() {
           home: GlobalFavoritesPage(controller: controller),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('المفضلة'), findsWidgets);
       expect(find.text('الكل'), findsWidgets);

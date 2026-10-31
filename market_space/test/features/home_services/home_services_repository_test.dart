@@ -17,9 +17,9 @@ void main() {
     test('getCategories returns 10 categories', () async {
       final categories = await repository.getCategories();
       expect(categories.length, 10);
-      expect(categories.any((c) => c.nameAr == 'تكييف وتبريد'), isTrue);
-      expect(categories.any((c) => c.nameAr == 'كهرباء وإنارة'), isTrue);
-      expect(categories.any((c) => c.nameAr == 'سباكة وصحي'), isTrue);
+      expect(categories.any((c) => c.name == 'تكييف وتبريد'), isTrue);
+      expect(categories.any((c) => c.name == 'كهرباء وإنارة'), isTrue);
+      expect(categories.any((c) => c.name == 'سباكة وصحي'), isTrue);
     });
 
     test('getServices filters by category', () async {
@@ -37,7 +37,7 @@ void main() {
     test('getServices filters by search query', () async {
       final results = await repository.getServices(searchQuery: 'غسيل مكيف');
       expect(results.isNotEmpty, isTrue);
-      expect(results.first.nameAr.contains('غسيل مكيف'), isTrue);
+      expect(results.first.title.contains('غسيل مكيف'), isTrue);
     });
 
     test('getServiceById returns correct service or null', () async {
@@ -73,43 +73,43 @@ void main() {
     test('getBookings retrieves initial bookings', () async {
       final bookings = await bookingRepo.getBookings();
       expect(bookings.isNotEmpty, isTrue);
-      expect(bookings.first.bookingNumber, startsWith('HS-'));
+      expect(bookings.first.id, startsWith('HS-'));
     });
 
     test('createBooking adds a new booking successfully', () async {
       final targetDate = DateTime(2026, 11, 20);
       final newBooking = HomeServiceBookingModel(
         id: 'hs-test-001',
-        bookingNumber: 'HS-2026-TEST1',
         customerId: 'usr-test-1',
         customerName: 'أحمد محمود',
         customerPhone: '01011112222',
         serviceId: 'srv-ac-wash',
         serviceTitle: 'غسيل وتنظيف عميق لمكيف سبليت',
         categoryId: 'cat-ac',
+        categoryTitle: 'تكييف وتبريد',
         providerId: 'prv-cool-air',
         providerName: 'المتحدة للتكييف والتبريد',
         technicianId: 'tech-cool-01',
         technicianName: 'محمود عبد الرازق',
         technicianPhone: '01000000001',
-        status: BookingStatus.confirmed,
+        status: BookingStatus.accepted,
         scheduledDate: targetDate,
         scheduledTimeSlot: '10:00 ص - 12:00 م',
-        basePrice: 350.0,
-        inspectionFee: 150.0,
-        discountAmount: 0.0,
-        taxAmount: 50.0,
-        totalAmount: 400.0,
-        paymentMethod: 'نقداً عند اكتمال الخدمة',
-        isPaid: false,
-        address: 'شارع 9، المعادي، القاهرة',
-        city: 'القاهرة',
-        notes: 'مكيف غرفة النوم الرئيسية',
+        problemDescription: 'مكيف غرفة النوم يحتاج تنظيف دوري وفحص غاز',
+        address: const BookingAddressModel(
+          city: 'القاهرة',
+          district: 'المعادي',
+          street: 'شارع 9',
+        ),
+        pricing: const BookingPricingModel(
+          servicePrice: 350.0,
+          inspectionFee: 50.0,
+        ),
         createdAt: DateTime.now(),
         timeline: [
           BookingTimelineEvent(
-            status: BookingStatus.confirmed,
-            title: 'تم تأكيد الحجز',
+            status: BookingStatus.accepted,
+            title: 'تم قبول الحجز',
             description: 'تم حجز موعد الزيارة واختيار الفني.',
             timestamp: DateTime.now(),
           ),
@@ -128,30 +128,28 @@ void main() {
       final targetDate = DateTime(2026, 11, 25);
       final booking1 = HomeServiceBookingModel(
         id: 'hs-slot-1',
-        bookingNumber: 'HS-2026-SLOT1',
         customerId: 'usr-test-1',
         customerName: 'محمد أحمد',
         customerPhone: '01011112222',
         serviceId: 'srv-ac-wash',
         serviceTitle: 'غسيل وتنظيف عميق لمكيف سبليت',
         categoryId: 'cat-ac',
+        categoryTitle: 'تكييف وتبريد',
         providerId: 'prv-cool-air',
         providerName: 'المتحدة للتكييف والتبريد',
         technicianId: 'tech-cool-01',
         technicianName: 'محمود عبد الرازق',
         technicianPhone: '01000000001',
-        status: BookingStatus.confirmed,
+        status: BookingStatus.accepted,
         scheduledDate: targetDate,
         scheduledTimeSlot: '01:00 م - 03:00 م',
-        basePrice: 350.0,
-        inspectionFee: 0.0,
-        discountAmount: 0.0,
-        taxAmount: 0.0,
-        totalAmount: 350.0,
-        paymentMethod: 'نقداً',
-        isPaid: false,
-        address: 'القاهرة الجديدة',
-        city: 'القاهرة',
+        problemDescription: 'تنظيف مكيف',
+        address: const BookingAddressModel(
+          city: 'القاهرة',
+          district: 'التجمع',
+          street: 'شارع التسعين',
+        ),
+        pricing: const BookingPricingModel(servicePrice: 350.0),
         createdAt: DateTime.now(),
         timeline: const [],
       );
@@ -161,13 +159,13 @@ void main() {
       // Attempt second booking with identical technician, date, and slot
       final conflictingBooking = HomeServiceBookingModel(
         id: 'hs-slot-2',
-        bookingNumber: 'HS-2026-SLOT2',
         customerId: 'usr-test-2',
         customerName: 'خالد إبراهيم',
         customerPhone: '01099998888',
         serviceId: 'srv-ac-wash',
         serviceTitle: 'غسيل وتنظيف عميق لمكيف سبليت',
         categoryId: 'cat-ac',
+        categoryTitle: 'تكييف وتبريد',
         providerId: 'prv-cool-air',
         providerName: 'المتحدة للتكييف والتبريد',
         technicianId: 'tech-cool-01',
@@ -176,15 +174,13 @@ void main() {
         status: BookingStatus.pendingConfirmation,
         scheduledDate: targetDate,
         scheduledTimeSlot: '01:00 م - 03:00 م',
-        basePrice: 350.0,
-        inspectionFee: 0.0,
-        discountAmount: 0.0,
-        taxAmount: 0.0,
-        totalAmount: 350.0,
-        paymentMethod: 'نقداً',
-        isPaid: false,
-        address: 'مدينة نصر',
-        city: 'القاهرة',
+        problemDescription: 'تنظيف مكيف الصالون',
+        address: const BookingAddressModel(
+          city: 'القاهرة',
+          district: 'مدينة نصر',
+          street: 'شارع عباس العقاد',
+        ),
+        pricing: const BookingPricingModel(servicePrice: 350.0),
         createdAt: DateTime.now(),
         timeline: const [],
       );
@@ -195,11 +191,11 @@ void main() {
       );
     });
 
-    test('cancelBooking updates status to cancelledByCustomer and records reason', () async {
+    test('cancelBooking updates status to cancelled and records reason', () async {
       final initial = (await bookingRepo.getBookings()).first;
       final cancelled = await bookingRepo.cancelBooking(initial.id, 'تغيير في خطة السفر');
 
-      expect(cancelled.status, BookingStatus.cancelledByCustomer);
+      expect(cancelled.status, BookingStatus.cancelled);
       expect(cancelled.cancellationReason, 'تغيير في خطة السفر');
       expect(cancelled.timeline.any((e) => e.title.contains('إلغاء')), isTrue);
     });
@@ -258,26 +254,27 @@ void main() {
     });
 
     test('toggleFavoriteService toggles favorite state', () async {
-      expect(await favRepo.isServiceFavorite('srv-ac-wash'), isFalse);
+      // Initially srv-electric-repair is not in the default favorites
+      expect(favRepo.isServiceFavorite('srv-electric-repair'), isFalse);
 
-      await favRepo.toggleFavoriteService('srv-ac-wash');
-      expect(await favRepo.isServiceFavorite('srv-ac-wash'), isTrue);
+      await favRepo.toggleFavoriteService('srv-electric-repair');
+      expect(favRepo.isServiceFavorite('srv-electric-repair'), isTrue);
 
-      final favs = await favRepo.getFavoriteServices();
-      expect(favs.contains('srv-ac-wash'), isTrue);
+      final favs = await favRepo.getFavoriteServiceIds();
+      expect(favs.contains('srv-electric-repair'), isTrue);
 
-      await favRepo.toggleFavoriteService('srv-ac-wash');
-      expect(await favRepo.isServiceFavorite('srv-ac-wash'), isFalse);
+      await favRepo.toggleFavoriteService('srv-electric-repair');
+      expect(favRepo.isServiceFavorite('srv-electric-repair'), isFalse);
     });
 
     test('toggleFavoriteProvider toggles provider favorite state', () async {
-      expect(await favRepo.isProviderFavorite('prv-cool-air'), isFalse);
+      expect(favRepo.isProviderFavorite('prov-elec-pro'), isFalse);
 
-      await favRepo.toggleFavoriteProvider('prv-cool-air');
-      expect(await favRepo.isProviderFavorite('prv-cool-air'), isTrue);
+      await favRepo.toggleFavoriteProvider('prov-elec-pro');
+      expect(favRepo.isProviderFavorite('prov-elec-pro'), isTrue);
 
-      await favRepo.toggleFavoriteProvider('prv-cool-air');
-      expect(await favRepo.isProviderFavorite('prv-cool-air'), isFalse);
+      await favRepo.toggleFavoriteProvider('prov-elec-pro');
+      expect(favRepo.isProviderFavorite('prov-elec-pro'), isFalse);
     });
   });
 }
