@@ -64,9 +64,7 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
+    return Scaffold(
         extendBody: true,
         backgroundColor: AppColors.lightBackground,
         appBar: AppBar(
@@ -149,8 +147,7 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
           notificationController: dependencies?.notificationController,
           isVisible: _isNavVisible,
         ),
-      ),
-    );
+      );
   }
 
   String _getAppBarTitle() {

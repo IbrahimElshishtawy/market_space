@@ -52,12 +52,8 @@ class BuildingMaterialsOrderRepositoryImpl
   final Duration delay;
 
   BuildingMaterialsOrderRepositoryImpl({
-    Duration? delay,
-  }) : delay = delay ??
-            ((WidgetsBinding.instance.runtimeType.toString().toLowerCase().contains('test') ||
-                    WidgetsBinding.instance is! WidgetsFlutterBinding)
-                ? Duration.zero
-                : const Duration(milliseconds: 150)) {
+    this.delay = Duration.zero,
+  }) {
     _orders.addAll(MockBuildingMaterialsComprehensiveData.mockOrders);
     _rfqs.addAll(MockBuildingMaterialsComprehensiveData.mockRfqs);
   }

@@ -83,12 +83,16 @@ class HomeServicesHomeView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'أقسام الخدمات المنزلية',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.neutral,
+                    const Expanded(
+                      child: Text(
+                        'أقسام الخدمات المنزلية',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.neutral,
+                        ),
                       ),
                     ),
                     TextButton(
@@ -214,7 +218,6 @@ class HomeServicesHomeView extends StatelessWidget {
         ],
       ),
       child: TextField(
-        textDirection: TextDirection.rtl,
         decoration: InputDecoration(
           hintText: 'ابحث عن خدمة، تخصص، أو فني...',
           hintStyle: const TextStyle(fontSize: 14.0, color: AppColors.lightTextSecondary),
@@ -325,20 +328,27 @@ class HomeServicesHomeView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(Icons.access_time_filled_rounded, size: 18.0, color: Colors.amber.shade900),
-                  const SizedBox(width: 6.0),
-                  Text(
-                    'حجز قادم — ${booking.id}',
-                    style: TextStyle(
-                      fontSize: 13.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.amber.shade900,
+              Expanded(
+                child: Row(
+                  children: [
+                    Icon(Icons.access_time_filled_rounded, size: 18.0, color: Colors.amber.shade900),
+                    const SizedBox(width: 6.0),
+                    Expanded(
+                      child: Text(
+                        'حجز قادم — ${booking.id}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber.shade900,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 8.0),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 decoration: BoxDecoration(
@@ -603,14 +613,19 @@ class HomeServicesHomeView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      service.formattedPrice,
-                      style: const TextStyle(
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                    Expanded(
+                      child: Text(
+                        service.formattedPrice,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 4.0),
                     InkWell(
                       onTap: () {
                         context.push('/home-services/service-detail?id=${service.id}');
@@ -710,14 +725,19 @@ class HomeServicesHomeView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'يبدأ من ${provider.startingPrice.toStringAsFixed(0)} ج.م',
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+              Expanded(
+                child: Text(
+                  'يبدأ من ${provider.startingPrice.toStringAsFixed(0)} ج.م',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
+              const SizedBox(width: 4.0),
               TextButton(
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,

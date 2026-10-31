@@ -104,9 +104,7 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
+    return Scaffold(
         extendBody: true,
         backgroundColor: AppColors.lightBackground,
         body: SafeArea(
@@ -273,7 +271,6 @@ class _BuildingMaterialsPageState extends State<BuildingMaterialsPage> {
           notificationController: dependencies?.notificationController,
           isVisible: _isNavVisible,
         ),
-      ),
-    );
+      );
   }
 }

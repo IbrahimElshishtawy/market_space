@@ -20,10 +20,12 @@ abstract class CarsRepository {
 class MockCarsRepository implements CarsRepository {
   final List<CarListingModel> _cars;
   final List<CarBrandModel> _brands;
+  final Duration simulatedDelay;
 
   MockCarsRepository({
     List<CarListingModel>? cars,
     List<CarBrandModel>? brands,
+    this.simulatedDelay = Duration.zero,
   })  : _cars = List.from(cars ?? MockCarsData.listings),
         _brands = List.from(brands ?? MockCarsData.brands);
 
@@ -33,7 +35,7 @@ class MockCarsRepository implements CarsRepository {
     int page = 1,
     int pageSize = 20,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     var results = List<CarListingModel>.from(_cars);
 
     if (filter != null) {
@@ -132,7 +134,7 @@ class MockCarsRepository implements CarsRepository {
 
   @override
   Future<CarListingModel> getCarById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 60));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     return _cars.firstWhere(
       (c) => c.id == id,
       orElse: () => _cars.first,
@@ -141,19 +143,19 @@ class MockCarsRepository implements CarsRepository {
 
   @override
   Future<List<CarListingModel>> getFeaturedCars() async {
-    await Future.delayed(const Duration(milliseconds: 60));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     return _cars.where((c) => c.isFeatured).toList();
   }
 
   @override
   Future<List<CarBrandModel>> getBrands() async {
-    await Future.delayed(const Duration(milliseconds: 40));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     return List.unmodifiable(_brands);
   }
 
   @override
   Future<List<CarListingModel>> getSimilarCars(String carId) async {
-    await Future.delayed(const Duration(milliseconds: 60));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     final car = await getCarById(carId);
     return MockCarsData.getSimilarCars(car);
   }

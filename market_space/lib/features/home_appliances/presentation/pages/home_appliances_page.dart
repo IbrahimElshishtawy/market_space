@@ -116,9 +116,7 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
+    return Scaffold(
         extendBody: true,
         backgroundColor: AppColors.lightBackground,
         body: SafeArea(
@@ -251,8 +249,7 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
           notificationController: dependencies?.notificationController,
           isVisible: _isNavVisible,
         ),
-      ),
-    );
+      );
   }
 
   void _showFilterSheet() {
@@ -262,9 +259,7 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
       builder: (ctx) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
+        return Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -285,8 +280,7 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
                 ),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }

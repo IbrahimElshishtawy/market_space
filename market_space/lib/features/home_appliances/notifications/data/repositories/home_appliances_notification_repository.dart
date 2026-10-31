@@ -10,6 +10,12 @@ abstract class HomeAppliancesNotificationRepository {
 
 class MockHomeAppliancesNotificationRepository
     implements HomeAppliancesNotificationRepository {
+  final Duration simulatedDelay;
+
+  MockHomeAppliancesNotificationRepository({
+    this.simulatedDelay = Duration.zero,
+  });
+
   final List<AppNotification> _notificationsStore = [
     AppNotification(
       id: 'notif-ha-1',
@@ -47,7 +53,7 @@ class MockHomeAppliancesNotificationRepository
 
   @override
   Future<List<AppNotification>> getNotifications({String? userId}) async {
-    await Future.delayed(const Duration(milliseconds: 150));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     return List.from(_notificationsStore);
   }
 
@@ -58,7 +64,7 @@ class MockHomeAppliancesNotificationRepository
 
   @override
   Future<bool> markAsRead(String notificationId) async {
-    await Future.delayed(const Duration(milliseconds: 50));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     final index = _notificationsStore.indexWhere((n) => n.id == notificationId);
     if (index != -1) {
       _notificationsStore[index] = _notificationsStore[index].copyWith(
@@ -71,7 +77,7 @@ class MockHomeAppliancesNotificationRepository
 
   @override
   Future<bool> markAllAsRead({String? userId}) async {
-    await Future.delayed(const Duration(milliseconds: 50));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     for (var i = 0; i < _notificationsStore.length; i++) {
       if (!_notificationsStore[i].isRead) {
         _notificationsStore[i] = _notificationsStore[i].copyWith(isRead: true);
@@ -82,7 +88,7 @@ class MockHomeAppliancesNotificationRepository
 
   @override
   Future<bool> deleteNotification(String notificationId) async {
-    await Future.delayed(const Duration(milliseconds: 50));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     _notificationsStore.removeWhere((n) => n.id == notificationId);
     return true;
   }

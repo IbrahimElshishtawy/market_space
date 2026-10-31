@@ -200,60 +200,64 @@ class _HomeServicesNotificationsViewState
           color: item.isRead ? AppColors.lightBorder : AppColors.primary.withValues(alpha: 0.3),
         ),
       ),
-      child: ListTile(
-        onTap: () {
-          setState(() {
-            item.isRead = true;
-          });
-          if (item.deepLink != null) {
-            context.push(item.deepLink!);
-          }
-        },
-        leading: Container(
-          padding: const EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: 0.12),
-            shape: BoxShape.circle,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: AppRadii.lg,
+        child: ListTile(
+          onTap: () {
+            setState(() {
+              item.isRead = true;
+            });
+            if (item.deepLink != null) {
+              context.push(item.deepLink!);
+            }
+          },
+          leading: Container(
+            padding: const EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: iconColor, size: 22.0),
           ),
-          child: Icon(icon, color: iconColor, size: 22.0),
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(
-                item.title,
-                style: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: item.isRead ? FontWeight.bold : FontWeight.w800,
-                  color: AppColors.neutral,
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  item.title,
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: item.isRead ? FontWeight.bold : FontWeight.w800,
+                    color: AppColors.neutral,
+                  ),
                 ),
               ),
-            ),
-            if (!item.isRead)
-              Container(
-                width: 8.0,
-                height: 8.0,
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
+              if (!item.isRead)
+                Container(
+                  width: 8.0,
+                  height: 8.0,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                  ),
                 ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4.0),
+              Text(
+                item.body,
+                style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
               ),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4.0),
-            Text(
-              item.body,
-              style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
-            ),
-            const SizedBox(height: 6.0),
-            Text(
-              _formatTimeAgo(item.timestamp),
-              style: const TextStyle(fontSize: 10.0, color: Colors.grey),
-            ),
-          ],
+              const SizedBox(height: 6.0),
+              Text(
+                _formatTimeAgo(item.timestamp),
+                style: const TextStyle(fontSize: 10.0, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
     );

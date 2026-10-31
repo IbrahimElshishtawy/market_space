@@ -27,10 +27,12 @@ abstract class FashionRepository {
 class MockFashionRepository implements FashionRepository {
   final List<FashionProductModel> _products;
   final List<FashionCategoryModel> _categories;
+  final Duration simulatedDelay;
 
   MockFashionRepository({
     List<FashionProductModel>? products,
     List<FashionCategoryModel>? categories,
+    this.simulatedDelay = Duration.zero,
   })  : _products = List.from(products ?? MockFashionData.products),
         _categories = List.from(categories ?? MockFashionData.categories);
 
@@ -46,7 +48,7 @@ class MockFashionRepository implements FashionRepository {
     int page = 1,
     int pageSize = 20,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 60));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     var results = List<FashionProductModel>.from(_products);
 
     if (department != null && department != FashionDepartment.unisex) {
@@ -113,7 +115,7 @@ class MockFashionRepository implements FashionRepository {
 
   @override
   Future<FashionProductModel> getProductById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 40));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     return _products.firstWhere(
       (p) => p.id == id,
       orElse: () => _products.first,
@@ -122,32 +124,32 @@ class MockFashionRepository implements FashionRepository {
 
   @override
   Future<List<FashionCategoryModel>> getCategories({FashionDepartment? department}) async {
-    await Future.delayed(const Duration(milliseconds: 40));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     if (department == null) return _categories;
     return _categories.where((c) => c.department == department).toList();
   }
 
   @override
   Future<List<FashionProductModel>> getFeaturedProducts() async {
-    await Future.delayed(const Duration(milliseconds: 50));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     return _products.where((p) => p.isFeatured).toList();
   }
 
   @override
   Future<List<FashionProductModel>> getBestSellers() async {
-    await Future.delayed(const Duration(milliseconds: 50));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     return _products.where((p) => p.isBestSeller).toList();
   }
 
   @override
   Future<List<FashionProductModel>> getNewArrivals() async {
-    await Future.delayed(const Duration(milliseconds: 50));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     return _products.where((p) => p.isNewArrival).toList();
   }
 
   @override
   Future<List<FashionProductModel>> getSimilarProducts(String productId) async {
-    await Future.delayed(const Duration(milliseconds: 40));
+    if (simulatedDelay > Duration.zero) await Future.delayed(simulatedDelay);
     final product = await getProductById(productId);
     return _products
         .where((p) => p.id != productId && (p.category == product.category || p.department == product.department))

@@ -273,11 +273,15 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
               const SizedBox(height: 12.0),
 
               // Bottom Price & Actions
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
                         'إجمالي الفاتورة',
@@ -294,6 +298,7 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                     ],
                   ),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       if (booking.status == BookingStatus.technicianOnTheWay ||
                           booking.status == BookingStatus.technicianAssigned)

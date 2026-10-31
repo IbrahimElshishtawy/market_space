@@ -650,7 +650,7 @@ class MockRealEstateData {
         const PropertySpecItem(label: 'بحري صريح', iconType: PropertySpecIconType.direction),
         const PropertySpecItem(label: 'أسانسير', iconType: PropertySpecIconType.elevator),
         const PropertySpecItem(label: 'غاز طبيعي', iconType: PropertySpecIconType.gas),
-        const PropertySpecItem(label: 'جراج خاص', iconType: PropertySpecIconType.garage),
+        const PropertySpecItem(label: 'جراج بالبدروم', iconType: PropertySpecIconType.garage),
       ],
       aboutProperty: 'فرصة سكنية واستثمارية ممتازة! العقار يتميز بموقعه الحيوي القريب من كافة الطرق والخدمات والمرافق الأساسية، واجهة بحرية صريحة وتصميم معماري راقٍ يستغل المساحة بأفضل شكل.',
       spaceDetails: 'المساحة الإجمالية: ${listing.areaM2} متر مربع بتشطيب ${listing.finishType} جاهز للاستلام.',

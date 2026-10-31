@@ -52,10 +52,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('ابحث عن خدمة، صيانة، فني متخصص...'), findsOneWidget);
-      expect(find.text('الأقسام والخدمات'), findsOneWidget);
+      expect(find.text('ابحث عن خدمة، تخصص، أو فني...'), findsOneWidget);
+      expect(find.text('أقسام الخدمات المنزلية'), findsOneWidget);
       expect(find.text('الخدمات الأكثر طلباً'), findsOneWidget);
-      expect(find.text('أفضل الشركات ومزودي الخدمة'), findsOneWidget);
+      expect(find.text('أفضل شركات ومقدمي الخدمة المعتمدين'), findsOneWidget);
     });
 
     testWidgets('HomeServicesCatalogView renders filter chips and category selector', (tester) async {
@@ -71,10 +71,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('دليل الخدمات المنزلية'), findsOneWidget);
-      expect(find.text('جميع الخدمات'), findsWidgets);
-      expect(find.text('تكييف وتبريد'), findsWidgets);
-      expect(find.text('سعر ثابت'), findsWidgets);
+      expect(find.text('ابحث في كافة الخدمات والمهندسين...'), findsOneWidget);
+      expect(find.text('كافة الأقسام'), findsWidgets);
+      expect(find.text('سباكة وتأسيس'), findsWidgets);
+      expect(find.text('طريقة التسعير'), findsWidgets);
     });
 
     testWidgets('HomeServicesBookingsView renders filter tabs for bookings', (tester) async {
@@ -92,11 +92,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('إدارة ومتابعة الحجوزات'), findsOneWidget);
-      expect(find.text('الكل'), findsWidgets);
-      expect(find.text('القادمة'), findsWidgets);
-      expect(find.text('قيد التنفيذ'), findsWidgets);
-      expect(find.text('المكتملة'), findsWidgets);
+      expect(find.textContaining('الكل'), findsWidgets);
+      expect(find.text('قادمة'), findsWidgets);
+      expect(find.text('جارية'), findsWidgets);
+      expect(find.text('مكتملة'), findsWidgets);
+      expect(find.text('ملغية'), findsWidgets);
     });
 
     testWidgets('HomeServicesFavoritesView renders services and providers segments', (tester) async {

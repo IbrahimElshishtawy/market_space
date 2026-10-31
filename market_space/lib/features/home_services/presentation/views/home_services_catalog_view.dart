@@ -123,7 +123,6 @@ class HomeServicesCatalogView extends StatelessWidget {
         border: Border.all(color: AppColors.lightBorder),
       ),
       child: TextField(
-        textDirection: TextDirection.rtl,
         decoration: InputDecoration(
           hintText: 'ابحث في كافة الخدمات والمهندسين...',
           hintStyle: const TextStyle(fontSize: 14.0, color: AppColors.lightTextSecondary),
@@ -253,11 +252,15 @@ class HomeServicesCatalogView extends StatelessWidget {
               const Divider(height: 18.0),
 
               // Bottom Pricing & Actions
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
@@ -286,6 +289,7 @@ class HomeServicesCatalogView extends StatelessWidget {
                     ],
                   ),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(

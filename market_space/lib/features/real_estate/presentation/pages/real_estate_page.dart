@@ -100,41 +100,38 @@ class _RealEstatePageState extends State<RealEstatePage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
       builder: (ctx) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'إضافة عقار جديد',
-                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+        return Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'إضافة عقار جديد',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8.0),
+              const Text(
+                'اختر نوع الإعلان الذي ترغب بنشره في سياق العقارات:',
+              ),
+              const SizedBox(height: AppSpacing.md),
+              ListTile(
+                leading: const Icon(
+                  Icons.home_work_outlined,
+                  color: AppColors.primary,
                 ),
-                const SizedBox(height: 8.0),
-                const Text(
-                  'اختر نوع الإعلان الذي ترغب بنشره في سياق العقارات:',
+                title: const Text('إعلان عقار للبيع'),
+                onTap: () => Navigator.pop(ctx),
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.key_outlined,
+                  color: AppColors.secondary,
                 ),
-                const SizedBox(height: AppSpacing.md),
-                ListTile(
-                  leading: const Icon(
-                    Icons.home_work_outlined,
-                    color: AppColors.primary,
-                  ),
-                  title: const Text('إعلان عقار للبيع'),
-                  onTap: () => Navigator.pop(ctx),
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.key_outlined,
-                    color: AppColors.secondary,
-                  ),
-                  title: const Text('إعلان عقار للإيجار'),
-                  onTap: () => Navigator.pop(ctx),
-                ),
-              ],
-            ),
+                title: const Text('إعلان عقار للإيجار'),
+                onTap: () => Navigator.pop(ctx),
+              ),
+            ],
           ),
         );
       },
@@ -145,9 +142,7 @@ class _RealEstatePageState extends State<RealEstatePage> {
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
+    return Scaffold(
         extendBody: true,
         backgroundColor: AppColors.lightBackground,
         body: SafeArea(
@@ -261,8 +256,7 @@ class _RealEstatePageState extends State<RealEstatePage> {
           notificationController: dependencies?.notificationController,
           isVisible: _isNavVisible,
         ),
-      ),
-    );
+      );
   }
 
   void _openListingDetail(String id) {
