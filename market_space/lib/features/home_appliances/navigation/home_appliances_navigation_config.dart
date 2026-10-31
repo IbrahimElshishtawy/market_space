@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/navigation/config/floating_action_config.dart';
 import '../../../core/navigation/config/navigation_item_config.dart';
 import '../../../core/navigation/config/section_navigation_config.dart';
 import '../../../core/routing/route_names.dart';
@@ -11,12 +10,6 @@ class HomeAppliancesNavigationConfig {
   static const SectionNavigationConfig config = SectionNavigationConfig(
     sectionId: sectionId,
     sectionName: 'الأجهزة المنزلية',
-    floatingAction: FloatingActionConfig(
-      id: 'ha-add',
-      label: 'أضف إعلانك',
-      icon: Icons.add_shopping_cart_rounded,
-      onPressedRoute: '/home-appliances/add',
-    ),
     items: [
       NavigationItemConfig(
         id: 'ha-home',

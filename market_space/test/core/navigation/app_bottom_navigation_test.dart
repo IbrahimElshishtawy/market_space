@@ -19,8 +19,10 @@ void main() {
       }
     });
 
-    test('All 6 section configurations include FloatingActionConfig for adding listings or primary action', () {
-      for (final config in SectionNavigationRegistry.allConfigs) {
+    test('Listing sections include FloatingActionConfig for adding listings or primary action', () {
+      final listingConfigs = SectionNavigationRegistry.allConfigs
+          .where((c) => c.sectionId != 'home_appliances');
+      for (final config in listingConfigs) {
         expect(config.floatingAction, isNotNull);
         expect(config.floatingAction!.label.isNotEmpty, isTrue);
       }

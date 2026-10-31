@@ -157,6 +157,34 @@ class _FashionProductDetailPageState extends State<FashionProductDetailPage> {
       return;
     }
 
+    // Variant-specific stock validation
+    final selectedVariant =
+        _product.variants.cast<FashionVariantModel?>().firstWhere(
+              (v) => v?.size == _selectedSize && v?.colorName == _selectedColor,
+              orElse: () => null,
+            );
+
+    if (selectedVariant == null || selectedVariant.stockQuantity <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('عذراً، هذا المقاس واللون غير متوفرين حالياً في المخزون'),
+        ),
+      );
+      return;
+    }
+
+    if (selectedVariant.stockQuantity < _quantity) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'عذراً، الكمية المتوفرة من هذا الخيار هي ${selectedVariant.stockQuantity} فقط',
+          ),
+        ),
+      );
+      return;
+    }
+
     widget.cartController?.addItem(
       _product,
       _selectedSize!,
@@ -662,6 +690,7 @@ class _FashionProductDetailPageState extends State<FashionProductDetailPage> {
 
   Widget _buildSpecRow(IconData icon, String label, String value) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 18, color: Colors.grey.shade600),
         const SizedBox(width: 8),
@@ -669,10 +698,13 @@ class _FashionProductDetailPageState extends State<FashionProductDetailPage> {
           label,
           style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
         ),
-        const Spacer(),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
         ),
       ],
     );

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 /// Centralized Monochrome Design System Color Tokens.
-/// Exclusively Black, White, and Grayscale shades.
-/// No extra accent colors (blue, green, purple, orange, etc.) are allowed in the core identity.
+/// Exclusively Black, White, and Grayscale shades for the core identity,
+/// with clear semantic colors for states (Success, Warning, Error, Info).
 class AppColors {
-  // --- Light Theme Tokens ---
+  // ==========================================
+  // --- 2.1 Light Theme Palette ---
+  // ==========================================
   static const Color background = Color(0xFFFFFFFF);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceSecondary = Color(0xFFF5F5F5);
@@ -12,14 +14,17 @@ class AppColors {
   static const Color textPrimary = Color(0xFF111111);
   static const Color textSecondary = Color(0xFF404040);
   static const Color textMuted = Color(0xFF666666);
-  static const Color border = Color(0xFFE0E0E0);
-  static const Color iconPrimary = Color(0xFF111111);
-  static const Color iconSecondary = Color(0xFF555555);
   static const Color primary = Color(0xFF111111);
   static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color border = Color(0xFFE0E0E0);
+  static const Color divider = Color(0xFFE5E5E5);
+  static const Color iconPrimary = Color(0xFF222222);
+  static const Color iconSecondary = Color(0xFF555555);
   static const Color disabled = Color(0xFFBDBDBD);
 
-  // --- Dark Theme Tokens ---
+  // ==========================================
+  // --- 2.2 Dark Theme Palette ---
+  // ==========================================
   static const Color darkBackground = Color(0xFF121212);
   static const Color darkSurface = Color(0xFF1C1C1C);
   static const Color darkSurfaceSecondary = Color(0xFF262626);
@@ -27,13 +32,104 @@ class AppColors {
   static const Color darkTextPrimary = Color(0xFFFFFFFF);
   static const Color darkTextSecondary = Color(0xFFD0D0D0);
   static const Color darkTextMuted = Color(0xFFA0A0A0);
-  static const Color darkBorder = Color(0xFF383838);
-  static const Color darkIconPrimary = Color(0xFFFFFFFF);
-  static const Color darkIconSecondary = Color(0xFFC0C0C0);
   static const Color darkPrimary = Color(0xFFFFFFFF);
   static const Color darkOnPrimary = Color(0xFF111111);
+  static const Color darkBorder = Color(0xFF383838);
+  static const Color darkDivider = Color(0xFF303030);
+  static const Color darkIconPrimary = Color(0xFFFFFFFF);
+  static const Color darkIconSecondary = Color(0xFFC0C0C0);
+  static const Color darkDisabled = Color(0xFF707070);
 
-  // --- Legacy Compatibility Tokens (Mapped Strictly to Monochrome) ---
+  // ==========================================
+  // --- 2.3 Semantic Colors (WCAG 2.2 AA) ---
+  // ==========================================
+  // Success
+  static const Color success = Color(0xFF16A34A);
+  static const Color successTint = Color(0xFFF0FDF4);
+  static const Color darkSuccess = Color(0xFF22C55E);
+  static const Color darkSuccessTint = Color(0xFF052E16);
+
+  // Warning
+  static const Color warning = Color(0xFFD97706);
+  static const Color warningTint = Color(0xFFFFFBEB);
+  static const Color darkWarning = Color(0xFFFBBF24);
+  static const Color darkWarningTint = Color(0xFF451A03);
+
+  // Error
+  static const Color error = Color(0xFFDC2626);
+  static const Color errorTint = Color(0xFFFEF2F2);
+  static const Color darkError = Color(0xFFEF4444);
+  static const Color darkErrorTint = Color(0xFF450A0A);
+
+  // Information
+  static const Color info = Color(0xFF2563EB);
+  static const Color infoTint = Color(0xFFEFF6FF);
+  static const Color darkInfo = Color(0xFF3B82F6);
+  static const Color darkInfoTint = Color(0xFF172554);
+
+  // ==========================================
+  // --- Dynamic Theme Helpers ---
+  // ==========================================
+  static bool isDark(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark;
+
+  static Color backgroundOf(BuildContext context) =>
+      isDark(context) ? darkBackground : background;
+
+  static Color surfaceOf(BuildContext context) =>
+      isDark(context) ? darkSurface : surface;
+
+  static Color surfaceSecondaryOf(BuildContext context) =>
+      isDark(context) ? darkSurfaceSecondary : surfaceSecondary;
+
+  static Color surfaceTertiaryOf(BuildContext context) =>
+      isDark(context) ? darkSurfaceTertiary : surfaceTertiary;
+
+  static Color textPrimaryOf(BuildContext context) =>
+      isDark(context) ? darkTextPrimary : textPrimary;
+
+  static Color textSecondaryOf(BuildContext context) =>
+      isDark(context) ? darkTextSecondary : textSecondary;
+
+  static Color textMutedOf(BuildContext context) =>
+      isDark(context) ? darkTextMuted : textMuted;
+
+  static Color borderOf(BuildContext context) =>
+      isDark(context) ? darkBorder : border;
+
+  static Color dividerOf(BuildContext context) =>
+      isDark(context) ? darkDivider : divider;
+
+  static Color iconOf(BuildContext context) =>
+      isDark(context) ? darkIconPrimary : iconPrimary;
+
+  static Color iconSecondaryOf(BuildContext context) =>
+      isDark(context) ? darkIconSecondary : iconSecondary;
+
+  static Color primaryOf(BuildContext context) =>
+      isDark(context) ? darkPrimary : primary;
+
+  static Color onPrimaryOf(BuildContext context) =>
+      isDark(context) ? darkOnPrimary : onPrimary;
+
+  static Color disabledOf(BuildContext context) =>
+      isDark(context) ? darkDisabled : disabled;
+
+  static Color successOf(BuildContext context) =>
+      isDark(context) ? darkSuccess : success;
+
+  static Color warningOf(BuildContext context) =>
+      isDark(context) ? darkWarning : warning;
+
+  static Color errorOf(BuildContext context) =>
+      isDark(context) ? darkError : error;
+
+  static Color infoOf(BuildContext context) =>
+      isDark(context) ? darkInfo : info;
+
+  // ==========================================
+  // --- Legacy Compatibility Tokens ---
+  // ==========================================
   static const Color lightBackground = background;
   static const Color lightSurface = surface;
   static const Color lightBorder = border;
@@ -58,14 +154,6 @@ class AppColors {
   static const Color neutral = Color(0xFF111111);
   static const Color neutralLight = Color(0xFF262626);
 
-  // Status tokens in Monochrome system: rely on high-contrast dark tones and text/icons
-  static const Color success = Color(0xFF111111);
-  static const Color warning = Color(0xFF404040);
-  static const Color error = Color(0xFF111111);
-  static const Color errorTint = Color(0xFFF5F5F5);
-  static const Color info = Color(0xFF262626);
-  static const Color infoTint = Color(0xFFF5F5F5);
-
   // Grayscale Palette tokens
   static const Color slate50 = Color(0xFFFAFAFA);
   static const Color slate100 = Color(0xFFF5F5F5);
@@ -87,7 +175,7 @@ class AppColors {
   static const Color emerald700 = Color(0xFF212121);
   static const Color emerald800 = Color(0xFF111111);
 
-  static const Color rose600 = Color(0xFF111111);
+  static const Color rose600 = error;
   static const Color accent = Color(0xFF111111);
   static const Color accentDark = Color(0xFF000000);
 }

@@ -117,77 +117,115 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
     final dependencies = AppDependencies.maybeOf(context);
 
     return Scaffold(
-        extendBody: true,
-        backgroundColor: AppColors.lightBackground,
-        body: SafeArea(
-          bottom: false,
-          child: ValueListenableBuilder<HomeAppliancesState>(
-            valueListenable: _controller,
-            builder: (context, state, _) {
-              if (state.isLoading) {
-                return const Center(child: AppLoadingIndicator());
-              }
+      extendBody: true,
+      backgroundColor: AppColors.lightBackground,
+      body: SafeArea(
+        bottom: false,
+        child: ValueListenableBuilder<HomeAppliancesState>(
+          valueListenable: _controller,
+          builder: (context, state, _) {
+            if (state.isLoading) {
+              return const Center(child: AppLoadingIndicator());
+            }
 
-              if (state.errorMessage != null) {
-                return Center(
-                  child: AppErrorView(
-                    message: state.errorMessage!,
-                    onRetry: _controller.loadData,
+            if (state.errorMessage != null) {
+              return Center(
+                child: AppErrorView(
+                  message: state.errorMessage!,
+                  onRetry: _controller.loadData,
+                ),
+              );
+            }
+
+            return NotificationListener<UserScrollNotification>(
+              onNotification: _onUserScroll,
+              child: RefreshIndicator(
+                color: AppColors.neutral,
+                onRefresh: _controller.loadData,
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
                   ),
-                );
-              }
-
-              return NotificationListener<UserScrollNotification>(
-                onNotification: _onUserScroll,
-                child: RefreshIndicator(
-                  color: AppColors.neutral,
-                  onRefresh: _controller.loadData,
-                  child: CustomScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(
-                      parent: BouncingScrollPhysics(),
+                  slivers: [
+                    // 1. Header Bar
+                    SliverToBoxAdapter(
+                      child: AppliancesHeader(
+                        onNotificationTap: () {
+                          if (GoRouter.maybeOf(context) != null) {
+                            context.push('/home-appliances/notifications');
+                          }
+                        },
+                        onCartTap: () {
+                          if (GoRouter.maybeOf(context) != null) {
+                            context.push('/home-appliances/cart');
+                          }
+                        },
+                      ),
                     ),
-                    slivers: [
-                      // 1. Header Bar
-                      SliverToBoxAdapter(
-                        child: AppliancesHeader(
-                          onNotificationTap: () {
-                            if (GoRouter.maybeOf(context) != null) {
-                              context.push('/home-appliances/notifications');
-                            }
-                          },
-                          onCartTap: () {
-                            if (GoRouter.maybeOf(context) != null) {
-                              context.push('/home-appliances/cart');
-                            }
-                          },
-                        ),
-                      ),
 
-                      // 2. Search & Filter Bar
-                      SliverToBoxAdapter(
-                        child: AppliancesSearchBar(
-                          onChanged: _controller.setSearchQuery,
-                          onFilterTap: _showFilterSheet,
-                        ),
+                    // 2. Search & Filter Bar
+                    SliverToBoxAdapter(
+                      child: AppliancesSearchBar(
+                        onChanged: _controller.setSearchQuery,
+                        onFilterTap: _showFilterSheet,
                       ),
+                    ),
 
-                      // 3. Hero Promo Deal Banner
-                      if (state.heroBanner != null)
-                        SliverToBoxAdapter(
-                          child: AppliancesHeroBanner(
-                            banner: state.heroBanner!,
-                            onCtaTap: () => _showSnackBar(
-                              'جاري عرض العروض والتخفيضات اليومية',
-                            ),
+                    // 3. Hero Promo Deal Banner
+                    if (state.heroBanner != null)
+                      SliverToBoxAdapter(
+                        child: AppliancesHeroBanner(
+                          banner: state.heroBanner!,
+                          onCtaTap: () => _showSnackBar(
+                            'جاري عرض العروض والتخفيضات اليومية',
                           ),
                         ),
+                      ),
 
-                      // 4. Category Grid (8 categories)
+                    // 4. Category Grid (8 categories)
+                    SliverToBoxAdapter(
+                      child: AppliancesCategoryGrid(
+                        categories: state.categories,
+                        selectedCategoryId: state.filter.selectedCategoryId,
+                        onCategoryTap: _openCategoryListing,
+                        onViewAllTap: () {
+                          if (GoRouter.maybeOf(context) != null) {
+                            context.push('/home-appliances/categories');
+                          }
+                        },
+                      ),
+                    ),
+
+                    // 5. ValU / Aman Financing Installment Banner
+                    SliverToBoxAdapter(
+                      child: AppliancesFinancingBanner(
+                        onKnowLimitTap: () => _showSnackBar(
+                          'جاري الاستعلام عن حد التقسيط المتاح مع ValU وأمان',
+                        ),
+                      ),
+                    ),
+
+                    // 6. Products Grid (Most requested items)
+                    if (state.products.isEmpty)
+                      const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(
+                          child: AppEmptyState(
+                            title: 'لا توجد أجهزة مطابقة',
+                            message: 'جرّب تغيير كلمات البحث أو الفئة لتصفح المزيد من الأجهزة',
+                          ),
+                        ),
+                      )
+                    else
                       SliverToBoxAdapter(
-                        child: AppliancesCategoryGrid(
-                          categories: state.categories,
-                          selectedCategoryId: state.filter.selectedCategoryId,
-                          onCategoryTap: _openCategoryListing,
+                        child: AppliancesProductsGrid(
+                          products: state.products,
+                          onProductTap: (id) =>
+                              _showSnackBar('تم فتح تفاصيل المنتج'),
+                          onAddToCartTap: (id) {
+                            _controller.toggleCart(id);
+                            _showSnackBar('تمت إضافة المنتج إلى السلة بنجاح');
+                          },
                           onViewAllTap: () {
                             if (GoRouter.maybeOf(context) != null) {
                               context.push('/home-appliances/categories');
@@ -196,60 +234,23 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
                         ),
                       ),
 
-                      // 5. ValU / Aman Financing Installment Banner
-                      SliverToBoxAdapter(
-                        child: AppliancesFinancingBanner(
-                          onKnowLimitTap: () => _showSnackBar(
-                            'جاري الاستعلام عن حد التقسيط المتاح مع ValU وأمان',
-                          ),
-                        ),
-                      ),
-
-                      // 6. Products Grid (Most requested items)
-                      if (state.products.isEmpty)
-                        const SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: Center(
-                            child: AppEmptyState(
-                              title: 'لا توجد أجهزة مطابقة',
-                              message: 'جرّب تغيير كلمات البحث أو الفئة لتصفح المزيد من الأجهزة',
-                            ),
-                          ),
-                        )
-                      else
-                        SliverToBoxAdapter(
-                          child: AppliancesProductsGrid(
-                            products: state.products,
-                            onProductTap: (id) =>
-                                _showSnackBar('تم فتح تفاصيل المنتج'),
-                            onAddToCartTap: (id) {
-                              _controller.toggleCart(id);
-                              _showSnackBar('تمت إضافة المنتج إلى السلة بنجاح');
-                            },
-                            onViewAllTap: () {
-                              if (GoRouter.maybeOf(context) != null) {
-                                context.push('/home-appliances/categories');
-                              }
-                            },
-                          ),
-                        ),
-
-                      const SliverToBoxAdapter(child: SizedBox(height: 90.0)),
-                    ],
-                  ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 90.0)),
+                  ],
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
-        bottomNavigationBar: AppBottomNavigation(
-          config: HomeAppliancesNavigationConfig.config,
-          currentIndex: _tabIndex,
-          onTabSelected: _onTabSelected,
-          notificationController: dependencies?.notificationController,
-          isVisible: _isNavVisible,
-        ),
-      );
+      ),
+      bottomNavigationBar: AppBottomNavigation(
+        config: HomeAppliancesNavigationConfig.config,
+        currentIndex: _tabIndex,
+        onTabSelected: _onTabSelected,
+        notificationController: dependencies?.notificationController,
+        isVisible: _isNavVisible,
+        showFloatingAction: false,
+      ),
+    );
   }
 
   void _showFilterSheet() {
@@ -260,27 +261,27 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
       ),
       builder: (ctx) {
         return Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'تصفية الأجهزة الكهربائية',
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                const Text(
-                  'تصفية حسب الماركة، السعر، مدة الضمان، أو نظام التقسيط.',
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  child: const Text('تطبيق الفلتر'),
-                ),
-              ],
-            ),
-          );
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'تصفية الأجهزة الكهربائية',
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              const Text(
+                'تصفية حسب الماركة، السعر، مدة الضمان، أو نظام التقسيط.',
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('تطبيق الفلتر'),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

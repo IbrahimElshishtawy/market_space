@@ -34,9 +34,11 @@ void main() {
       expect(find.byType(MainCategoriesSection), findsOneWidget);
       expect(find.text('الأقسام الرئيسية'), findsOneWidget);
       expect(find.text('عقارات'), findsOneWidget);
-      expect(find.text('أجهزة منزلية'), findsOneWidget);
-      expect(find.text('خدمات منزلية'), findsOneWidget);
       expect(find.text('مواد بناء'), findsOneWidget);
+      expect(find.text('خدمات منزلية'), findsOneWidget);
+      expect(find.text('أجهزة منزلية'), findsOneWidget);
+      expect(find.text('السيارات'), findsOneWidget);
+      expect(find.text('الملابس والإكسسوارات'), findsOneWidget);
 
       // Verify Most Requested Services
       expect(find.byType(MostRequestedServicesSection), findsOneWidget);
@@ -107,6 +109,25 @@ void main() {
       await tester.tap(servicesCategoryFinder);
       await tester.pump();
       // Interaction succeeds without throwing exceptions
+    });
+
+    testWidgets('Tapping السيارات and الملابس والإكسسوارات works without exceptions', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: HomePage()));
+      await tester.pumpAndSettle();
+
+      final carsFinder = find.text('السيارات');
+      expect(carsFinder, findsOneWidget);
+      await tester.ensureVisible(carsFinder);
+      await tester.tap(carsFinder);
+      await tester.pump();
+
+      final fashionFinder = find.text('الملابس والإكسسوارات');
+      expect(fashionFinder, findsOneWidget);
+      await tester.ensureVisible(fashionFinder);
+      await tester.tap(fashionFinder);
+      await tester.pump();
     });
   });
 }

@@ -1,5 +1,3 @@
-import 'package:flutter/widgets.dart';
-
 import '../mock/mock_building_materials_comprehensive_data.dart';
 import '../models/building_material_cart_model.dart';
 import '../models/building_material_order_model.dart';
@@ -51,9 +49,7 @@ class BuildingMaterialsOrderRepositoryImpl
   final List<RfqRequestModel> _rfqs = [];
   final Duration delay;
 
-  BuildingMaterialsOrderRepositoryImpl({
-    this.delay = Duration.zero,
-  }) {
+  BuildingMaterialsOrderRepositoryImpl({this.delay = Duration.zero}) {
     _orders.addAll(MockBuildingMaterialsComprehensiveData.mockOrders);
     _rfqs.addAll(MockBuildingMaterialsComprehensiveData.mockRfqs);
   }
@@ -96,7 +92,8 @@ class BuildingMaterialsOrderRepositoryImpl
     if (delay > Duration.zero) await Future.delayed(delay);
 
     final String orderId = 'ord-bm-${DateTime.now().millisecondsSinceEpoch}';
-    final String orderNumber = 'ORD-BM-${DateTime.now().year}-${_orders.length + 903}';
+    final String orderNumber =
+        'ORD-BM-${DateTime.now().year}-${_orders.length + 903}';
 
     // فلترة المنتجات الخاصة بهذا المورد
     final supplierItems = cart.items
@@ -119,13 +116,20 @@ class BuildingMaterialsOrderRepositoryImpl
     }).toList();
 
     final subtotal = supplierItems.fold(0.0, (sum, i) => sum + i.totalPrice);
-    final freight = cart.calculatedFreight > 0 ? cart.calculatedFreight : 1500.0;
+    final freight = cart.calculatedFreight > 0
+        ? cart.calculatedFreight
+        : 1500.0;
     final grandTotal = subtotal + freight - cart.discountAmount;
 
     // إنشاء الشحنات المرحلية (Staged Deliveries)
     final List<StagedShipmentModel> shipments = [];
-    final totalQty = orderItems.fold(0.0, (sum, i) => sum + i.requestedQuantity);
-    final primaryUnit = orderItems.isNotEmpty ? orderItems.first.unit : MaterialUnit.ton;
+    final totalQty = orderItems.fold(
+      0.0,
+      (sum, i) => sum + i.requestedQuantity,
+    );
+    final primaryUnit = orderItems.isNotEmpty
+        ? orderItems.first.unit
+        : MaterialUnit.ton;
     final shipmentQty = (totalQty / numberOfStagedShipments);
 
     for (int i = 0; i < numberOfStagedShipments; i++) {
@@ -133,7 +137,8 @@ class BuildingMaterialsOrderRepositoryImpl
       shipments.add(
         StagedShipmentModel(
           id: 'shp-$orderId-${i + 1}',
-          shipmentNumber: 'SHP-${orderNumber.split('-').last}-${String.fromCharCode(65 + i)}',
+          shipmentNumber:
+              'SHP-${orderNumber.split('-').last}-${String.fromCharCode(65 + i)}',
           shipmentIndex: i + 1,
           totalShipments: numberOfStagedShipments,
           allocatedQuantity: UnitConverter.roundCurrency(shipmentQty),
@@ -247,13 +252,18 @@ class BuildingMaterialsOrderRepositoryImpl
         imageUrl: item.imageUrl,
         unit: item.unit,
         requestedQuantity: item.requestedQuantity,
-        deliveredQuantity: deliveredShipmentsQty.clamp(0.0, item.requestedQuantity),
+        deliveredQuantity: deliveredShipmentsQty.clamp(
+          0.0,
+          item.requestedQuantity,
+        ),
         unitPrice: item.unitPrice,
         technicalSpecs: item.technicalSpecs,
       );
     }).toList();
 
-    final allDelivered = updatedShipments.every((s) => s.status == ShipmentStatus.delivered);
+    final allDelivered = updatedShipments.every(
+      (s) => s.status == ShipmentStatus.delivered,
+    );
     final newStatus = allDelivered
         ? BuildingMaterialOrderStatus.delivered
         : BuildingMaterialOrderStatus.partialDelivery;
@@ -266,7 +276,8 @@ class BuildingMaterialsOrderRepositoryImpl
         ...order.timeline,
         OrderTimelineEvent(
           title: 'تأكيد استلام شحنة',
-          description: 'قام العميل بتأكيد استلام الدفعة ومطابقة الأوزان بالموقع',
+          description:
+              'قام العميل بتأكيد استلام الدفعة ومطابقة الأوزان بالموقع',
           timestamp: DateTime.now(),
         ),
       ],
@@ -302,9 +313,7 @@ class BuildingMaterialsOrderRepositoryImpl
     final index = _rfqs.indexWhere((r) => r.id == rfqId);
     if (index != -1) {
       final existing = _rfqs[index];
-      _rfqs[index] = existing.copyWith(
-        quotes: [...existing.quotes, quote],
-      );
+      _rfqs[index] = existing.copyWith(quotes: [...existing.quotes, quote]);
     }
   }
 

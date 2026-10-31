@@ -19,6 +19,8 @@ class MainCategoriesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: MainCategoriesLayout.padding(context),
       child: Column(
@@ -31,16 +33,18 @@ class MainCategoriesSection extends StatelessWidget {
               InkWell(
                 onTap: onViewAllTap,
                 borderRadius: BorderRadius.circular(4.0),
-                child: const Text(
+                child: Text(
                   'عرض الكل',
                   style: TextStyle(
                     fontSize: 13.0,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.lightTextSecondary,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.lightTextSecondary,
                   ),
                 ),
               ),
-              const Flexible(
+              Flexible(
                 child: Text(
                   'الأقسام الرئيسية',
                   maxLines: 1,
@@ -48,7 +52,8 @@ class MainCategoriesSection extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 17.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.neutral,
+                    color:
+                        isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   ),
                 ),
               ),
@@ -57,59 +62,34 @@ class MainCategoriesSection extends StatelessWidget {
 
           const SizedBox(height: 12.0),
 
-          // 2x2 Grid of Category Cards
-          if (categories.length >= 4)
-            Column(
-              children: [
+          // Dynamic Grid of Category Cards (2 per row)
+          Column(
+            children: [
+              for (int i = 0; i < categories.length; i += 2) ...[
+                if (i > 0) const SizedBox(height: 10.0),
                 Row(
                   children: [
                     Expanded(
                       child: MainCategoryCard(
-                        category: categories[1], // Home Appliances
-                        onTap: () => onCategoryTap?.call(categories[1]),
+                        category: categories[i],
+                        onTap: () => onCategoryTap?.call(categories[i]),
                       ),
                     ),
                     const SizedBox(width: 10.0),
-                    Expanded(
-                      child: MainCategoryCard(
-                        category: categories[0], // Real Estate
-                        onTap: () => onCategoryTap?.call(categories[0]),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10.0),
-                Row(
-                  children: [
-                    Expanded(
-                      child: MainCategoryCard(
-                        category: categories[2], // Home Services
-                        onTap: () => onCategoryTap?.call(categories[2]),
-                      ),
-                    ),
-                    const SizedBox(width: 10.0),
-                    Expanded(
-                      child: MainCategoryCard(
-                        category: categories[3], // Building Materials
-                        onTap: () => onCategoryTap?.call(categories[3]),
-                      ),
-                    ),
+                    if (i + 1 < categories.length)
+                      Expanded(
+                        child: MainCategoryCard(
+                          category: categories[i + 1],
+                          onTap: () => onCategoryTap?.call(categories[i + 1]),
+                        ),
+                      )
+                    else
+                      const Spacer(),
                   ],
                 ),
               ],
-            )
-          else
-            Column(
-              children: categories.map((cat) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: MainCategoryCard(
-                    category: cat,
-                    onTap: () => onCategoryTap?.call(cat),
-                  ),
-                );
-              }).toList(),
-            ),
+            ],
+          ),
         ],
       ),
     );

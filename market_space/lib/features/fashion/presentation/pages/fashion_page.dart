@@ -88,7 +88,7 @@ class _FashionPageState extends State<FashionPage> {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('الملابس والأزياء', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('الملابس والإكسسوارات', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
             icon: const Icon(Icons.category_outlined),

@@ -194,16 +194,21 @@ class FashionProductCard extends StatelessWidget {
                   // Brand & Department
                   Row(
                     children: [
-                      Text(
-                        product.brand,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.primary,
+                      Expanded(
+                        child: Text(
+                          product.brand,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 4),
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
                           const SizedBox(width: 2),
@@ -228,29 +233,28 @@ class FashionProductCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   // Price and Old Price
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 6,
+                    runSpacing: 2,
                     children: [
                       Text(
                         '${product.price.toStringAsFixed(0)} ج.م',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.bold,
                           color: theme.colorScheme.primary,
                         ),
                       ),
-                      if (product.hasDiscount) ...[
-                        const SizedBox(width: 6),
+                      if (product.hasDiscount)
                         Text(
                           '${product.oldPrice!.toStringAsFixed(0)} ج.م',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 10.5,
                             color: Colors.grey.shade500,
                             decoration: TextDecoration.lineThrough,
                           ),
                         ),
-                      ],
                     ],
                   ),
                 ],

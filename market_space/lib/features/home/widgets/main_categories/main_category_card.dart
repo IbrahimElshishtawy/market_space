@@ -12,6 +12,7 @@ class MainCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(MainCategoriesLayout.borderRadius),
@@ -19,14 +20,17 @@ class MainCategoryCard extends StatelessWidget {
         height: MainCategoriesLayout.cardHeight,
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(
             MainCategoriesLayout.borderRadius,
           ),
-          border: Border.all(color: AppColors.lightBorder, width: 1.0),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            width: 1.0,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
               blurRadius: 6.0,
               offset: const Offset(0, 2),
             ),
@@ -35,10 +39,12 @@ class MainCategoryCard extends StatelessWidget {
         child: Row(
           children: [
             // Left Chevron icon
-            const Icon(
+            Icon(
               Icons.chevron_left_rounded,
               size: 18.0,
-              color: AppColors.lightTextMuted,
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.lightTextMuted,
             ),
 
             const SizedBox(width: 4.0),
@@ -50,10 +56,10 @@ class MainCategoryCard extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: Text(
                   category.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.5,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   ),
                 ),
               ),
@@ -65,7 +71,8 @@ class MainCategoryCard extends StatelessWidget {
             Icon(
               category.icon,
               size: 22.0,
-              color: category.iconColor ?? AppColors.neutral,
+              color: category.iconColor ??
+                  (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
             ),
           ],
         ),
