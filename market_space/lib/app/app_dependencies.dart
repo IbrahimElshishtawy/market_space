@@ -18,6 +18,12 @@ import '../features/building_materials/presentation/controllers/building_materia
 import '../features/home_appliances/cart/presentation/controllers/home_appliances_cart_controller.dart';
 import '../features/home_appliances/notifications/presentation/controllers/home_appliances_notification_controller.dart';
 import '../features/home_appliances/orders/presentation/controllers/home_appliances_order_controller.dart';
+import '../features/home_services/data/repositories/home_services_booking_repository.dart';
+import '../features/home_services/data/repositories/home_services_favorites_repository.dart';
+import '../features/home_services/data/repositories/home_services_repository.dart';
+import '../features/home_services/presentation/controllers/home_services_booking_controller.dart';
+import '../features/home_services/presentation/controllers/home_services_catalog_controller.dart';
+import '../features/home_services/presentation/controllers/home_services_favorites_controller.dart';
 import '../features/real_estate/favorites/presentation/controllers/real_estate_favorites_controller.dart';
 import '../features/real_estate/notifications/presentation/controllers/real_estate_notification_controller.dart';
 import '../shared/state/sector_controller.dart';
@@ -48,6 +54,12 @@ class AppDependencies {
   final BuildingMaterialsOrderController buildingMaterialsOrderController;
   final BuildingMaterialsNotificationController
   buildingMaterialsNotificationController;
+  final HomeServicesRepository homeServicesRepository;
+  final HomeServicesBookingRepository homeServicesBookingRepository;
+  final HomeServicesFavoritesRepository homeServicesFavoritesRepository;
+  final HomeServicesCatalogController homeServicesCatalogController;
+  final HomeServicesBookingController homeServicesBookingController;
+  final HomeServicesFavoritesController homeServicesFavoritesController;
 
   AppDependencies({
     required this.appConfig,
@@ -73,6 +85,12 @@ class AppDependencies {
     BuildingMaterialsOrderController? buildingMaterialsOrderController,
     BuildingMaterialsNotificationController?
     buildingMaterialsNotificationController,
+    HomeServicesRepository? homeServicesRepository,
+    HomeServicesBookingRepository? homeServicesBookingRepository,
+    HomeServicesFavoritesRepository? homeServicesFavoritesRepository,
+    HomeServicesCatalogController? homeServicesCatalogController,
+    HomeServicesBookingController? homeServicesBookingController,
+    HomeServicesFavoritesController? homeServicesFavoritesController,
   }) : sectorController =
            sectorController ??
            SectorController(preferencesService: preferencesService),
@@ -104,6 +122,34 @@ class AppDependencies {
            buildingMaterialsNotificationController ??
            BuildingMaterialsNotificationController(
              repository: notificationRepository ?? NotificationRepositoryImpl(),
+           ),
+       homeServicesRepository =
+           homeServicesRepository ?? HomeServicesRepositoryImpl(),
+       homeServicesBookingRepository =
+           homeServicesBookingRepository ?? HomeServicesBookingRepositoryImpl(),
+       homeServicesFavoritesRepository =
+           homeServicesFavoritesRepository ??
+           HomeServicesFavoritesRepositoryImpl(),
+       homeServicesCatalogController =
+           homeServicesCatalogController ??
+           HomeServicesCatalogController(
+             repository: homeServicesRepository ?? HomeServicesRepositoryImpl(),
+           ),
+       homeServicesBookingController =
+           homeServicesBookingController ??
+           HomeServicesBookingController(
+             repository:
+                 homeServicesBookingRepository ??
+                 HomeServicesBookingRepositoryImpl(),
+           ),
+       homeServicesFavoritesController =
+           homeServicesFavoritesController ??
+           HomeServicesFavoritesController(
+             favoritesRepository:
+                 homeServicesFavoritesRepository ??
+                 HomeServicesFavoritesRepositoryImpl(),
+             servicesRepository:
+                 homeServicesRepository ?? HomeServicesRepositoryImpl(),
            );
 
   static AppDependencies of(BuildContext context) {
