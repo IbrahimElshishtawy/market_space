@@ -171,16 +171,18 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   Widget _buildSearchBar(ExploreState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.border),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0A000000),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 8.0,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -190,20 +192,28 @@ class _ExplorePageState extends State<ExplorePage> {
         textInputAction: TextInputAction.search,
         onChanged: (text) => _controller.onSearchQueryChanged(text),
         onSubmitted: (text) => _controller.submitSearch(text),
+        style: TextStyle(
+          fontSize: 13.5,
+          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+        ),
         decoration: InputDecoration(
           hintText: 'ابحث عن عقار، حديد تسليح، تكييف، فني سباكة...',
-          hintStyle: const TextStyle(
+          hintStyle: TextStyle(
             fontSize: 13.5,
-            color: AppColors.textMuted,
+            color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
           ),
-          prefixIcon: const Icon(
+          prefixIcon: Icon(
             Icons.search_rounded,
-            color: AppColors.iconPrimary,
+            color: isDark ? AppColors.darkTextSecondary : AppColors.iconPrimary,
             size: 22.0,
           ),
           suffixIcon: state.searchQuery.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear_rounded, size: 20.0),
+                  icon: Icon(
+                    Icons.clear_rounded,
+                    size: 20.0,
+                    color: isDark ? AppColors.darkTextSecondary : null,
+                  ),
                   onPressed: () {
                     _searchFieldController.clear();
                     _controller.clearSearch();
@@ -367,6 +377,8 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   Widget _buildMainCategoriesSection(ExploreState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -375,12 +387,12 @@ class _ExplorePageState extends State<ExplorePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'التصنيفات الرئيسية والأقسام',
             style: TextStyle(
               fontSize: 17.0,
               fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -389,14 +401,14 @@ class _ExplorePageState extends State<ExplorePage> {
               margin: const EdgeInsets.only(bottom: AppSpacing.md),
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.darkSurface : Colors.white,
                 borderRadius: AppRadii.lg,
-                border: Border.all(color: const Color(0x12000000)),
-                boxShadow: const [
+                border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x12000000)),
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x06000000),
+                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
                     blurRadius: 8.0,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -419,10 +431,10 @@ class _ExplorePageState extends State<ExplorePage> {
                           const SizedBox(width: AppSpacing.sm),
                           Text(
                             cat.sectorTitle,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.neutral,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                             ),
                           ),
                         ],
@@ -445,16 +457,16 @@ class _ExplorePageState extends State<ExplorePage> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF1F5F9),
+                            color: isDark ? AppColors.darkSurfaceSecondary : const Color(0xFFF1F5F9),
                             borderRadius: AppRadii.full,
-                            border: Border.all(color: const Color(0x0F000000)),
+                            border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x0F000000)),
                           ),
                           child: Text(
                             sub.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12.0,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.neutral,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                             ),
                           ),
                         ),
@@ -516,18 +528,20 @@ class _ExplorePageState extends State<ExplorePage> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+
                 return Container(
                   width: 220.0,
                   margin: const EdgeInsets.only(left: AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? AppColors.darkSurface : Colors.white,
                     borderRadius: AppRadii.lg,
-                    border: Border.all(color: const Color(0x14000000)),
-                    boxShadow: const [
+                    border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
+                    boxShadow: [
                       BoxShadow(
-                        color: Color(0x08000000),
+                        color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
                         blurRadius: 10.0,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -588,10 +602,10 @@ class _ExplorePageState extends State<ExplorePage> {
                                       item.title,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 13.5,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.neutral,
+                                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                                       ),
                                     ),
                                     const SizedBox(height: 2.0),
@@ -599,9 +613,9 @@ class _ExplorePageState extends State<ExplorePage> {
                                       item.subtitle,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11.5,
-                                        color: AppColors.lightTextSecondary,
+                                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                                       ),
                                     ),
                                   ],
@@ -681,17 +695,19 @@ class _ExplorePageState extends State<ExplorePage> {
         delegate: SliverChildBuilderDelegate(
           (context, index) {
             final item = state.searchResults[index];
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+
             return Container(
               margin: const EdgeInsets.only(bottom: AppSpacing.sm),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.darkSurface : Colors.white,
                 borderRadius: AppRadii.lg,
-                border: Border.all(color: const Color(0x14000000)),
-                boxShadow: const [
+                border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
+                boxShadow: [
                   BoxShadow(
-                    color: Color(0x06000000),
+                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
                     blurRadius: 6.0,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -739,9 +755,9 @@ class _ExplorePageState extends State<ExplorePage> {
                                 const SizedBox(width: 6.0),
                                 Text(
                                   item.sectorName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 10.5,
-                                    color: AppColors.lightTextSecondary,
+                                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                                   ),
                                 ),
                               ],
@@ -751,10 +767,10 @@ class _ExplorePageState extends State<ExplorePage> {
                               item.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.neutral,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                               ),
                             ),
                             const SizedBox(height: 2.0),
@@ -762,9 +778,9 @@ class _ExplorePageState extends State<ExplorePage> {
                               item.subtitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11.5,
-                                color: AppColors.lightTextSecondary,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                               ),
                             ),
                             const SizedBox(height: 4.0),
