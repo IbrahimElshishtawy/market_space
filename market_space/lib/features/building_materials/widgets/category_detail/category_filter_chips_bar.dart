@@ -18,6 +18,8 @@ class CategoryFilterChipsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SizedBox(
       height: 42.0,
       child: ListView.separated(
@@ -37,17 +39,21 @@ class CategoryFilterChipsBar extends StatelessWidget {
               height: 38.0,
               padding: const EdgeInsets.symmetric(horizontal: 14.0),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.neutral : Colors.white,
+                color: isSelected
+                    ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                    : (isDark ? AppColors.darkSurface : Colors.white),
                 borderRadius: AppRadii.lg,
                 border: Border.all(
-                  color: isSelected ? AppColors.neutral : AppColors.lightBorder,
+                  color: isSelected
+                      ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                      : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                   width: 1.0,
                 ),
                 boxShadow: isSelected
                     ? []
                     : [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.02),
+                          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
                           blurRadius: 3.0,
                           offset: const Offset(0, 1),
                         ),
@@ -57,10 +63,10 @@ class CategoryFilterChipsBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (!isSelected && chip != 'الكل') ...[
-                    const Icon(
+                    Icon(
                       Icons.keyboard_arrow_down_rounded,
                       size: 16.0,
-                      color: AppColors.lightTextSecondary,
+                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                     ),
                     const SizedBox(width: 4.0),
                   ],
@@ -72,8 +78,8 @@ class CategoryFilterChipsBar extends StatelessWidget {
                           ? FontWeight.w800
                           : FontWeight.w700,
                       color: isSelected
-                          ? Colors.white
-                          : AppColors.lightTextPrimary,
+                          ? (isDark ? AppColors.darkOnPrimary : Colors.white)
+                          : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
                     ),
                   ),
                 ],

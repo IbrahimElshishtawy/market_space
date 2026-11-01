@@ -17,6 +17,8 @@ class AcFilterChipsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SizedBox(
       height: AcFilterChipsLayout.chipHeight,
       child: ListView.separated(
@@ -41,12 +43,16 @@ class AcFilterChipsBar extends StatelessWidget {
               height: AcFilterChipsLayout.chipHeight,
               padding: const EdgeInsets.symmetric(horizontal: 14.0),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.neutral : Colors.white,
+                color: isSelected
+                    ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                    : (isDark ? AppColors.darkSurface : Colors.white),
                 borderRadius: BorderRadius.circular(
                   AcFilterChipsLayout.borderRadius,
                 ),
                 border: Border.all(
-                  color: isSelected ? AppColors.neutral : AppColors.lightBorder,
+                  color: isSelected
+                      ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                      : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                 ),
               ),
               child: Row(
@@ -60,8 +66,8 @@ class AcFilterChipsBar extends StatelessWidget {
                           ? FontWeight.w800
                           : FontWeight.w600,
                       color: isSelected
-                          ? Colors.white
-                          : AppColors.lightTextPrimary,
+                          ? (isDark ? AppColors.darkOnPrimary : Colors.white)
+                          : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
                     ),
                   ),
                   if (hasDropdown) ...[
@@ -70,8 +76,8 @@ class AcFilterChipsBar extends StatelessWidget {
                       Icons.keyboard_arrow_down_rounded,
                       size: 16.0,
                       color: isSelected
-                          ? Colors.white
-                          : AppColors.lightTextSecondary,
+                          ? (isDark ? AppColors.darkOnPrimary : Colors.white)
+                          : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
                     ),
                   ],
                 ],

@@ -20,14 +20,18 @@ class MaterialCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 6.0,
             offset: const Offset(0, 2),
           ),
@@ -128,10 +132,10 @@ class MaterialCard extends StatelessWidget {
                       product.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.lightTextPrimary,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                         height: 1.25,
                       ),
                     ),
@@ -143,9 +147,9 @@ class MaterialCard extends StatelessWidget {
                       product.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10.0,
-                        color: AppColors.lightTextSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                         height: 1.3,
                       ),
                     ),
@@ -180,14 +184,14 @@ class MaterialCard extends StatelessWidget {
                             width: 32.0,
                             height: 32.0,
                             decoration: BoxDecoration(
-                              color: AppColors.neutral,
+                              color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                               borderRadius: BorderRadius.circular(8.0),
                             ),
-                            child: const Center(
+                            child: Center(
                               child: Icon(
                                 Icons.add_shopping_cart_rounded,
                                 size: 16.0,
-                                color: Colors.white,
+                                color: isDark ? AppColors.darkOnPrimary : Colors.white,
                               ),
                             ),
                           ),

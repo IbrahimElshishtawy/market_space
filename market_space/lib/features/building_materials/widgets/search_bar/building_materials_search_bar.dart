@@ -19,6 +19,8 @@ class BuildingMaterialsSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
@@ -31,31 +33,33 @@ class BuildingMaterialsSearchBar extends StatelessWidget {
             child: Container(
               height: BuildingMaterialsSearchBarLayout.height,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.darkSurface : Colors.white,
                 borderRadius: AppRadii.md,
-                border: Border.all(color: AppColors.lightBorder),
+                border: Border.all(
+                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                ),
               ),
               child: TextField(
                 onChanged: onChanged,
                 onTap: onSearchTap,
                 textAlign: TextAlign.right,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13.5,
-                  color: AppColors.lightTextPrimary,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'أبحث عن مواد البناء "أسمنت، حديد، طوب"',
                   hintStyle: TextStyle(
                     fontSize: 12.5,
-                    color: AppColors.lightTextMuted,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextMuted,
                   ),
                   prefixIcon: Icon(
                     Icons.search_rounded,
-                    color: AppColors.neutralLight,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.neutralLight,
                     size: 22.0,
                   ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
                     vertical: 12.0,
                   ),
@@ -74,14 +78,16 @@ class BuildingMaterialsSearchBar extends StatelessWidget {
               width: BuildingMaterialsSearchBarLayout.filterButtonWidth,
               height: BuildingMaterialsSearchBarLayout.height,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.darkSurface : Colors.white,
                 borderRadius: AppRadii.md,
-                border: Border.all(color: AppColors.lightBorder),
+                border: Border.all(
+                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                ),
               ),
-              child: const Center(
+              child: Center(
                 child: Icon(
                   Icons.filter_alt_outlined,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   size: 20.0,
                 ),
               ),

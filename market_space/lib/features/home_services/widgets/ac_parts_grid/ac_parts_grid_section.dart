@@ -21,6 +21,8 @@ class AcPartsGridSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AcPartsGridLayout.horizontalPadding,
@@ -33,22 +35,22 @@ class AcPartsGridSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'قطع غيار وملحقات التكييف',
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                 ),
               ),
               InkWell(
                 onTap: onViewAllTap,
-                child: const Text(
+                child: Text(
                   'عرض الكل',
                   style: TextStyle(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.lightTextSecondary,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                   ),
                 ),
               ),

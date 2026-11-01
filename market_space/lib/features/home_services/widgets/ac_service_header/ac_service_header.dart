@@ -19,6 +19,8 @@ class AcServiceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AcServiceHeaderLayout.horizontalPadding,
@@ -34,10 +36,10 @@ class AcServiceHeader extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AcServiceHeaderLayout.titleFontSize,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -50,15 +52,17 @@ class AcServiceHeader extends StatelessWidget {
                   width: AcServiceHeaderLayout.backButtonSize,
                   height: AcServiceHeaderLayout.backButtonSize,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? AppColors.darkSurface : Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.lightBorder),
+                    border: Border.all(
+                      color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                    ),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 16.0,
-                      color: AppColors.neutral,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                     ),
                   ),
                 ),
@@ -71,9 +75,9 @@ class AcServiceHeader extends StatelessWidget {
           // Subtitle
           Text(
             subtitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: AcServiceHeaderLayout.subtitleFontSize,
-              color: AppColors.lightTextSecondary,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
               height: 1.35,
             ),
           ),

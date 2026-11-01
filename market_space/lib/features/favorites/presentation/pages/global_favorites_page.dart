@@ -69,6 +69,8 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundOf(context),
       body: SafeArea(
@@ -99,12 +101,12 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'المفضلة',
                                   style: TextStyle(
                                     fontSize: 22.0,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.neutral,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                                   ),
                                 ),
                                 if (state.favorites.isNotEmpty)
@@ -113,27 +115,27 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                       horizontal: 10.0,
                                       vertical: 4.0,
                                     ),
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.primary,
+                                    decoration: BoxDecoration(
+                                      color: isDark ? AppColors.darkPrimary : AppColors.primary,
                                       borderRadius: AppRadii.full,
                                     ),
                                     child: Text(
                                       '${state.favorites.length} عناصر محفوظة',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11.5,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: isDark ? AppColors.darkOnPrimary : Colors.white,
                                       ),
                                     ),
                                   ),
                               ],
                             ),
                             const SizedBox(height: 2.0),
-                            const Text(
+                            Text(
                               'جميع العقارات، المواد، الخدمات والأجهزة التي قمت بحفظها',
                               style: TextStyle(
                                 fontSize: 12.5,
-                                color: AppColors.textSecondary,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -164,7 +166,7 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                     Icon(
                                       sector.icon,
                                       size: 15.0,
-                                      color: isSelected ? Colors.white : AppColors.neutral,
+                                      color: isSelected ? Colors.white : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                                     ),
                                     const SizedBox(width: 6.0),
                                     Text(
@@ -172,17 +174,19 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                       style: TextStyle(
                                         fontSize: 12.0,
                                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                        color: isSelected ? Colors.white : AppColors.neutral,
+                                        color: isSelected ? Colors.white : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                                       ),
                                     ),
                                   ],
                                 ),
-                                backgroundColor: AppColors.surfaceSecondary,
-                                selectedColor: AppColors.primary,
+                                backgroundColor: isDark ? AppColors.darkSurface : AppColors.surfaceSecondary,
+                                selectedColor: isDark ? AppColors.darkPrimary : AppColors.primary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: AppRadii.full,
                                   side: BorderSide(
-                                    color: isSelected ? AppColors.primary : AppColors.border,
+                                    color: isSelected
+                                        ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                                        : (isDark ? AppColors.darkBorder : AppColors.border),
                                   ),
                                 ),
                                 onSelected: (_) => _controller.setSectorFilter(sector),
@@ -245,17 +249,19 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
   }
 
   Widget _buildFavoriteCard(BuildContext context, UnifiedFavoriteItem item) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.border),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x06000000),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 8.0,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -295,23 +301,23 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                                 vertical: 2.0,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF1F5F9),
+                                color: isDark ? AppColors.darkSurfaceSecondary : const Color(0xFFF1F5F9),
                                 borderRadius: AppRadii.xs,
                               ),
                               child: Text(
                                 item.sectorName,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textSecondary,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textSecondary,
                                 ),
                               ),
                             ),
                             // Remove from favorite button
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.favorite_rounded,
-                                color: AppColors.primary,
+                                color: isDark ? AppColors.darkPrimary : AppColors.primary,
                                 size: 22.0,
                               ),
                               constraints: const BoxConstraints(),
@@ -326,10 +332,10 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                           item.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.neutral,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           ),
                         ),
                         const SizedBox(height: 2.0),
@@ -337,9 +343,9 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                           item.subtitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.0,
-                            color: AppColors.textSecondary,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 6.0),
@@ -348,26 +354,27 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                           children: [
                             Text(
                               item.formattedPrice,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.w900,
-                                color: AppColors.textPrimary,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                               ),
                             ),
                             if (item.rating != null)
                               Row(
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.star_rounded,
                                     size: 14.0,
-                                    color: AppColors.textPrimary,
+                                    color: isDark ? AppColors.darkPrimary : AppColors.textPrimary,
                                   ),
                                   const SizedBox(width: 2.0),
                                   Text(
                                     item.rating!.toString(),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 11.5,
                                       fontWeight: FontWeight.bold,
+                                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                                     ),
                                   ),
                                 ],
@@ -379,7 +386,11 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                   ),
                 ],
               ),
-              const Divider(height: 18.0, thickness: 0.8),
+              Divider(
+                height: 18.0,
+                thickness: 0.8,
+                color: isDark ? AppColors.darkDivider : AppColors.divider,
+              ),
               // Bottom Action Button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -398,8 +409,8 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                         style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                        backgroundColor: isDark ? AppColors.darkPrimary : AppColors.primary,
+                        foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                         shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
@@ -430,8 +441,8 @@ class _GlobalFavoritesPageState extends State<GlobalFavoritesPage> {
                         style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.bold),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.neutral,
-                        foregroundColor: Colors.white,
+                        backgroundColor: isDark ? AppColors.darkPrimary : AppColors.neutral,
+                        foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
                         shape: RoundedRectangleBorder(borderRadius: AppRadii.md),

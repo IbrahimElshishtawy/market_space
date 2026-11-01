@@ -29,6 +29,8 @@ class BuildingMaterialsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
@@ -59,10 +61,10 @@ class BuildingMaterialsHeader extends StatelessWidget {
                   children: [
                     Text(
                       userName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.lightTextPrimary,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2.0),
@@ -77,9 +79,9 @@ class BuildingMaterialsHeader extends StatelessWidget {
                         const SizedBox(width: 4.0),
                         Text(
                           userLocation,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.0,
-                            color: AppColors.lightTextSecondary,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                           ),
                         ),
                       ],
@@ -97,11 +99,13 @@ class BuildingMaterialsHeader extends StatelessWidget {
             icon: Icons.notifications_none_rounded,
             badgeCount: unreadNotificationsCount,
             onTap: onNotificationsTap,
+            isDark: isDark,
           ),
           const SizedBox(width: AppSpacing.sm),
           _buildActionButton(
             icon: Icons.shopping_basket_outlined,
             onTap: onCartTap,
+            isDark: isDark,
           ),
         ],
       ),
@@ -112,6 +116,7 @@ class BuildingMaterialsHeader extends StatelessWidget {
     required IconData icon,
     int badgeCount = 0,
     VoidCallback? onTap,
+    required bool isDark,
   }) {
     return Stack(
       clipBehavior: Clip.none,
@@ -120,12 +125,14 @@ class BuildingMaterialsHeader extends StatelessWidget {
           width: BuildingMaterialsHeaderLayout.actionButtonSize,
           height: BuildingMaterialsHeaderLayout.actionButtonSize,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? AppColors.darkSurface : Colors.white,
             borderRadius: AppRadii.md,
-            border: Border.all(color: AppColors.lightBorder),
+            border: Border.all(
+              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
                 blurRadius: 4.0,
                 offset: const Offset(0, 2),
               ),
@@ -137,7 +144,7 @@ class BuildingMaterialsHeader extends StatelessWidget {
             icon: Icon(
               icon,
               size: BuildingMaterialsHeaderLayout.actionIconSize,
-              color: AppColors.lightTextPrimary,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
             ),
           ),
         ),
@@ -151,7 +158,10 @@ class BuildingMaterialsHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 1.5),
+                border: Border.all(
+                  color: isDark ? AppColors.darkSurface : Colors.white,
+                  width: 1.5,
+                ),
               ),
             ),
           ),

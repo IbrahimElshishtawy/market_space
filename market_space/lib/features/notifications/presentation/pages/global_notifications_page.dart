@@ -63,6 +63,8 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
   Widget build(BuildContext context) {
     final controller = widget.controller ?? AppDependencies.of(context).notificationController;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
@@ -81,8 +83,15 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
             children: [
               // Sector Tabs
               Container(
-                color: Colors.white,
+                color: isDark ? AppColors.darkSurface : Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                decoration: isDark
+                    ? const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: AppColors.darkBorder, width: 0.8),
+                        ),
+                      )
+                    : null,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -110,7 +119,9 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
                                 style: TextStyle(
                                   fontSize: 12.0,
                                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                  color: isSelected ? Colors.white : AppColors.neutral,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                                 ),
                               ),
                               if (unreadCount > 0) ...[
@@ -118,7 +129,9 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1.0),
                                   decoration: BoxDecoration(
-                                    color: isSelected ? Colors.white : AppColors.primary,
+                                    color: isSelected
+                                        ? Colors.white
+                                        : (isDark ? AppColors.darkPrimary : AppColors.primary),
                                     borderRadius: AppRadii.full,
                                   ),
                                   child: Text(
@@ -126,19 +139,23 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
                                     style: TextStyle(
                                       fontSize: 10.0,
                                       fontWeight: FontWeight.bold,
-                                      color: isSelected ? AppColors.primary : Colors.white,
+                                      color: isSelected
+                                          ? (isDark ? AppColors.darkOnPrimary : AppColors.primary)
+                                          : Colors.white,
                                     ),
                                   ),
                                 ),
                               ],
                             ],
                           ),
-                          backgroundColor: const Color(0xFFF1F5F9),
-                          selectedColor: AppColors.primary,
+                          backgroundColor: isDark ? AppColors.darkSurfaceSecondary : const Color(0xFFF1F5F9),
+                          selectedColor: isDark ? AppColors.darkPrimary : AppColors.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: AppRadii.full,
                             side: BorderSide(
-                              color: isSelected ? AppColors.primary : const Color(0x0F000000),
+                              color: isSelected
+                                  ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                                  : (isDark ? AppColors.darkBorder : const Color(0x0F000000)),
                             ),
                           ),
                           onSelected: (_) {
@@ -233,19 +250,29 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
         sectorName = 'إشعار عام';
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       decoration: BoxDecoration(
-        color: notif.isRead ? Colors.white : AppColors.primary.withValues(alpha: 0.05),
+        color: notif.isRead
+            ? (isDark ? AppColors.darkSurface : Colors.white)
+            : (isDark
+                ? AppColors.darkSurfaceSecondary
+                : AppColors.primary.withValues(alpha: 0.05)),
         borderRadius: AppRadii.lg,
         border: Border.all(
-          color: notif.isRead ? const Color(0x14000000) : AppColors.primary.withValues(alpha: 0.3),
+          color: notif.isRead
+              ? (isDark ? AppColors.darkBorder : const Color(0x14000000))
+              : (isDark
+                  ? AppColors.darkPrimary.withValues(alpha: 0.4)
+                  : AppColors.primary.withValues(alpha: 0.3)),
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x06000000),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 6.0,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -285,8 +312,8 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
                           Container(
                             width: 8.0,
                             height: 8.0,
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
+                            decoration: BoxDecoration(
+                              color: isDark ? AppColors.darkPrimary : AppColors.primary,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -298,15 +325,15 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
                       style: TextStyle(
                         fontSize: 13.5,
                         fontWeight: notif.isRead ? FontWeight.w600 : FontWeight.bold,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
                     const SizedBox(height: 2.0),
                     Text(
                       notif.body,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.0,
-                        color: AppColors.lightTextSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                       ),
                     ),
                   ],

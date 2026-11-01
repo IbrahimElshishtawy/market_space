@@ -17,6 +17,8 @@ class CategoryDetailHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
@@ -32,10 +34,10 @@ class CategoryDetailHeader extends StatelessWidget {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.lightTextPrimary,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                   letterSpacing: -0.3,
                 ),
               ),
@@ -45,9 +47,9 @@ class CategoryDetailHeader extends StatelessWidget {
                 child: Text(
                   subtitle,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11.5,
-                    color: AppColors.lightTextSecondary,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                     height: 1.3,
                   ),
                 ),
@@ -64,10 +66,10 @@ class CategoryDetailHeader extends StatelessWidget {
               child: IconButton(
                 padding: EdgeInsets.zero,
                 onPressed: onBackTap ?? () => Navigator.of(context).maybePop(),
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 20.0,
-                  color: AppColors.lightTextPrimary,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                 ),
               ),
             ),
