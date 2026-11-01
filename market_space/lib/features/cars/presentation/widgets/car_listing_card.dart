@@ -23,9 +23,9 @@ class CarListingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isHorizontal) {
-      return _buildHorizontalCard(context);
+      return RepaintBoundary(child: _buildHorizontalCard(context));
     }
-    return _buildVerticalCard(context);
+    return RepaintBoundary(child: _buildVerticalCard(context));
   }
 
   Widget _buildVerticalCard(BuildContext context) {
@@ -152,10 +152,10 @@ class CarListingCard extends StatelessWidget {
                     // Price
                     Text(
                       car.formattedPrice,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.primary,
+                        color: isDark ? AppColors.darkPrimary : AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
@@ -325,7 +325,11 @@ class CarListingCard extends StatelessWidget {
                     const SizedBox(height: 2.0),
                     Text(
                       car.formattedPrice,
-                      style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: AppColors.primary),
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? AppColors.darkPrimary : AppColors.primary,
+                      ),
                     ),
                     const SizedBox(height: 4.0),
                     Row(

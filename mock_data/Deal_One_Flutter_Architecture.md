@@ -1,4 +1,12 @@
 # معمارية تطبيقات Flutter: Deal One
+## الإصدار المحدث المتوافق مع القرارات المعمارية المعتمدة (ADR-001 إلى ADR-012)
+
+**الإصدار:** 2.0  
+**التاريخ:** 1 نوفمبر 2026  
+**الحالة:** معتمد رسمياً (Approved)  
+**المراجع المرتبطة:** `Deal_One_Architecture_Decisions.md`، `Deal_One_Master_Architecture.md`، `Deal_One_System_Design.md`، `Deal_One_SRS.md`
+
+---
 
 **الإصدار:** 1.0
 **التاريخ:** 1 نوفمبر 2026
@@ -217,9 +225,13 @@ class ListingsFeed extends _$ListingsFeed {
 class Listing with _$Listing {
   const factory Listing({
     required String id,
+    required String accountId,
+    required String categoryId,
     required String title,
     required ListingKind kind,
-    required ListingStatus status,
+    required ModerationStatus moderationStatus,
+    required PublicationStatus publicationStatus,
+    required AvailabilityStatus availabilityStatus,
     required ContactChannel contactChannel,
     num? price,
     required String currency,
@@ -227,12 +239,29 @@ class Listing with _$Listing {
     required ListingLocation location,
     @Default([]) List<String> imageUrls,
     @Default({}) Map<String, dynamic> attributes,
-    required DateTime approvedAt,
+    DateTime? approvedAt,
+    DateTime? expiresAt,
   }) = _Listing;
 }
 
-enum ListingStatus { draft, pending, approved, rejected, sold, expired, hidden }
+enum ModerationStatus { draft, pending, approved, rejected }
+enum PublicationStatus { unpublished, published, hidden, archived }
+enum AvailabilityStatus { available, reserved, sold, rented, outOfStock, discontinued }
 enum ContactChannel { inApp, external }
+
+@freezed
+class ListingLocation with _$ListingLocation {
+  const factory ListingLocation({
+    required String areaId,
+    required String cityName,
+    required String areaName,
+    required double displayLat,
+    required double displayLng,
+    // الإحداثيات الفعلية الدقيقة لا تتوفر إلا لصاحب الإعلان وفي سياق الإدارة
+    double? physicalLat,
+    double? physicalLng,
+  }) = _ListingLocation;
+}
 ```
 
 ### 6.2 Result type للأخطاء
@@ -526,7 +555,7 @@ Stream<Message> conversationMessages(ConversationMessagesRef ref, String convers
 - تقليل الـ logs في الإنتاج.
 
 ### 18.4 حماية من الأجهزة المعدلة
-- Root/jailbreak detection للعمليات الحساسة (مثل تغيير طريقة البيع)، مع تنبيه للدعم، من غير ما نمنع الاستخدام العادي.
+- Root/jailbreak detection للعمليات الحساسة (مثل إدارة مستندات التوثيق والعمليات الإدارية)، مع تنبيه للدعم، من غير ما نمنع الاستخدام العادي.
 
 ### 18.5 الخصوصية
 - طلب الصلاحيات بشرح واضح.

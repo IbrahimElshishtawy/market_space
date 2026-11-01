@@ -96,6 +96,7 @@ class _RealEstateNotificationsPageState
   @override
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -103,18 +104,24 @@ class _RealEstateNotificationsPageState
         extendBody: true,
         backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
-          title: const Text('إشعارات العقارات'),
+          title: Text(
+            'إشعارات العقارات',
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
           elevation: 0.5,
-          foregroundColor: AppColors.neutral,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
           actions: [
             TextButton(
               onPressed: _controller.markAllAsRead,
-              child: const Text(
+              child: Text(
                 'تحديد الكل كقراءة',
                 style: TextStyle(
-                  color: AppColors.primary,
+                  color: isDark ? AppColors.darkPrimary : AppColors.primary,
                   fontSize: 11.5,
                   fontWeight: FontWeight.bold,
                 ),

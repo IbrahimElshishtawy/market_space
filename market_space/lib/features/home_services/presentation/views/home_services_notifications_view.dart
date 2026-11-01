@@ -116,6 +116,11 @@ class _HomeServicesNotificationsViewState
               ),
               if (unreadCount > 0)
                 TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkPrimary
+                        : AppColors.primary,
+                  ),
                   onPressed: () {
                     setState(() {
                       for (var n in _notifications) {
@@ -132,7 +137,7 @@ class _HomeServicesNotificationsViewState
         // Notifications List
         Expanded(
           child: filtered.isEmpty
-              ? _buildEmptyState()
+              ? _buildEmptyState(context)
               : ListView.separated(
                   padding: const EdgeInsets.fromLTRB(
                     AppSpacing.md,
@@ -198,7 +203,7 @@ class _HomeServicesNotificationsViewState
       decoration: BoxDecoration(
         color: item.isRead
             ? (isDark ? AppColors.darkSurface : Colors.white)
-            : (isDark ? AppColors.darkBackground : AppColors.primary.withValues(alpha: 0.05)),
+            : (isDark ? AppColors.darkSurfaceSecondary : AppColors.primary.withValues(alpha: 0.05)),
         borderRadius: AppRadii.lg,
         border: Border.all(
           color: item.isRead
@@ -242,8 +247,8 @@ class _HomeServicesNotificationsViewState
                 Container(
                   width: 8.0,
                   height: 8.0,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkPrimary : AppColors.primary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -255,12 +260,19 @@ class _HomeServicesNotificationsViewState
               const SizedBox(height: 4.0),
               Text(
                 item.body,
-                style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  height: 1.3,
+                ),
               ),
               const SizedBox(height: 6.0),
               Text(
                 _formatTimeAgo(item.timestamp),
-                style: const TextStyle(fontSize: 10.0, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 10.0,
+                  color: isDark ? AppColors.darkTextMuted : Colors.grey,
+                ),
               ),
             ],
           ),
@@ -269,24 +281,31 @@ class _HomeServicesNotificationsViewState
     );
   }
 
-  Widget _buildEmptyState() {
-    return const Center(
+  Widget _buildEmptyState(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.notifications_none_rounded, size: 64.0, color: Colors.grey),
-            SizedBox(height: AppSpacing.md),
+            const Icon(Icons.notifications_none_rounded, size: 64.0, color: Colors.grey),
+            const SizedBox(height: AppSpacing.md),
             Text(
               'لا توجد إشعارات حالياً',
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+                color: isDark ? AppColors.darkTextPrimary : null,
+              ),
             ),
-            SizedBox(height: AppSpacing.xs),
+            const SizedBox(height: AppSpacing.xs),
             Text(
               'ستظهر هنا كافة إشعارات تحديثات الحجز وتعيين الفنيين والعروض الحصرية.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.lightTextSecondary),
+              style: TextStyle(
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+              ),
             ),
           ],
         ),

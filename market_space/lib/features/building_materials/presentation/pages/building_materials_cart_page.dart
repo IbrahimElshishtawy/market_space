@@ -62,13 +62,14 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dependencies = AppDependencies.of(context);
     final controller = dependencies.buildingMaterialsCartController;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text(
             'سلة مواد البناء والتوريدات',
@@ -76,8 +77,8 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
           ),
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: AppColors.slate900,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
             onPressed: () {
@@ -100,8 +101,19 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        title: const Text('إفراغ السلة'),
-                        content: const Text('هل أنت متأكد من حذف جميع المواد من السلة؟'),
+                        backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+                        title: Text(
+                          'إفراغ السلة',
+                          style: TextStyle(
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                          ),
+                        ),
+                        content: Text(
+                          'هل أنت متأكد من حذف جميع المواد من السلة؟',
+                          style: TextStyle(
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.slate600,
+                          ),
+                        ),
                         actions: [
                           TextButton(onPressed: () => ctx.pop(false), child: const Text('إلغاء')),
                           TextButton(
@@ -136,6 +148,10 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
                     title: 'سلة المشتريات فارغة',
                     message: 'لم تقم بإضافة مواد بناء بعد. تصفح الأقسام واختر الكميات المطلوبة لمشروعك.',
                     action: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDark ? AppColors.darkPrimary : AppColors.emerald700,
+                        foregroundColor: Colors.white,
+                      ),
                       onPressed: () => context.go(RouteNames.buildingMaterials),
                       child: const Text('تصفح مواد البناء'),
                     ),
@@ -148,31 +164,31 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
               padding: const EdgeInsets.all(AppSpacing.md),
               children: [
                 // محدد المحافظة لحساب تكلفة الشحن الفعلي
-                _buildLocationCard(controller, cart),
+                _buildLocationCard(controller, cart, isDark),
                 const SizedBox(height: AppSpacing.md),
 
                 // مجموعات المنتجات مقسمة حسب المورد (Marketplace)
                 ...cart.itemsBySupplier.entries.map((entry) {
-                  return _buildSupplierGroupCard(controller, entry.key, entry.value);
+                  return _buildSupplierGroupCard(controller, entry.key, entry.value, isDark);
                 }),
                 const SizedBox(height: AppSpacing.md),
 
                 // كود الخصم
-                _buildCouponCard(controller, cart),
+                _buildCouponCard(controller, cart, isDark),
                 const SizedBox(height: AppSpacing.md),
 
                 // ملخص التكاليف والنقل
-                _buildSummaryCard(cart),
+                _buildSummaryCard(cart, isDark),
                 const SizedBox(height: AppSpacing.lg),
 
                 // زر الانتقال إلى الدفع والإنهاء
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.emerald700,
+                    backgroundColor: isDark ? AppColors.darkPrimary : AppColors.emerald700,
                     foregroundColor: Colors.white,
-                    disabledBackgroundColor: AppColors.slate300,
+                    disabledBackgroundColor: isDark ? AppColors.darkBorder : AppColors.slate300,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: AppRadii.md,
                     ),
                   ),
@@ -207,47 +223,69 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
   Widget _buildLocationCard(
     BuildingMaterialsCartController controller,
     BuildingMaterialCartModel cart,
+    bool isDark,
   ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.slate200),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.slate200,
+        ),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.emerald50,
+              color: isDark ? AppColors.darkSurfaceSecondary : AppColors.emerald50,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.location_on_outlined, color: AppColors.emerald700, size: 22),
+            child: Icon(
+              Icons.location_on_outlined,
+              color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+              size: 22,
+            ),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'موقع تسليم وتشوين المشروع',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.slate900),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                  ),
                 ),
                 Text(
                   'تؤثر المحافظة على حساب مسافة النقل وسعة الشاحنات',
-                  style: TextStyle(fontSize: 11, color: AppColors.slate500),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.slate500,
+                  ),
                 ),
               ],
             ),
           ),
           DropdownButton<String>(
             value: cart.targetGovernorate,
+            dropdownColor: isDark ? AppColors.darkSurface : Colors.white,
             underline: const SizedBox.shrink(),
             items: _governorates.map((gov) {
               return DropdownMenuItem(
                 value: gov,
-                child: Text(gov, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                child: Text(
+                  gov,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                  ),
+                ),
               );
             }).toList(),
             onChanged: (val) {
@@ -265,18 +303,19 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
     BuildingMaterialsCartController controller,
     String supplierId,
     List<BuildingMaterialCartItemModel> items,
+    bool isDark,
   ) {
     final supplier = items.first.supplier;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.slate200),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.slate200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -289,23 +328,35 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.slate50,
+              color: isDark ? AppColors.darkSurfaceSecondary : AppColors.slate50,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadii.lgValue)),
-              border: const Border(bottom: BorderSide(color: AppColors.slate200)),
+              border: Border(bottom: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.slate200)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.business_rounded, size: 18, color: AppColors.slate700),
+                Icon(
+                  Icons.business_rounded,
+                  size: 18,
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.slate700,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     supplier.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.slate900),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                    ),
                   ),
                 ),
                 Text(
                   '${items.length} مواد',
-                  style: TextStyle(fontSize: 11, color: AppColors.slate600, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.slate600,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -313,7 +364,7 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
 
           // قائمة المواد
           ...items.map((item) {
-            return _buildCartItemTile(controller, item);
+            return _buildCartItemTile(controller, item, isDark);
           }),
         ],
       ),
@@ -323,6 +374,7 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
   Widget _buildCartItemTile(
     BuildingMaterialsCartController controller,
     BuildingMaterialCartItemModel item,
+    bool isDark,
   ) {
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -347,25 +399,40 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
                   children: [
                     Text(
                       item.product.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.slate900),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'المصنع: ${item.product.brand}',
-                      style: TextStyle(fontSize: 11, color: AppColors.slate500),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark ? AppColors.darkTextMuted : AppColors.slate500,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '${item.unitPrice.toStringAsFixed(0)} ج.م / ${item.selectedUnit.label}',
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.emerald700),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                      ),
                     ),
                   ],
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.delete_outline_rounded, color: AppColors.slate400, size: 20),
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  color: isDark ? AppColors.darkTextMuted : AppColors.slate400,
+                  size: 20,
+                ),
                 onPressed: () => controller.removeFromCart(item.id),
               ),
             ],
@@ -381,7 +448,7 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
                   Container(
                     height: 32,
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.slate300),
+                      border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.slate300),
                       borderRadius: AppRadii.sm,
                     ),
                     child: Row(
@@ -389,7 +456,11 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
                         IconButton(
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(minWidth: 28),
-                          icon: const Icon(Icons.remove, size: 16),
+                          icon: Icon(
+                            Icons.remove,
+                            size: 16,
+                            color: isDark ? AppColors.darkTextPrimary : null,
+                          ),
                           onPressed: () {
                             controller.updateQuantity(
                               itemId: item.id,
@@ -401,13 +472,21 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Text(
                             '${item.quantity.toStringAsFixed(item.quantity.truncateToDouble() == item.quantity ? 0 : 2)} ${item.selectedUnit.label}',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: isDark ? AppColors.darkTextPrimary : null,
+                            ),
                           ),
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(minWidth: 28),
-                          icon: const Icon(Icons.add, size: 16),
+                          icon: Icon(
+                            Icons.add,
+                            size: 16,
+                            color: isDark ? AppColors.darkTextPrimary : null,
+                          ),
                           onPressed: () {
                             controller.updateQuantity(
                               itemId: item.id,
@@ -422,7 +501,11 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
               ),
               Text(
                 '${item.totalPrice.toStringAsFixed(0)} ج.م',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.slate900),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                ),
               ),
             ],
           ),
@@ -436,7 +519,11 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
                 const SizedBox(width: 4),
                 Text(
                   'أقل كمية مسموح بها هي ${item.product.formattedMinOrder}',
-                  style: TextStyle(fontSize: 11, color: Colors.amber.shade900, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isDark ? Colors.amber.shade300 : Colors.amber.shade900,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -449,32 +536,51 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
   Widget _buildCouponCard(
     BuildingMaterialsCartController controller,
     BuildingMaterialCartModel cart,
+    bool isDark,
   ) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.slate200),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.slate200),
       ),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _couponController,
-              decoration: const InputDecoration(
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+              ),
+              decoration: InputDecoration(
                 hintText: 'كوبون الخصم (جرب: BUILD10)',
-                hintStyle: TextStyle(fontSize: 12),
+                hintStyle: TextStyle(
+                  fontSize: 12,
+                  color: isDark ? AppColors.darkTextMuted : AppColors.slate400,
+                ),
                 isDense: true,
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                filled: true,
+                fillColor: isDark ? AppColors.darkSurfaceSecondary : null,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: isDark ? AppColors.darkBorder : AppColors.slate300,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: isDark ? AppColors.darkBorder : AppColors.slate300,
+                  ),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               ),
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.slate800,
+              backgroundColor: isDark ? AppColors.darkPrimary : AppColors.slate800,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               shape: RoundedRectangleBorder(borderRadius: AppRadii.sm),
@@ -497,48 +603,62 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
     );
   }
 
-  Widget _buildSummaryCard(BuildingMaterialCartModel cart) {
+  Widget _buildSummaryCard(BuildingMaterialCartModel cart, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.slate200),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.slate200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'ملخص التوريد والشحن الإنشائي',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.slate900),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+            ),
           ),
-          const Divider(height: 20, color: AppColors.slate200),
-          _buildSummaryRow('إجمالي المواد', '${cart.subtotal.toStringAsFixed(0)} ج.م'),
-          _buildSummaryRow('إجمالي الوزن التقديري', '${cart.totalWeightTons.toStringAsFixed(1)} طن'),
+          Divider(height: 20, color: isDark ? AppColors.darkBorder : AppColors.slate200),
+          _buildSummaryRow('إجمالي المواد', '${cart.subtotal.toStringAsFixed(0)} ج.م', isDark: isDark),
+          _buildSummaryRow('إجمالي الوزن التقديري', '${cart.totalWeightTons.toStringAsFixed(1)} طن', isDark: isDark),
           _buildSummaryRow(
             'تكلفة النقل والتعتيق بالموقع',
             cart.calculatedFreight > 0 ? '${cart.calculatedFreight.toStringAsFixed(0)} ج.م' : 'تحدد بعد المعاينة',
             highlight: true,
+            isDark: isDark,
           ),
           if (cart.discountAmount > 0)
             _buildSummaryRow(
               'الخصم المطبق (${cart.couponCode})',
               '- ${cart.discountAmount.toStringAsFixed(0)} ج.م',
-              textColor: Colors.green,
+              textColor: isDark ? AppColors.emerald400 : Colors.green,
+              isDark: isDark,
             ),
-          const Divider(height: 20, color: AppColors.slate200),
+          Divider(height: 20, color: isDark ? AppColors.darkBorder : AppColors.slate200),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'الإجمالي النهائي للطلب',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.slate900),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                  ),
                 ),
               ),
               Text(
                 '${cart.grandTotal.toStringAsFixed(0)} ج.م',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.emerald700),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                ),
               ),
             ],
           ),
@@ -552,6 +672,7 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
     String value, {
     bool highlight = false,
     Color? textColor,
+    required bool isDark,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -559,7 +680,13 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Text(label, style: TextStyle(fontSize: 13, color: AppColors.slate600)),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.slate600,
+              ),
+            ),
           ),
           const SizedBox(width: AppSpacing.sm),
           Text(
@@ -567,7 +694,10 @@ class _BuildingMaterialsCartPageState extends State<BuildingMaterialsCartPage> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: highlight ? FontWeight.bold : FontWeight.w600,
-              color: textColor ?? (highlight ? AppColors.slate900 : AppColors.slate800),
+              color: textColor ??
+                  (highlight
+                      ? (isDark ? AppColors.darkTextPrimary : AppColors.slate900)
+                      : (isDark ? AppColors.darkTextSecondary : AppColors.slate800)),
             ),
           ),
         ],

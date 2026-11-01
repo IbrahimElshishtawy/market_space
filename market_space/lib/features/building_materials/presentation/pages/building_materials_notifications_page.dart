@@ -48,19 +48,25 @@ class _BuildingMaterialsNotificationsPageState
     final dependencies = AppDependencies.of(context);
     final controller = dependencies.buildingMaterialsNotificationController;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
-          title: const Text(
+          title: Text(
             'إشعارات مواد البناء',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+            ),
           ),
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: AppColors.slate900,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
             onPressed: () {
@@ -74,9 +80,13 @@ class _BuildingMaterialsNotificationsPageState
           actions: [
             TextButton(
               onPressed: () => controller.markAllAsRead(),
-              child: const Text(
+              child: Text(
                 'قراءة الكل',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.emerald700),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                ),
               ),
             ),
           ],
@@ -99,7 +109,7 @@ class _BuildingMaterialsNotificationsPageState
               children: [
                 // شريط الفلاتر الأفقية
                 Container(
-                  color: Colors.white,
+                  color: isDark ? AppColors.darkSurface : Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -112,15 +122,19 @@ class _BuildingMaterialsNotificationsPageState
                           child: ChoiceChip(
                             label: Text(filter.label),
                             selected: isSelected,
-                            selectedColor: AppColors.emerald100,
-                            backgroundColor: AppColors.slate100,
+                            selectedColor: isDark ? AppColors.emerald900.withValues(alpha: 0.5) : AppColors.emerald100,
+                            backgroundColor: isDark ? AppColors.darkSurfaceSecondary : AppColors.slate100,
                             labelStyle: TextStyle(
                               fontSize: 12,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              color: isSelected ? AppColors.emerald800 : AppColors.slate800,
+                              color: isSelected
+                                  ? (isDark ? AppColors.emerald300 : AppColors.emerald800)
+                                  : (isDark ? AppColors.darkTextSecondary : AppColors.slate800),
                             ),
                             side: BorderSide(
-                              color: isSelected ? AppColors.emerald600 : Colors.transparent,
+                              color: isSelected
+                                  ? (isDark ? AppColors.emerald400 : AppColors.emerald600)
+                                  : (isDark ? AppColors.darkBorder : Colors.transparent),
                             ),
                             onSelected: (_) => controller.setFilter(filter),
                           ),
@@ -129,14 +143,14 @@ class _BuildingMaterialsNotificationsPageState
                     ),
                   ),
                 ),
-                const Divider(height: 1, color: AppColors.slate200),
+                Divider(height: 1, color: isDark ? AppColors.darkBorder : AppColors.slate200),
 
                 // قائمة الإشعارات
                 Expanded(
                   child: notifications.isEmpty
-                      ? Center(
+                      ? const Center(
                           child: Padding(
-                            padding: const EdgeInsets.all(AppSpacing.xl),
+                            padding: EdgeInsets.all(AppSpacing.xl),
                             child: AppEmptyState(
                               title: 'لا توجد إشعارات',
                               message: 'كل إشعارات طلبياتك، تحديثات أسعار الحديد والأسمنت، وعروض الموردين ستظهر هنا.',
@@ -152,7 +166,7 @@ class _BuildingMaterialsNotificationsPageState
                                 const SizedBox(height: AppSpacing.sm),
                             itemBuilder: (context, index) {
                               final item = notifications[index];
-                              return _buildNotificationCard(controller, item);
+                              return _buildNotificationCard(controller, item, isDark);
                             },
                           ),
                         ),
@@ -168,16 +182,21 @@ class _BuildingMaterialsNotificationsPageState
   Widget _buildNotificationCard(
     BuildingMaterialsNotificationController controller,
     AppNotification item,
+    bool isDark,
   ) {
     final iconData = _getNotificationIcon(item.type);
     final iconColor = _getNotificationColor(item.type);
 
     return Container(
       decoration: BoxDecoration(
-        color: item.isRead ? Colors.white : const Color(0xFFF0FDF4),
+        color: item.isRead
+            ? (isDark ? AppColors.darkSurface : Colors.white)
+            : (isDark ? AppColors.emerald900.withValues(alpha: 0.25) : const Color(0xFFF0FDF4)),
         borderRadius: AppRadii.md,
         border: Border.all(
-          color: item.isRead ? AppColors.slate200 : AppColors.emerald300,
+          color: item.isRead
+              ? (isDark ? AppColors.darkBorder : AppColors.slate200)
+              : (isDark ? AppColors.emerald700 : AppColors.emerald300),
         ),
       ),
       child: ListTile(
@@ -185,7 +204,7 @@ class _BuildingMaterialsNotificationsPageState
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: 0.1),
+            color: iconColor.withValues(alpha: isDark ? 0.2 : 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(iconData, color: iconColor, size: 22),
@@ -198,7 +217,7 @@ class _BuildingMaterialsNotificationsPageState
                 style: TextStyle(
                   fontWeight: item.isRead ? FontWeight.w600 : FontWeight.bold,
                   fontSize: 13,
-                  color: AppColors.slate900,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
                 ),
               ),
             ),
@@ -219,12 +238,19 @@ class _BuildingMaterialsNotificationsPageState
             const SizedBox(height: 2),
             Text(
               item.body,
-              style: TextStyle(fontSize: 12, color: AppColors.slate600, height: 1.3),
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.slate600,
+                height: 1.3,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               _formatDate(item.createdAt),
-              style: TextStyle(fontSize: 10, color: AppColors.slate400),
+              style: TextStyle(
+                fontSize: 10,
+                color: isDark ? AppColors.darkTextMuted : AppColors.slate400,
+              ),
             ),
           ],
         ),

@@ -209,27 +209,42 @@ class HomeServicesHomeView extends StatelessWidget {
   }
 
   Widget _buildSearchBar(BuildContext context, HomeServicesCatalogController ctrl) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 8.0,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: TextField(
+        style: TextStyle(
+          fontSize: 14.0,
+          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+        ),
         decoration: InputDecoration(
           hintText: 'ابحث عن خدمة، تخصص، أو فني...',
-          hintStyle: const TextStyle(fontSize: 14.0, color: AppColors.lightTextSecondary),
-          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
+          hintStyle: TextStyle(
+            fontSize: 14.0,
+            color: isDark ? AppColors.darkTextMuted : AppColors.lightTextSecondary,
+          ),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: isDark ? AppColors.darkIconPrimary : AppColors.primary,
+          ),
           suffixIcon: ctrl.searchQuery.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear_rounded, size: 20.0),
+                  icon: Icon(
+                    Icons.clear_rounded,
+                    size: 20.0,
+                    color: isDark ? AppColors.darkIconSecondary : null,
+                  ),
                   onPressed: () => ctrl.setSearchQuery(''),
                 )
               : null,
@@ -394,7 +409,11 @@ class HomeServicesHomeView extends StatelessWidget {
             const SizedBox(height: 4.0),
             Text(
               'الفني: ${booking.technicianName}',
-              style: const TextStyle(fontSize: 12.0, color: AppColors.primary, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 12.0,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
           const SizedBox(height: 10.0),
@@ -402,7 +421,9 @@ class HomeServicesHomeView extends StatelessWidget {
             width: double.infinity,
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.amber.shade900),
+                side: BorderSide(
+                  color: isDark ? Colors.amber.shade400 : Colors.amber.shade900,
+                ),
                 shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
               ),
@@ -411,7 +432,10 @@ class HomeServicesHomeView extends StatelessWidget {
               },
               child: Text(
                 'عرض تفاصيل الحجز ومتابعة الفني',
-                style: TextStyle(color: Colors.amber.shade900, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: isDark ? Colors.amber.shade300 : Colors.amber.shade900,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -425,6 +449,7 @@ class HomeServicesHomeView extends StatelessWidget {
     HomeServiceCategoryModel cat,
     HomeServicesCatalogController ctrl,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = ctrl.selectedCategoryId == cat.id;
 
     return InkWell(
@@ -437,10 +462,14 @@ class HomeServicesHomeView extends StatelessWidget {
         width: 86.0,
         padding: const EdgeInsets.all(AppSpacing.xs),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+          color: isSelected
+              ? (isDark ? AppColors.darkSurfaceSecondary : AppColors.primary.withValues(alpha: 0.1))
+              : (isDark ? AppColors.darkSurface : Colors.white),
           borderRadius: AppRadii.lg,
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.lightBorder,
+            color: isSelected
+                ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
           ),
         ),
         child: Column(
@@ -449,12 +478,14 @@ class HomeServicesHomeView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10.0),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: isDark
+                    ? AppColors.darkSurfaceSecondary
+                    : AppColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 _getCategoryIcon(cat.iconName),
-                color: AppColors.primary,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                 size: 24.0,
               ),
             ),
@@ -468,10 +499,8 @@ class HomeServicesHomeView extends StatelessWidget {
                 fontSize: 11.0,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                 color: isSelected
-                    ? AppColors.primary
-                    : (Theme.of(context).brightness == Brightness.dark
-                        ? AppColors.darkTextPrimary
-                        : AppColors.neutral),
+                    ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                    : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
               ),
             ),
           ],
@@ -643,10 +672,10 @@ class HomeServicesHomeView extends StatelessWidget {
                         service.formattedPrice,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13.0,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                         ),
                       ),
                     ),
@@ -658,12 +687,16 @@ class HomeServicesHomeView extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
                         decoration: BoxDecoration(
-                          color: AppColors.primary,
+                          color: isDark ? AppColors.darkPrimary : AppColors.primary,
                           borderRadius: AppRadii.md,
                         ),
-                        child: const Text(
+                        child: Text(
                           'احجز',
-                          style: TextStyle(color: Colors.white, fontSize: 12.0, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: isDark ? AppColors.darkOnPrimary : Colors.white,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -771,10 +804,10 @@ class HomeServicesHomeView extends StatelessWidget {
                   'يبدأ من ${provider.startingPrice.toStringAsFixed(0)} ج.م',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                   ),
                 ),
               ),

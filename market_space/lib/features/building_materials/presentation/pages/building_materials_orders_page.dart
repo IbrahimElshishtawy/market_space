@@ -58,20 +58,25 @@ class _BuildingMaterialsOrdersPageState
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.of(context);
     final orderController = dependencies.buildingMaterialsOrderController;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
-          title: const Text(
+          title: Text(
             'طلبيات مواد البناء والتوريد',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+            ),
           ),
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: AppColors.slate900,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
             onPressed: () {
@@ -91,9 +96,9 @@ class _BuildingMaterialsOrdersPageState
           ],
           bottom: TabBar(
             controller: _tabController,
-            labelColor: AppColors.emerald700,
-            unselectedLabelColor: AppColors.slate500,
-            indicatorColor: AppColors.emerald700,
+            labelColor: isDark ? AppColors.emerald400 : AppColors.emerald700,
+            unselectedLabelColor: isDark ? AppColors.darkTextMuted : AppColors.slate500,
+            indicatorColor: isDark ? AppColors.emerald400 : AppColors.emerald700,
             indicatorWeight: 3,
             tabs: const [
               Tab(text: 'الكل'),
@@ -118,7 +123,7 @@ class _BuildingMaterialsOrdersPageState
             return TabBarView(
               controller: _tabController,
               children: [
-                _buildOrdersList(state.orders),
+                _buildOrdersList(state.orders, isDark),
                 _buildOrdersList(
                   state.orders
                       .where((o) =>
@@ -126,14 +131,16 @@ class _BuildingMaterialsOrdersPageState
                           o.status != BuildingMaterialOrderStatus.cancelled &&
                           o.status != BuildingMaterialOrderStatus.returned)
                       .toList(),
+                  isDark,
                 ),
                 _buildOrdersList(
                   state.orders
                       .where((o) =>
                           o.status == BuildingMaterialOrderStatus.delivered)
                       .toList(),
+                  isDark,
                 ),
-                _buildRfqList(state.rfqs),
+                _buildRfqList(state.rfqs, isDark),
               ],
             );
           },
@@ -142,7 +149,7 @@ class _BuildingMaterialsOrdersPageState
     );
   }
 
-  Widget _buildOrdersList(List<BuildingMaterialOrderModel> orders) {
+  Widget _buildOrdersList(List<BuildingMaterialOrderModel> orders, bool isDark) {
     if (orders.isEmpty) {
       return Center(
         child: Padding(
@@ -151,6 +158,10 @@ class _BuildingMaterialsOrdersPageState
             title: 'لا توجد طلبات في هذا القسم',
             message: 'يمكنك إنشاء طلب جديد لمواد البناء وسيتم جدولته وشحنه لموقع مشروعك.',
             action: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isDark ? AppColors.darkPrimary : AppColors.emerald700,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () => context.go(RouteNames.buildingMaterials),
               child: const Text('تصفح مواد البناء'),
             ),
@@ -168,24 +179,24 @@ class _BuildingMaterialsOrdersPageState
         itemCount: orders.length,
         itemBuilder: (context, index) {
           final order = orders[index];
-          return _buildOrderCard(order);
+          return _buildOrderCard(order, isDark);
         },
       ),
     );
   }
 
-  Widget _buildOrderCard(BuildingMaterialOrderModel order) {
+  Widget _buildOrderCard(BuildingMaterialOrderModel order, bool isDark) {
     final statusColor = _getStatusColor(order.status);
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.slate200),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.slate200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -209,14 +220,18 @@ class _BuildingMaterialsOrdersPageState
                 children: [
                   Text(
                     order.orderNumber,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.slate900),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.1),
+                      color: statusColor.withValues(alpha: isDark ? 0.2 : 0.1),
                       borderRadius: AppRadii.full,
-                      border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+                      border: Border.all(color: statusColor.withValues(alpha: isDark ? 0.4 : 0.3)),
                     ),
                     child: Text(
                       order.status.label,
@@ -234,13 +249,19 @@ class _BuildingMaterialsOrdersPageState
               // اسم المورد وتاريخ الطلب
               Text(
                 'المورد: ${order.supplier.name}',
-                style: TextStyle(fontSize: 12, color: AppColors.slate600),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.slate600,
+                ),
               ),
               Text(
                 'تاريخ الطلب: ${order.createdAt.year}/${order.createdAt.month}/${order.createdAt.day}',
-                style: TextStyle(fontSize: 11, color: AppColors.slate400),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? AppColors.darkTextMuted : AppColors.slate400,
+                ),
               ),
-              const Divider(height: 16, color: AppColors.slate200),
+              Divider(height: 16, color: isDark ? AppColors.darkBorder : AppColors.slate200),
 
               // عدد المواد وإجمالي الكمية
               Row(
@@ -248,11 +269,19 @@ class _BuildingMaterialsOrdersPageState
                 children: [
                   Text(
                     '${order.items.length} مواد • إجمالي الكمية: ${order.totalRequestedQuantity.toStringAsFixed(0)}',
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.slate800),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? AppColors.darkTextSecondary : AppColors.slate800,
+                    ),
                   ),
                   Text(
                     '${order.grandTotal.toStringAsFixed(0)} ج.م',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.emerald700),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                    ),
                   ),
                 ],
               ),
@@ -265,11 +294,18 @@ class _BuildingMaterialsOrdersPageState
                   children: [
                     Text(
                       'نسبة اكتمال التوريد للموقع:',
-                      style: TextStyle(fontSize: 11, color: AppColors.slate500),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark ? AppColors.darkTextMuted : AppColors.slate500,
+                      ),
                     ),
                     Text(
                       '${order.deliveryCompletionPercentage}% (${order.totalDeliveredQuantity.toStringAsFixed(0)} من ${order.totalRequestedQuantity.toStringAsFixed(0)})',
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.slate800),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.slate800,
+                      ),
                     ),
                   ],
                 ),
@@ -279,9 +315,11 @@ class _BuildingMaterialsOrdersPageState
                   child: LinearProgressIndicator(
                     value: order.deliveryCompletionRatio,
                     minHeight: 6,
-                    backgroundColor: AppColors.slate200,
+                    backgroundColor: isDark ? AppColors.darkSurfaceSecondary : AppColors.slate200,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      order.deliveryCompletionRatio >= 1.0 ? AppColors.emerald700 : const Color(0xFF2563EB),
+                      order.deliveryCompletionRatio >= 1.0
+                          ? (isDark ? AppColors.emerald400 : AppColors.emerald700)
+                          : const Color(0xFF2563EB),
                     ),
                   ),
                 ),
@@ -293,7 +331,7 @@ class _BuildingMaterialsOrdersPageState
     );
   }
 
-  Widget _buildRfqList(List<RfqRequestModel> rfqs) {
+  Widget _buildRfqList(List<RfqRequestModel> rfqs, bool isDark) {
     if (rfqs.isEmpty) {
       return Center(
         child: Padding(
@@ -302,6 +340,10 @@ class _BuildingMaterialsOrdersPageState
             title: 'لا توجد طلبات عروض أسعار',
             message: 'يمكنك طلب عروض أسعار لمشروعك الكبير وتلقي عروض متنافسة من كبرى المصانع والموردين.',
             action: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isDark ? AppColors.darkPrimary : AppColors.emerald700,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () => context.push(RouteNames.buildingMaterialsRfq),
               child: const Text('طلب عرض سعر الآن'),
             ),
@@ -318,23 +360,32 @@ class _BuildingMaterialsOrdersPageState
         return Container(
           margin: const EdgeInsets.only(bottom: AppSpacing.md),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? AppColors.darkSurface : Colors.white,
             borderRadius: AppRadii.lg,
-            border: Border.all(color: AppColors.slate200),
+            border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.slate200),
           ),
           child: ExpansionTile(
+            textColor: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+            collapsedTextColor: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+            iconColor: isDark ? AppColors.darkTextPrimary : null,
+            collapsedIconColor: isDark ? AppColors.darkTextSecondary : null,
             title: Text(
               '${rfq.materialName} (${rfq.quantity.toStringAsFixed(0)} ${rfq.unit.label})',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             ),
             subtitle: Text(
               'المشروع: ${rfq.projectName} • ${rfq.quotes.length} عروض مقدمة',
-              style: TextStyle(fontSize: 11, color: AppColors.slate500),
+              style: TextStyle(
+                fontSize: 11,
+                color: isDark ? AppColors.darkTextMuted : AppColors.slate500,
+              ),
             ),
             trailing: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: rfq.status == RfqStatus.awarded ? AppColors.emerald50 : const Color(0xFFEFF6FF),
+                color: rfq.status == RfqStatus.awarded
+                    ? (isDark ? AppColors.emerald900.withValues(alpha: 0.3) : AppColors.emerald50)
+                    : (isDark ? const Color(0xFF1E3A8A).withValues(alpha: 0.3) : const Color(0xFFEFF6FF)),
                 borderRadius: AppRadii.sm,
               ),
               child: Text(
@@ -342,27 +393,42 @@ class _BuildingMaterialsOrdersPageState
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: rfq.status == RfqStatus.awarded ? AppColors.emerald700 : const Color(0xFF1D4ED8),
+                  color: rfq.status == RfqStatus.awarded
+                      ? (isDark ? AppColors.emerald400 : AppColors.emerald700)
+                      : (isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8)),
                 ),
               ),
             ),
             children: [
-              const Divider(height: 1),
+              Divider(height: 1, color: isDark ? AppColors.darkBorder : AppColors.slate200),
               Padding(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('العروض المقدمة من الموردين:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.slate700)),
+                    Text(
+                      'العروض المقدمة من الموردين:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.slate700,
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.sm),
                     ...rfq.quotes.map((q) {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: q.isAccepted ? AppColors.emerald50 : AppColors.slate50,
+                          color: q.isAccepted
+                              ? (isDark ? AppColors.emerald900.withValues(alpha: 0.25) : AppColors.emerald50)
+                              : (isDark ? AppColors.darkSurfaceSecondary : AppColors.slate50),
                           borderRadius: AppRadii.md,
-                          border: Border.all(color: q.isAccepted ? AppColors.emerald300 : AppColors.slate200),
+                          border: Border.all(
+                            color: q.isAccepted
+                                ? (isDark ? AppColors.emerald700 : AppColors.emerald300)
+                                : (isDark ? AppColors.darkBorder : AppColors.slate200),
+                          ),
                         ),
                         child: Row(
                           children: [
@@ -370,21 +436,46 @@ class _BuildingMaterialsOrdersPageState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(q.supplier.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                                  Text('سعر الوحدة: ${q.quotedUnitPrice.toStringAsFixed(0)} ج.م • الشحن: ${q.quotedFreightCost.toStringAsFixed(0)} ج.م',
-                                      style: TextStyle(fontSize: 11, color: AppColors.slate600)),
-                                  Text('مدة التوصيل: ${q.deliveryDurationDays} يوم', style: TextStyle(fontSize: 10, color: AppColors.slate500)),
+                                  Text(
+                                    q.supplier.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: isDark ? AppColors.darkTextPrimary : null,
+                                    ),
+                                  ),
+                                  Text(
+                                    'سعر الوحدة: ${q.quotedUnitPrice.toStringAsFixed(0)} ج.م • الشحن: ${q.quotedFreightCost.toStringAsFixed(0)} ج.م',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: isDark ? AppColors.darkTextSecondary : AppColors.slate600,
+                                    ),
+                                  ),
+                                  Text(
+                                    'مدة التوصيل: ${q.deliveryDurationDays} يوم',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: isDark ? AppColors.darkTextMuted : AppColors.slate500,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text('${q.grandTotal.toStringAsFixed(0)} ج.م', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.emerald700)),
+                                Text(
+                                  '${q.grandTotal.toStringAsFixed(0)} ج.م',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                                  ),
+                                ),
                                 if (!q.isAccepted && rfq.status != RfqStatus.awarded)
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.emerald700,
+                                      backgroundColor: isDark ? AppColors.darkPrimary : AppColors.emerald700,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       minimumSize: Size.zero,
@@ -398,7 +489,14 @@ class _BuildingMaterialsOrdersPageState
                                     child: const Text('قبول العرض', style: TextStyle(fontSize: 11)),
                                   )
                                 else if (q.isAccepted)
-                                  const Text('عرض معتمد', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.emerald700)),
+                                  Text(
+                                    'عرض معتمد',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                                    ),
+                                  ),
                               ],
                             ),
                           ],

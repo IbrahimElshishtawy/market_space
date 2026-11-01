@@ -74,8 +74,8 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                               fontSize: 13.0,
                               fontWeight: _selectedSegment == 0 ? FontWeight.bold : FontWeight.normal,
                               color: _selectedSegment == 0
-                                  ? AppColors.primary
-                                  : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
+                                  ? (isDark ? AppColors.darkTextPrimary : AppColors.primary)
+                                  : (isDark ? AppColors.darkTextSecondary : AppColors.neutral),
                             ),
                           ),
                         ),
@@ -89,7 +89,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           decoration: BoxDecoration(
                             color: _selectedSegment == 1
-                                ? (isDark ? AppColors.darkBackground : Colors.white)
+                                ? (isDark ? AppColors.darkSurfaceSecondary : Colors.white)
                                 : Colors.transparent,
                             borderRadius: AppRadii.md,
                             boxShadow: _selectedSegment == 1
@@ -108,8 +108,8 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                               fontSize: 13.0,
                               fontWeight: _selectedSegment == 1 ? FontWeight.bold : FontWeight.normal,
                               color: _selectedSegment == 1
-                                  ? AppColors.primary
-                                  : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
+                                  ? (isDark ? AppColors.darkTextPrimary : AppColors.primary)
+                                  : (isDark ? AppColors.darkTextSecondary : AppColors.neutral),
                             ),
                           ),
                         ),
@@ -124,7 +124,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
             Expanded(
               child: _selectedSegment == 0
                   ? (services.isEmpty
-                      ? _buildEmptyState('لا توجد خدمات محفوظة حالياً')
+                      ? _buildEmptyState('لا توجد خدمات محفوظة حالياً', isDark)
                       : ListView.separated(
                           padding: const EdgeInsets.fromLTRB(
                             AppSpacing.md,
@@ -155,11 +155,17 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                               ),
                               title: Text(
                                 s.title,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                                ),
                               ),
                               subtitle: Text(
                                 '${s.formattedPrice} • ${s.estimatedDuration}',
-                                style: const TextStyle(fontSize: 12.0, color: AppColors.primary),
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: isDark ? AppColors.darkTextSecondary : AppColors.primary,
+                                ),
                               ),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -170,6 +176,8 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
+                                      backgroundColor: isDark ? AppColors.darkPrimary : AppColors.primary,
+                                      foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                       minimumSize: const Size(60, 32),
                                     ),
@@ -187,7 +195,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                           },
                         ))
                   : (providers.isEmpty
-                      ? _buildEmptyState('لا توجد شركات أو مقدمي خدمة محفوظين')
+                      ? _buildEmptyState('لا توجد شركات أو مقدمي خدمة محفوظين', isDark)
                       : ListView.separated(
                           padding: const EdgeInsets.fromLTRB(
                             AppSpacing.md,
@@ -218,13 +226,19 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                               ),
                               title: Text(
                                 p.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                                ),
                               ),
                               subtitle: Text(
                                 '${p.rating} ★ (${p.reviewsCount} تقييم) • ${p.specialties.join(", ")}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 12.0),
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: isDark ? AppColors.darkTextSecondary : null,
+                                ),
                               ),
                               trailing: IconButton(
                                 icon: const Icon(Icons.favorite_rounded, color: Colors.red),
@@ -243,7 +257,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
     );
   }
 
-  Widget _buildEmptyState(String title) {
+  Widget _buildEmptyState(String title, bool isDark) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -254,16 +268,26 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
             const SizedBox(height: AppSpacing.md),
             Text(
               title,
-              style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+                color: isDark ? AppColors.darkTextPrimary : null,
+              ),
             ),
             const SizedBox(height: AppSpacing.xs),
-            const Text(
+            Text(
               'يمكنك حفظ الخدمات والمزودين المفضلين للوصول إليهم والحجز بضغطة زر واحدة.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.lightTextSecondary),
+              style: TextStyle(
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isDark ? AppColors.darkPrimary : AppColors.primary,
+                foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
+              ),
               onPressed: widget.onExploreServicesTap,
               child: const Text('تصفح الخدمات الآن'),
             ),

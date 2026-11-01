@@ -1,4 +1,12 @@
 # معمارية الفلاتر والبحث: Deal One
+## الإصدار المحدث المتوافق مع القرارات المعمارية المعتمدة (ADR-001 إلى ADR-012)
+
+**الإصدار:** 2.0  
+**التاريخ:** 1 نوفمبر 2026  
+**الحالة:** معتمد رسمياً (Approved)  
+**المراجع المرتبطة:** `Deal_One_Architecture_Decisions.md`، `Deal_One_Master_Architecture.md`، `Deal_One_System_Design.md`
+
+---
 
 **الإصدار:** 1.0
 **التاريخ:** 1 نوفمبر 2026
@@ -105,11 +113,16 @@ CREATE INDEX idx_listings_attrs ON listings USING GIN (attributes jsonb_path_ops
 
 **الاستعلام:**
 ```sql
-SELECT * FROM listings
-WHERE category_id = $1
-  AND status = 'approved'
-  AND attributes @> '{"rooms": 3, "furnished": true}'
-  AND (attributes->>'area_sqm')::int BETWEEN $2 AND $3;
+SELECT l.* FROM listings l
+JOIN accounts a ON l.account_id = a.id
+WHERE l.category_id = $1
+  AND l.moderation_status = 'approved'
+  AND l.publication_status = 'published'
+  AND l.availability_status = 'available'
+  AND a.verification_status = 'approved'
+  AND a.is_active = true
+  AND l.attributes @> '{"rooms": 3, "furnished": true}'
+  AND (l.attributes->>'area_sqm')::int BETWEEN $2 AND $3;
 ```
 
 **ملاحظة:** الـ GIN بيدعم `@>` (containment) بكفاءة، لكن الـ range (`BETWEEN`) على الأرقام بيحتاج expression index لكل حقل رقمي مهم:
@@ -137,7 +150,9 @@ CREATE INDEX idx_listings_area ON listings (((attributes->>'area_sqm')::int));
 ```json
 {
   "id": "uuid",
-  "status": "approved",
+  "moderation_status": "approved",
+  "publication_status": "published",
+  "availability_status": "available",
   "account": { "id": "uuid", "type": "company", "verified": true },
   "category_path": ["عقارات", "شقق", "للإيجار"],
   "category_id": "uuid",
@@ -172,7 +187,7 @@ CREATE INDEX idx_listings_area ON listings (((attributes->>'area_sqm')::int));
 - `price`: `scaled_float` أو `double`.
 - `location`: `geo_point`.
 - `attributes`: **dynamic templates**، مع تحديد النوع لكل حقل معروف (`rooms` → integer، `brand` → keyword).
-- `status`, `contact_channel`, `listing_kind`: `keyword`.
+- `moderation_status`, `publication_status`, `availability_status`, `contact_channel`, `listing_kind`: `keyword`.
 - `expires_at`, `approved_at`, `created_at`: `date`.
 
 ### 4.3 الفلتر الثابت (لا يتجاوزه أي استعلام)
@@ -334,7 +349,7 @@ category_version:{category_id} → 17
 
 ---
 
-## 10. البحث المحفوظ والتنبيهات
+## 10. البحث المحفوظ والتنبيهات (مخطط للمرحلة الثانية V2 — ADR-011)
 
 ### 10.1 الفكرة
 المستخدم يحفظ بحث (مثلاً "شقة 3 غرف في مدينة نصر بأقل من 10 ألف"). لما يظهر إعلان جديد يطابق، يوصله إشعار.
@@ -430,7 +445,7 @@ GET /listings?category=apartments-sale&include_facets=rooms,area,price_range
 - قياس زمن الاستجابة، واستهلاك الـ CPU والـ memory.
 
 ### 13.3 تحسينات مبكرة
-- الـ index المناسب على `(category_id, status, expires_at)`.
+- الـ index المناسب على `(category_id, moderation_status, publication_status, availability_status, expires_at)`.
 - Partitioning للإعلانات المنتهية (فصل الجداول التاريخية).
 - Connection pooling (PgBouncer).
 

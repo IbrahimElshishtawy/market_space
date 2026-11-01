@@ -67,10 +67,10 @@ class _HomeAppliancesNotificationsPageState
           actions: [
             TextButton(
               onPressed: _controller.markAllAsRead,
-              child: const Text(
+              child: Text(
                 'تحديد الكل كقراءة',
                 style: TextStyle(
-                  color: AppColors.primary,
+                  color: isDark ? AppColors.darkPrimary : AppColors.primary,
                   fontSize: 11.5,
                   fontWeight: FontWeight.bold,
                 ),

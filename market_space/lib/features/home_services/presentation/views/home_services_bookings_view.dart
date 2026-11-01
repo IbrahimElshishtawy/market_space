@@ -190,7 +190,7 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                 ],
               ),
 
-              const Divider(height: 18.0),
+              Divider(height: 18.0, color: isDark ? AppColors.darkBorder : null),
 
               // Service Title & Provider
               Row(
@@ -232,14 +232,18 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                           const SizedBox(height: 3.0),
                           Row(
                             children: [
-                              const Icon(Icons.person_rounded, size: 14.0, color: AppColors.primary),
+                              Icon(
+                                Icons.person_rounded,
+                                size: 14.0,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.primary,
+                              ),
                               const SizedBox(width: 3.0),
                               Text(
                                 'الفني: ${booking.technicianName}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                                 ),
                               ),
                             ],
@@ -257,12 +261,17 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.sm),
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkBackground : Colors.grey.shade50,
+                  color: isDark ? AppColors.darkSurfaceSecondary : Colors.grey.shade50,
                   borderRadius: AppRadii.md,
+                  border: isDark ? Border.all(color: AppColors.darkBorder) : null,
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.calendar_today_rounded, size: 16.0, color: Colors.grey),
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      size: 16.0,
+                      color: isDark ? AppColors.darkTextMuted : Colors.grey,
+                    ),
                     const SizedBox(width: 6.0),
                     Text(
                       '${booking.scheduledDate.year}/${booking.scheduledDate.month}/${booking.scheduledDate.day} — ${booking.scheduledTimeSlot}',
@@ -289,16 +298,19 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
+                      Text(
                         'إجمالي الفاتورة',
-                        style: TextStyle(fontSize: 11.0, color: AppColors.lightTextSecondary),
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                        ),
                       ),
                       Text(
                         '${booking.pricing.total.toStringAsFixed(0)} ج.م',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                         ),
                       ),
                     ],
@@ -312,8 +324,10 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                           icon: const Icon(Icons.location_on_rounded, size: 16.0),
                           label: const Text('تتبع الفني'),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.primary,
-                            side: const BorderSide(color: AppColors.primary),
+                            foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.primary,
+                            side: BorderSide(
+                              color: isDark ? AppColors.darkBorder : AppColors.primary,
+                            ),
                             shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                           ),
                           onPressed: () {
@@ -323,6 +337,8 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                       const SizedBox(width: AppSpacing.xs),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: isDark ? AppColors.darkPrimary : AppColors.primary,
+                          foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                         ),
                         onPressed: () {

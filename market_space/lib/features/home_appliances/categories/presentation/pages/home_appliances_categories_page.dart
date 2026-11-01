@@ -117,15 +117,15 @@ class _HomeAppliancesCategoriesPageState
                                 Container(
                                   padding: const EdgeInsets.all(12.0),
                                   decoration: BoxDecoration(
-                                    color: AppColors.primary.withValues(
-                                      alpha: 0.1,
-                                    ),
+                                    color: isDark
+                                        ? AppColors.darkSurfaceSecondary
+                                        : AppColors.primary.withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
                                     cat.iconData,
                                     size: 28.0,
-                                    color: AppColors.primary,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                                   ),
                                 ),
                                 const SizedBox(height: 8.0),

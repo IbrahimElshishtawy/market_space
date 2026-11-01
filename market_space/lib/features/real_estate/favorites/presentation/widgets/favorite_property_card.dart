@@ -77,8 +77,8 @@ class FavoritePropertyCard extends StatelessWidget {
                               horizontal: 8.0,
                               vertical: 3.0,
                             ),
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
+                            decoration: BoxDecoration(
+                              color: isDark ? AppColors.darkPrimary : AppColors.primary,
                               borderRadius: AppRadii.xs,
                             ),
                             child: Text(
@@ -86,8 +86,8 @@ class FavoritePropertyCard extends StatelessWidget {
                                   (property.pricePeriod != null
                                       ? ' / ${property.pricePeriod}'
                                       : ''),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: isDark ? AppColors.darkOnPrimary : Colors.white,
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold,
                               ),

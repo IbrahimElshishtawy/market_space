@@ -254,8 +254,10 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
   }
 
   void _showFilterSheet() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
+      backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -266,18 +268,32 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'تصفية الأجهزة الكهربائية',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
-              const Text(
+              Text(
                 'تصفية حسب الماركة، السعر، مدة الضمان، أو نظام التقسيط.',
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('تطبيق الفلتر'),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? AppColors.darkPrimary : AppColors.primary,
+                    foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
+                  ),
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('تطبيق الفلتر'),
+                ),
               ),
             ],
           ),

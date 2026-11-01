@@ -116,20 +116,42 @@ class HomeServicesCatalogView extends StatelessWidget {
   }
 
   Widget _buildSearchBar(BuildContext context, HomeServicesCatalogController ctrl) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 6.0,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: TextField(
+        style: TextStyle(
+          fontSize: 14.0,
+          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+        ),
         decoration: InputDecoration(
           hintText: 'ابحث في كافة الخدمات والمهندسين...',
-          hintStyle: const TextStyle(fontSize: 14.0, color: AppColors.lightTextSecondary),
-          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
+          hintStyle: TextStyle(
+            fontSize: 14.0,
+            color: isDark ? AppColors.darkTextMuted : AppColors.lightTextSecondary,
+          ),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: isDark ? AppColors.darkIconPrimary : AppColors.primary,
+          ),
           suffixIcon: ctrl.searchQuery.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear_rounded, size: 20.0),
+                  icon: Icon(
+                    Icons.clear_rounded,
+                    size: 20.0,
+                    color: isDark ? AppColors.darkIconSecondary : null,
+                  ),
                   onPressed: () => ctrl.setSearchQuery(''),
                 )
               : null,
@@ -224,23 +246,37 @@ class HomeServicesCatalogView extends StatelessWidget {
                           service.shortDescription,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                          ),
                         ),
                         const SizedBox(height: 6.0),
                         Row(
                           children: [
-                            const Icon(Icons.access_time_rounded, size: 14.0, color: Colors.grey),
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 14.0,
+                              color: isDark ? AppColors.darkTextMuted : Colors.grey,
+                            ),
                             const SizedBox(width: 4.0),
                             Text(
                               service.estimatedDuration,
-                              style: const TextStyle(fontSize: 11.0, color: Colors.grey),
+                              style: TextStyle(
+                                fontSize: 11.0,
+                                color: isDark ? AppColors.darkTextMuted : Colors.grey,
+                              ),
                             ),
                             const SizedBox(width: AppSpacing.sm),
                             const Icon(Icons.star_rounded, size: 15.0, color: Colors.amber),
                             const SizedBox(width: 2.0),
                             Text(
                               '${service.rating} (${service.reviewsCount})',
-                              style: const TextStyle(fontSize: 11.0, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 11.0,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? AppColors.darkTextPrimary : null,
+                              ),
                             ),
                           ],
                         ),
@@ -250,7 +286,7 @@ class HomeServicesCatalogView extends StatelessWidget {
                 ],
               ),
 
-              const Divider(height: 18.0),
+              Divider(height: 18.0, color: isDark ? AppColors.darkBorder : null),
 
               // Bottom Pricing & Actions
               Wrap(
@@ -266,25 +302,27 @@ class HomeServicesCatalogView extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: isDark
+                              ? AppColors.darkSurfaceSecondary
+                              : AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: AppRadii.sm,
                         ),
                         child: Text(
                           service.pricingType.labelAr,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10.0,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.primary,
                           ),
                         ),
                       ),
                       const SizedBox(height: 2.0),
                       Text(
                         service.formattedPrice,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15.0,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
                         ),
                       ),
                     ],
@@ -296,6 +334,10 @@ class HomeServicesCatalogView extends StatelessWidget {
                         style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                          foregroundColor: isDark ? AppColors.darkTextPrimary : null,
+                          side: BorderSide(
+                            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                          ),
                         ),
                         onPressed: () {
                           context.push('/home-services/service-detail?id=${service.id}');
@@ -305,8 +347,8 @@ class HomeServicesCatalogView extends StatelessWidget {
                       const SizedBox(width: AppSpacing.xs),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
+                          backgroundColor: isDark ? AppColors.darkPrimary : AppColors.primary,
+                          foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                         ),

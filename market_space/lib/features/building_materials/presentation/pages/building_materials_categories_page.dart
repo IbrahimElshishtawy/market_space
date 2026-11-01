@@ -78,10 +78,12 @@ class _BuildingMaterialsCategoriesPageState
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text(
             'تصنيفات مواد البناء',
@@ -89,8 +91,8 @@ class _BuildingMaterialsCategoriesPageState
           ),
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: AppColors.slate900,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
             onPressed: () {
@@ -138,31 +140,41 @@ class _BuildingMaterialsCategoriesPageState
                     // شريط البحث
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? AppColors.darkSurface : Colors.white,
                         borderRadius: AppRadii.md,
+                        border: Border.all(
+                          color: isDark ? AppColors.darkBorder : AppColors.slate200,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
+                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: TextField(
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
+                        ),
                         onChanged: (val) => setState(() => _searchQuery = val),
                         decoration: InputDecoration(
                           hintText: 'ابحث عن أسمنت، حديد، سيراميك، دهانات...',
                           hintStyle: TextStyle(
                             fontSize: 13,
-                            color: AppColors.slate500,
+                            color: isDark ? AppColors.darkTextMuted : AppColors.slate500,
                           ),
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.search_rounded,
-                            color: AppColors.slate600,
+                            color: isDark ? AppColors.darkTextMuted : AppColors.slate600,
                           ),
                           suffixIcon: _searchQuery.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(Icons.clear, size: 18),
+                                  icon: Icon(
+                                    Icons.clear,
+                                    size: 18,
+                                    color: isDark ? AppColors.darkTextMuted : AppColors.slate600,
+                                  ),
                                   onPressed: () =>
                                       setState(() => _searchQuery = ''),
                                 )
@@ -179,10 +191,10 @@ class _BuildingMaterialsCategoriesPageState
 
                     Text(
                       'التصنيفات المعتمدة (${_filteredCategories.length})',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.slate900,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
@@ -197,7 +209,7 @@ class _BuildingMaterialsCategoriesPageState
                       )
                     else
                       ..._filteredCategories.map((cat) {
-                        return _buildCategoryCard(context, cat);
+                        return _buildCategoryCard(context, cat, isDark);
                       }),
                   ],
                 ),
@@ -209,16 +221,19 @@ class _BuildingMaterialsCategoriesPageState
   Widget _buildCategoryCard(
     BuildContext context,
     BuildingMaterialCategoryModel category,
+    bool isDark,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.slate200),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.slate200,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -232,7 +247,7 @@ class _BuildingMaterialsCategoriesPageState
           leading: Container(
             padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
-              color: category.iconColor.withValues(alpha: 0.1),
+              color: category.iconColor.withValues(alpha: 0.15),
               borderRadius: AppRadii.md,
             ),
             child: Icon(category.icon, color: category.iconColor, size: 26),
@@ -242,17 +257,17 @@ class _BuildingMaterialsCategoriesPageState
               Expanded(
                 child: Text(
                   category.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.slate900,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.slate900,
                   ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: AppColors.slate100,
+                  color: isDark ? AppColors.darkSurfaceSecondary : AppColors.slate100,
                   borderRadius: AppRadii.full,
                 ),
                 child: Text(
@@ -260,7 +275,7 @@ class _BuildingMaterialsCategoriesPageState
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.slate700,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.slate700,
                   ),
                 ),
               ),
@@ -270,7 +285,10 @@ class _BuildingMaterialsCategoriesPageState
             padding: const EdgeInsets.only(top: 4),
             child: Text(
               category.description,
-              style: TextStyle(fontSize: 12, color: AppColors.slate600),
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.slate600,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -280,7 +298,10 @@ class _BuildingMaterialsCategoriesPageState
             vertical: AppSpacing.sm,
           ),
           children: [
-            const Divider(color: AppColors.slate200, height: 1),
+            Divider(
+              color: isDark ? AppColors.darkBorder : AppColors.slate200,
+              height: 1,
+            ),
             const SizedBox(height: AppSpacing.sm),
             Align(
               alignment: Alignment.centerRight,
@@ -289,7 +310,7 @@ class _BuildingMaterialsCategoriesPageState
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.slate700,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.slate700,
                 ),
               ),
             ),
@@ -300,11 +321,13 @@ class _BuildingMaterialsCategoriesPageState
               children: category.subcategories.map((sub) {
                 return ActionChip(
                   label: Text('${sub.name} (${sub.productsCount})'),
-                  backgroundColor: AppColors.slate50,
-                  side: const BorderSide(color: AppColors.slate300),
-                  labelStyle: const TextStyle(
+                  backgroundColor: isDark ? AppColors.darkSurfaceSecondary : AppColors.slate50,
+                  side: BorderSide(
+                    color: isDark ? AppColors.darkBorder : AppColors.slate300,
+                  ),
+                  labelStyle: TextStyle(
                     fontSize: 12,
-                    color: AppColors.slate800,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.slate800,
                   ),
                   onPressed: () {
                     context.push(
@@ -319,10 +342,12 @@ class _BuildingMaterialsCategoriesPageState
               width: double.infinity,
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.emerald700,
-                  side: const BorderSide(color: AppColors.emerald600),
+                  foregroundColor: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                  side: BorderSide(
+                    color: isDark ? AppColors.emerald500 : AppColors.emerald600,
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius: AppRadii.md,
                   ),
                 ),
