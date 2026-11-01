@@ -21,14 +21,18 @@ class PropertyDescriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 10.0,
             offset: const Offset(0, 3),
           ),
@@ -39,32 +43,32 @@ class PropertyDescriptionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Section Title
-          const Text(
+          Text(
             'الوصف التفصيلي',
             style: TextStyle(
               fontSize: PropertyDescriptionCardLayout.headerFontSize,
               fontWeight: FontWeight.w800,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             ),
           ),
 
           const SizedBox(height: 12.0),
 
           // Subtitle: عن الشقة
-          const Text(
+          Text(
             'عن الشقة:',
             style: TextStyle(
               fontSize: PropertyDescriptionCardLayout.subHeaderFontSize,
               fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             ),
           ),
           const SizedBox(height: 4.0),
           Text(
             detail.aboutProperty,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: PropertyDescriptionCardLayout.bodyFontSize,
-              color: AppColors.lightTextPrimary,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextPrimary,
               height: 1.5,
             ),
           ),
@@ -73,16 +77,16 @@ class PropertyDescriptionCard extends StatelessWidget {
             const SizedBox(height: 14.0),
 
             // Subtitle: تفاصيل المساحة والتقسيم
-            const Text(
+            Text(
               'تفاصيل المساحة والتقسيم:',
               style: TextStyle(
                 fontSize: PropertyDescriptionCardLayout.subHeaderFontSize,
                 fontWeight: FontWeight.bold,
-                color: AppColors.neutral,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
               ),
             ),
             const SizedBox(height: 4.0),
-            _buildBulletText(detail.spaceDetails),
+            _buildBulletText(detail.spaceDetails, isDark),
 
             const SizedBox(height: 14.0),
 
@@ -92,21 +96,21 @@ class PropertyDescriptionCard extends StatelessWidget {
             const SizedBox(height: 14.0),
 
             // Bath & Kitchen details
-            _buildBulletText(detail.bathAndKitchenDetails),
+            _buildBulletText(detail.bathAndKitchenDetails, isDark),
 
             const SizedBox(height: 14.0),
 
             // Subtitle: المميزات والمرافق
-            const Text(
+            Text(
               'المميزات والمرافق',
               style: TextStyle(
                 fontSize: PropertyDescriptionCardLayout.subHeaderFontSize,
                 fontWeight: FontWeight.bold,
-                color: AppColors.neutral,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
               ),
             ),
             const SizedBox(height: 6.0),
-            ...detail.featuresList.map((feature) => _buildBulletText(feature)),
+            ...detail.featuresList.map((feature) => _buildBulletText(feature, isDark)),
           ],
 
           const SizedBox(height: 14.0),
@@ -126,8 +130,8 @@ class PropertyDescriptionCard extends StatelessWidget {
                   children: [
                     Text(
                       isExpanded ? 'إخفاء' : 'إظهار التفاصيل',
-                      style: const TextStyle(
-                        color: AppColors.primary,
+                      style: TextStyle(
+                        color: isDark ? AppColors.darkPrimary : AppColors.primary,
                         fontSize: 13.5,
                         fontWeight: FontWeight.bold,
                       ),
@@ -137,7 +141,7 @@ class PropertyDescriptionCard extends StatelessWidget {
                       isExpanded
                           ? Icons.keyboard_arrow_up_rounded
                           : Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.primary,
+                      color: isDark ? AppColors.darkPrimary : AppColors.primary,
                       size: 20.0,
                     ),
                   ],
@@ -150,26 +154,26 @@ class PropertyDescriptionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildBulletText(String text) {
+  Widget _buildBulletText(String text, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '• ',
             style: TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             ),
           ),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: PropertyDescriptionCardLayout.bodyFontSize,
-                color: AppColors.lightTextPrimary,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextPrimary,
                 height: 1.45,
               ),
             ),

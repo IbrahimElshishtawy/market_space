@@ -20,12 +20,16 @@ class AdvertiserProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
+        color: isDark ? AppColors.darkSurfaceSecondary : const Color(0xFFF8FAFC),
         borderRadius: AppRadii.md,
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
+        ),
       ),
       child: Row(
         children: [
@@ -52,19 +56,19 @@ class AdvertiserProfileCard extends StatelessWidget {
               children: [
                 Text(
                   advertiser.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14.5,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   ),
                 ),
                 const SizedBox(height: 2.0),
                 Text(
                   advertiser.role,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.0,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.lightTextMuted,
+                    color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
                   ),
                 ),
               ],
@@ -119,22 +123,22 @@ class AdvertiserProfileCard extends StatelessWidget {
                   height: AdvertiserProfileCardLayout.buttonHeight,
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   decoration: BoxDecoration(
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                     borderRadius: AppRadii.sm,
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.phone_in_talk_outlined,
                         size: 14.0,
-                        color: Colors.white,
+                        color: isDark ? AppColors.darkOnPrimary : Colors.white,
                       ),
-                      SizedBox(width: 4.0),
+                      const SizedBox(width: 4.0),
                       Text(
                         'أتصال',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: isDark ? AppColors.darkOnPrimary : Colors.white,
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
                         ),

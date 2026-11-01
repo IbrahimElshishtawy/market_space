@@ -19,6 +19,8 @@ class RealEstateFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: RealEstateFilterBarLayout.padding(context),
       child: SizedBox(
@@ -44,19 +46,21 @@ class RealEstateFilterBar extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? Colors.white
-                              : Colors.white.withValues(alpha: 0.7),
+                              ? (isDark ? AppColors.darkPrimary : Colors.white)
+                              : (isDark
+                                  ? AppColors.darkSurface
+                                  : Colors.white.withValues(alpha: 0.7)),
                           borderRadius: AppRadii.md,
                           border: Border.all(
                             color: isSelected
-                                ? AppColors.neutral
-                                : AppColors.lightBorder,
+                                ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                                : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                             width: isSelected ? 1.2 : 1.0,
                           ),
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.04),
+                                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
                                     blurRadius: 4.0,
                                     offset: const Offset(0, 2),
                                   ),
@@ -70,7 +74,9 @@ class RealEstateFilterBar extends StatelessWidget {
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.w500,
-                            color: AppColors.neutral,
+                            color: isSelected
+                                ? (isDark ? AppColors.darkOnPrimary : AppColors.neutral)
+                                : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                           ),
                         ),
                       ),
@@ -90,21 +96,23 @@ class RealEstateFilterBar extends StatelessWidget {
                 width: RealEstateFilterBarLayout.height,
                 height: RealEstateFilterBarLayout.height,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? AppColors.darkSurface : Colors.white,
                   borderRadius: AppRadii.md,
-                  border: Border.all(color: AppColors.lightBorder),
+                  border: Border.all(
+                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
+                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
                       blurRadius: 4.0,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.swap_vert_rounded,
                   size: 20.0,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                 ),
               ),
             ),

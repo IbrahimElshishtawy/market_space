@@ -34,23 +34,27 @@ class AppliancesProductsGrid extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'الأكثر طلباً في طنطا',
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.neutral,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.neutral,
                 ),
               ),
               InkWell(
                 onTap: onViewAllTap,
                 borderRadius: BorderRadius.circular(4.0),
-                child: const Text(
+                child: Text(
                   'عرض الكل',
                   style: TextStyle(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.lightTextMuted,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkTextMuted
+                        : AppColors.lightTextMuted,
                   ),
                 ),
               ),

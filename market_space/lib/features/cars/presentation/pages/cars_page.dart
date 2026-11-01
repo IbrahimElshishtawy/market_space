@@ -96,15 +96,20 @@ class _CarsPageState extends State<CarsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       extendBody: true,
       backgroundColor: AppColors.backgroundOf(context),
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.directions_car_filled_rounded, color: AppColors.primary),
-            SizedBox(width: 8.0),
-            Text(
+            Icon(
+              Icons.directions_car_filled_rounded,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
+            ),
+            const SizedBox(width: 8.0),
+            const Text(
               'سوق السيارات',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
             ),
@@ -168,19 +173,36 @@ class _CarsPageState extends State<CarsPage> {
                               child: Container(
                                 height: 46.0,
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: isDark ? AppColors.darkSurface : Colors.white,
                                   borderRadius: AppRadii.md,
-                                  border: Border.all(color: AppColors.lightBorder),
+                                  border: Border.all(
+                                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                                  ),
                                 ),
                                 child: TextField(
                                   controller: _searchFieldController,
+                                  style: TextStyle(
+                                    fontSize: 13.5,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                  ),
                                   decoration: InputDecoration(
                                     hintText: 'ابحث عن ماركة، موديل، أو محافظة...',
-                                    hintStyle: const TextStyle(fontSize: 13.0, color: AppColors.lightTextSecondary),
-                                    prefixIcon: const Icon(Icons.search_rounded, size: 20.0, color: AppColors.primary),
+                                    hintStyle: TextStyle(
+                                      fontSize: 13.0,
+                                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.search_rounded,
+                                      size: 20.0,
+                                      color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
+                                    ),
                                     suffixIcon: _searchFieldController.text.isNotEmpty
                                         ? IconButton(
-                                            icon: const Icon(Icons.clear, size: 18.0),
+                                            icon: Icon(
+                                              Icons.clear,
+                                              size: 18.0,
+                                              color: isDark ? AppColors.darkTextSecondary : null,
+                                            ),
                                             onPressed: () {
                                               _searchFieldController.clear();
                                               _controller.setSearchQuery('');
@@ -203,13 +225,13 @@ class _CarsPageState extends State<CarsPage> {
                                 padding: const EdgeInsetsDirectional.symmetric(horizontal: 12.0),
                                 decoration: BoxDecoration(
                                   color: state.filter.hasActiveFilters
-                                      ? AppColors.primary
-                                      : Colors.white,
+                                      ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                                      : (isDark ? AppColors.darkSurface : Colors.white),
                                   borderRadius: AppRadii.md,
                                   border: Border.all(
                                     color: state.filter.hasActiveFilters
-                                        ? AppColors.primary
-                                        : AppColors.lightBorder,
+                                        ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                                        : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                                   ),
                                 ),
                                 child: Row(
@@ -218,8 +240,8 @@ class _CarsPageState extends State<CarsPage> {
                                       Icons.filter_list_rounded,
                                       size: 18.0,
                                       color: state.filter.hasActiveFilters
-                                          ? Colors.white
-                                          : AppColors.neutral,
+                                          ? (isDark ? AppColors.darkOnPrimary : Colors.white)
+                                          : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                                     ),
                                     const SizedBox(width: 4.0),
                                     Text(
@@ -228,8 +250,8 @@ class _CarsPageState extends State<CarsPage> {
                                         fontSize: 13.0,
                                         fontWeight: FontWeight.bold,
                                         color: state.filter.hasActiveFilters
-                                            ? Colors.white
-                                            : AppColors.neutral,
+                                            ? (isDark ? AppColors.darkOnPrimary : Colors.white)
+                                            : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                                       ),
                                     ),
                                   ],
@@ -318,19 +340,19 @@ class _CarsPageState extends State<CarsPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'عروض سيارات مميزة',
                                 style: TextStyle(
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.neutral,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                                 ),
                               ),
                               Text(
                                 '${state.featuredCars.length} سيارات مميزة',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12.0,
-                                  color: AppColors.lightTextSecondary,
+                                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                                 ),
                               ),
                             ],
@@ -376,12 +398,12 @@ class _CarsPageState extends State<CarsPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'تصفح حسب أشهر الماركات',
                                 style: TextStyle(
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.neutral,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                                 ),
                               ),
                               TextButton(
@@ -423,17 +445,17 @@ class _CarsPageState extends State<CarsPage> {
                           children: [
                             Text(
                               state.filter.hasActiveFilters ? 'نتائج التصفية والبحث' : 'أحدث السيارات المعروضة',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.neutral,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                               ),
                             ),
                             Text(
                               '${state.cars.length} إعلان متاح',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12.0,
-                                color: AppColors.lightTextSecondary,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                               ),
                             ),
                           ],
@@ -509,16 +531,22 @@ class _CarsPageState extends State<CarsPage> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return InkWell(
       onTap: onTap,
       borderRadius: AppRadii.sm,
       child: Container(
         padding: const EdgeInsetsDirectional.symmetric(horizontal: 12.0, vertical: 7.0),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.white,
+          color: isSelected
+              ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+              : (isDark ? AppColors.darkSurface : Colors.white),
           borderRadius: AppRadii.sm,
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.lightBorder,
+            color: isSelected
+                ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
           ),
         ),
         child: Text(
@@ -526,7 +554,9 @@ class _CarsPageState extends State<CarsPage> {
           style: TextStyle(
             fontSize: 12.0,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? Colors.white : AppColors.neutral,
+            color: isSelected
+                ? (isDark ? AppColors.darkOnPrimary : Colors.white)
+                : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
           ),
         ),
       ),
@@ -534,6 +564,8 @@ class _CarsPageState extends State<CarsPage> {
   }
 
   Widget _buildBrandChip(CarBrandModel brand, bool isSelected) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
       child: InkWell(
@@ -544,10 +576,14 @@ class _CarsPageState extends State<CarsPage> {
         child: Container(
           padding: const EdgeInsetsDirectional.symmetric(horizontal: 12.0, vertical: 8.0),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+            color: isSelected
+                ? (isDark ? AppColors.darkPrimary.withValues(alpha: 0.2) : AppColors.primary.withValues(alpha: 0.1))
+                : (isDark ? AppColors.darkSurface : Colors.white),
             borderRadius: AppRadii.md,
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.lightBorder,
+              color: isSelected
+                  ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                  : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
             ),
           ),
           child: Row(
@@ -558,7 +594,11 @@ class _CarsPageState extends State<CarsPage> {
                 backgroundColor: AppColors.backgroundOf(context),
                 child: Text(
                   brand.name[0],
-                  style: const TextStyle(fontSize: 11.0, fontWeight: FontWeight.bold, color: AppColors.primary),
+                  style: TextStyle(
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
+                  ),
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -571,12 +611,17 @@ class _CarsPageState extends State<CarsPage> {
                     style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? AppColors.primary : AppColors.neutral,
+                      color: isSelected
+                          ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                          : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                     ),
                   ),
                   Text(
                     '${brand.availableListingsCount} إعلان',
-                    style: const TextStyle(fontSize: 9.5, color: AppColors.lightTextSecondary),
+                    style: TextStyle(
+                      fontSize: 9.5,
+                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                    ),
                   ),
                 ],
               ),

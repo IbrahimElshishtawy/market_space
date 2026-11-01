@@ -29,6 +29,8 @@ class RealEstateHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: RealEstateHeaderLayout.padding(context),
       child: Row(
@@ -56,28 +58,28 @@ class RealEstateHeader extends StatelessWidget {
                   children: [
                     Text(
                       userName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
                     const SizedBox(height: 2.0),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.location_on_outlined,
                           size: 13.0,
-                          color: AppColors.lightTextSecondary,
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                         ),
                         const SizedBox(width: 2.0),
                         Text(
                           userLocation,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w500,
-                            color: AppColors.lightTextSecondary,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                           ),
                         ),
                       ],
@@ -94,6 +96,7 @@ class RealEstateHeader extends StatelessWidget {
             children: [
               // Notification Bell Button
               _buildIconButton(
+                context: context,
                 icon: Icons.notifications_outlined,
                 onTap: onNotificationsTap,
                 badgeDot: hasUnreadNotifications,
@@ -101,6 +104,7 @@ class RealEstateHeader extends StatelessWidget {
               const SizedBox(width: AppSpacing.xs + 2),
               // Cart / Basket Button
               _buildIconButton(
+                context: context,
                 icon: Icons.shopping_basket_outlined,
                 onTap: onCartTap,
               ),
@@ -112,20 +116,25 @@ class RealEstateHeader extends StatelessWidget {
   }
 
   Widget _buildIconButton({
+    required BuildContext context,
     required IconData icon,
     VoidCallback? onTap,
     bool badgeDot = false,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: RealEstateHeaderLayout.actionButtonSize,
       height: RealEstateHeaderLayout.actionButtonSize,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.md,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
             blurRadius: 4.0,
             offset: const Offset(0, 2),
           ),
@@ -139,7 +148,11 @@ class RealEstateHeader extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Icon(icon, size: 20.0, color: AppColors.neutral),
+              Icon(
+                icon,
+                size: 20.0,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+              ),
               if (badgeDot)
                 Positioned(
                   top: 9.0,
@@ -147,8 +160,8 @@ class RealEstateHeader extends StatelessWidget {
                   child: Container(
                     width: 7.0,
                     height: 7.0,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkPrimary : AppColors.primary,
                       shape: BoxShape.circle,
                     ),
                   ),

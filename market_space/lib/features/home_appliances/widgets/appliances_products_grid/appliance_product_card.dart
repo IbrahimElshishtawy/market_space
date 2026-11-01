@@ -21,14 +21,18 @@ class ApplianceProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 6.0,
             offset: const Offset(0, 2),
           ),
@@ -122,10 +126,10 @@ class ApplianceProductCard extends StatelessWidget {
                             product.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13.0,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.neutral,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                             ),
                           ),
 
@@ -136,9 +140,9 @@ class ApplianceProductCard extends StatelessWidget {
                             product.subtitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 11.5,
-                              color: AppColors.textSecondary,
+                              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                             ),
                           ),
 
@@ -152,19 +156,19 @@ class ApplianceProductCard extends StatelessWidget {
                               children: [
                                 Text(
                                   product.priceFormatted,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 13.5,
                                     fontWeight: FontWeight.w900,
-                                    color: AppColors.textPrimary,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                                   ),
                                 ),
                                 if (product.oldPriceFormatted != null) ...[
                                   const SizedBox(width: 4.0),
                                   Text(
                                     product.oldPriceFormatted!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 11.0,
-                                      color: AppColors.textMuted,
+                                      color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
                                       decoration: TextDecoration.lineThrough,
                                     ),
                                   ),
@@ -179,10 +183,10 @@ class ApplianceProductCard extends StatelessWidget {
                           if (product.monthlyInstallmentFormatted != null)
                             Text(
                               product.monthlyInstallmentFormatted!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11.0,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textSecondary,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                               ),
                             ),
                         ],
@@ -199,10 +203,10 @@ class ApplianceProductCard extends StatelessWidget {
                           height: 32.0,
                           decoration: BoxDecoration(
                             color: product.inCart
-                                ? AppColors.surfaceSecondary
-                                : AppColors.primary,
+                                ? (isDark ? AppColors.darkSurfaceSecondary : AppColors.surfaceSecondary)
+                                : (isDark ? AppColors.darkPrimary : AppColors.primary),
                             border: product.inCart
-                                ? Border.all(color: AppColors.border)
+                                ? Border.all(color: isDark ? AppColors.darkBorder : AppColors.border)
                                 : null,
                             borderRadius: AppRadii.md,
                           ),
@@ -213,8 +217,8 @@ class ApplianceProductCard extends StatelessWidget {
                                 product.inCart ? 'تمت الإضافة' : 'أضف للسلة',
                                 style: TextStyle(
                                   color: product.inCart
-                                      ? AppColors.textPrimary
-                                      : Colors.white,
+                                      ? (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary)
+                                      : (isDark ? AppColors.darkOnPrimary : Colors.white),
                                   fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -226,8 +230,8 @@ class ApplianceProductCard extends StatelessWidget {
                                     : Icons.shopping_cart_outlined,
                                 size: 14.0,
                                 color: product.inCart
-                                    ? AppColors.textPrimary
-                                    : Colors.white,
+                                    ? (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary)
+                                    : (isDark ? AppColors.darkOnPrimary : Colors.white),
                               ),
                             ],
                           ),

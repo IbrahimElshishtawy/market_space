@@ -70,10 +70,12 @@ class _CarFilterSheetState extends State<CarFilterSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24.0)),
       ),
       child: SafeArea(
         top: false,
@@ -94,7 +96,7 @@ class _CarFilterSheetState extends State<CarFilterSheet> {
                     width: 40.0,
                     height: 4.0,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: isDark ? AppColors.darkBorder : Colors.grey.shade300,
                       borderRadius: BorderRadius.circular(2.0),
                     ),
                   ),
@@ -102,12 +104,12 @@ class _CarFilterSheetState extends State<CarFilterSheet> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'تصفية وفلترة السيارات',
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.neutral,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                         ),
                       ),
                       TextButton(
@@ -119,7 +121,10 @@ class _CarFilterSheetState extends State<CarFilterSheet> {
                 ],
               ),
             ),
-            const Divider(height: 1.0),
+            Divider(
+              height: 1.0,
+              color: isDark ? AppColors.darkBorder : AppColors.divider,
+            ),
 
             // Filter Options Scrollable Content
             Flexible(
@@ -338,8 +343,8 @@ class _CarFilterSheetState extends State<CarFilterSheet> {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: isDark ? AppColors.darkPrimary : AppColors.primary,
+                    foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14.0),
                     shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                   ),
@@ -357,14 +362,15 @@ class _CarFilterSheetState extends State<CarFilterSheet> {
   }
 
   Widget _buildSectionTitle(String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.xs),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14.0,
           fontWeight: FontWeight.bold,
-          color: AppColors.neutral,
+          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
         ),
       ),
     );
@@ -375,18 +381,26 @@ class _CarFilterSheetState extends State<CarFilterSheet> {
     required bool isSelected,
     required VoidCallback onSelected,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
       onSelected: (_) => onSelected(),
-      selectedColor: AppColors.primary.withValues(alpha: 0.15),
+      selectedColor: isDark
+          ? AppColors.darkPrimary.withValues(alpha: 0.2)
+          : AppColors.primary.withValues(alpha: 0.15),
+      backgroundColor: isDark ? AppColors.darkSurfaceSecondary : null,
       labelStyle: TextStyle(
         fontSize: 12.0,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        color: isSelected ? AppColors.primary : AppColors.neutral,
+        color: isSelected
+            ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+            : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
       ),
       side: BorderSide(
-        color: isSelected ? AppColors.primary : AppColors.lightBorder,
+        color: isSelected
+            ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+            : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
       ),
       shape: RoundedRectangleBorder(borderRadius: AppRadii.sm),
       showCheckmark: false,

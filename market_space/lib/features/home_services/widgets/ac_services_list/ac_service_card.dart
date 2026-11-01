@@ -20,16 +20,20 @@ class AcServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(
           AcServicesListLayout.borderRadius,
         ),
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
             blurRadius: 6.0,
             offset: const Offset(0, 2),
           ),
@@ -69,10 +73,10 @@ class AcServiceCard extends StatelessWidget {
                       service.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.lightTextPrimary,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 2.0),
@@ -80,9 +84,9 @@ class AcServiceCard extends StatelessWidget {
                       service.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10.5,
-                        color: AppColors.lightTextSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                         height: 1.25,
                       ),
                     ),
@@ -97,24 +101,24 @@ class AcServiceCard extends StatelessWidget {
                         const SizedBox(width: 2.0),
                         Text(
                           '${service.rating.toStringAsFixed(1)} (+${service.reviewsCount})',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.lightTextPrimary,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                           ),
                         ),
                         const SizedBox(width: 8.0),
-                        const Icon(
+                        Icon(
                           Icons.access_time_rounded,
                           size: 13.0,
-                          color: AppColors.neutralLight,
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.neutralLight,
                         ),
                         const SizedBox(width: 2.0),
                         Text(
                           '${service.durationMinutes} دقيقة',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10.5,
-                            color: AppColors.lightTextSecondary,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                           ),
                         ),
                       ],
@@ -140,24 +144,24 @@ class AcServiceCard extends StatelessWidget {
                         vertical: 6.0,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                         borderRadius: AppRadii.md,
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.calendar_today_rounded,
                             size: 12.0,
-                            color: Colors.white,
+                            color: isDark ? AppColors.darkOnPrimary : Colors.white,
                           ),
-                          SizedBox(width: 4.0),
+                          const SizedBox(width: 4.0),
                           Text(
                             'احجز الآن',
                             style: TextStyle(
                               fontSize: 11.0,
                               fontWeight: FontWeight.w800,
-                              color: Colors.white,
+                              color: isDark ? AppColors.darkOnPrimary : Colors.white,
                             ),
                           ),
                         ],

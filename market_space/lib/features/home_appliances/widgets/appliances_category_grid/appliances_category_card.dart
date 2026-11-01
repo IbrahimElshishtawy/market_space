@@ -18,14 +18,20 @@ class AppliancesCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
         color: isSelected
-            ? AppColors.primary.withValues(alpha: 0.08)
-            : Colors.white,
+            ? (isDark
+                ? AppColors.darkPrimary.withValues(alpha: 0.15)
+                : AppColors.primary.withValues(alpha: 0.08))
+            : (isDark ? AppColors.darkSurface : Colors.white),
         borderRadius: AppRadii.md,
         border: Border.all(
-          color: isSelected ? AppColors.primary : const Color(0xFFE2E8F0),
+          color: isSelected
+              ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+              : (isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0)),
           width: isSelected ? 1.5 : 1.0,
         ),
       ),
@@ -45,7 +51,9 @@ class AppliancesCategoryCard extends StatelessWidget {
                 Icon(
                   category.iconData,
                   size: 20.0,
-                  color: isSelected ? AppColors.primary : AppColors.neutral,
+                  color: isSelected
+                      ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                      : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                 ),
                 const SizedBox(width: 8.0),
                 Flexible(
@@ -58,7 +66,9 @@ class AppliancesCategoryCard extends StatelessWidget {
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.w700,
-                      color: isSelected ? AppColors.primary : AppColors.neutral,
+                      color: isSelected
+                          ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                          : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                     ),
                   ),
                 ),

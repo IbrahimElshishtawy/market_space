@@ -29,6 +29,8 @@ class AppliancesHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -47,13 +49,15 @@ class AppliancesHeader extends StatelessWidget {
                   width: AppliancesHeaderLayout.iconButtonSize,
                   height: AppliancesHeaderLayout.iconButtonSize,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? AppColors.darkSurface : Colors.white,
                     borderRadius: AppRadii.md,
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    border: Border.all(
+                      color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
+                    ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.shopping_bag_outlined,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                     size: 20.0,
                   ),
                 ),
@@ -71,13 +75,15 @@ class AppliancesHeader extends StatelessWidget {
                       width: AppliancesHeaderLayout.iconButtonSize,
                       height: AppliancesHeaderLayout.iconButtonSize,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? AppColors.darkSurface : Colors.white,
                         borderRadius: AppRadii.md,
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                        border: Border.all(
+                          color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
+                        ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.notifications_none_rounded,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                         size: 20.0,
                       ),
                     ),
@@ -114,10 +120,10 @@ class AppliancesHeader extends StatelessWidget {
                   children: [
                     Text(
                       userName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
                     const SizedBox(height: 2.0),
@@ -126,16 +132,16 @@ class AppliancesHeader extends StatelessWidget {
                       children: [
                         Text(
                           userLocation,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11.5,
-                            color: AppColors.lightTextMuted,
+                            color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
                           ),
                         ),
                         const SizedBox(width: 3.0),
-                        const Icon(
+                        Icon(
                           Icons.location_on_outlined,
                           size: 13.0,
-                          color: AppColors.lightTextMuted,
+                          color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
                         ),
                       ],
                     ),

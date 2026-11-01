@@ -18,6 +18,8 @@ class AppliancesFinancingBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -27,10 +29,12 @@ class AppliancesFinancingBanner extends StatelessWidget {
         height: AppliancesFinancingBannerLayout.bannerHeight,
         decoration: BoxDecoration(
           borderRadius: AppRadii.lg,
-          border: Border.all(color: const Color(0xFFE2E8F0)),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
               blurRadius: 6.0,
               offset: const Offset(0, 2),
             ),
@@ -48,17 +52,23 @@ class AppliancesFinancingBanner extends StatelessWidget {
                 fallbackIcon: Icons.kitchen_rounded,
               ),
 
-              // 2. Light to Dark Gradient Overlay
+              // 2. Gradient Overlay
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.4),
-                      Colors.white.withValues(alpha: 0.85),
-                      Colors.white.withValues(alpha: 0.95),
-                    ],
+                    colors: isDark
+                        ? [
+                            Colors.black.withValues(alpha: 0.5),
+                            AppColors.darkSurface.withValues(alpha: 0.85),
+                            AppColors.darkSurface.withValues(alpha: 0.95),
+                          ]
+                        : [
+                            Colors.black.withValues(alpha: 0.4),
+                            Colors.white.withValues(alpha: 0.85),
+                            Colors.white.withValues(alpha: 0.95),
+                          ],
                   ),
                 ),
               ),
@@ -98,7 +108,7 @@ class AppliancesFinancingBanner extends StatelessWidget {
                         vertical: 3.5,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkSurfaceSecondary : AppColors.neutral,
                         borderRadius: AppRadii.full,
                       ),
                       child: const Row(
@@ -126,7 +136,7 @@ class AppliancesFinancingBanner extends StatelessWidget {
               ),
 
               // 4. Center Lightning Callout
-              const Positioned(
+              Positioned(
                 top: 50.0,
                 right: 12.0,
                 left: 12.0,
@@ -137,13 +147,13 @@ class AppliancesFinancingBanner extends StatelessWidget {
                       Icon(
                         Icons.bolt_rounded,
                         size: 16.0,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
-                      SizedBox(width: 4.0),
+                      const SizedBox(width: 4.0),
                       Text(
                         'موافقة خلال دقائق',
                         style: TextStyle(
-                          color: AppColors.neutral,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           fontSize: 13.0,
                           fontWeight: FontWeight.w800,
                         ),
@@ -160,26 +170,26 @@ class AppliancesFinancingBanner extends StatelessWidget {
                 left: 12.0,
                 child: Column(
                   children: [
-                    const Text(
+                    Text(
                       'قسط أجهزتك على 12 أو 24 شهر',
                       style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
                     const SizedBox(height: 2.0),
-                    const Text(
+                    Text(
                       'أسهل إجراءات بالتعاون مع Valu وأمان',
                       style: TextStyle(
                         fontSize: 11.0,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.lightTextMuted,
+                        color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
                       ),
                     ),
                     const SizedBox(height: 8.0),
 
-                    // Dark Navy Button (اعرف لمتك ->)
+                    // Button (اعرف لمتك ->)
                     InkWell(
                       onTap: onKnowLimitTap,
                       borderRadius: AppRadii.md,
@@ -189,25 +199,25 @@ class AppliancesFinancingBanner extends StatelessWidget {
                           vertical: 7.0,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.neutral,
+                          color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                           borderRadius: AppRadii.md,
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               'اعرف لمتك',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: isDark ? AppColors.darkOnPrimary : Colors.white,
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 6.0),
+                            const SizedBox(width: 6.0),
                             Icon(
                               Icons.arrow_forward_rounded,
                               size: 15.0,
-                              color: Colors.white,
+                              color: isDark ? AppColors.darkOnPrimary : Colors.white,
                             ),
                           ],
                         ),

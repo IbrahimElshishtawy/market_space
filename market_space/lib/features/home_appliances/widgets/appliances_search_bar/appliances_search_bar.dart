@@ -19,6 +19,8 @@ class AppliancesSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -27,9 +29,11 @@ class AppliancesSearchBar extends StatelessWidget {
       child: Container(
         height: AppliancesSearchBarLayout.height,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkSurface : Colors.white,
           borderRadius: AppRadii.lg,
-          border: Border.all(color: const Color(0xFFE2E8F0)),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
+          ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Row(
@@ -40,9 +44,9 @@ class AppliancesSearchBar extends StatelessWidget {
               borderRadius: AppRadii.md,
               child: Container(
                 padding: const EdgeInsets.all(6.0),
-                child: const Icon(
+                child: Icon(
                   Icons.filter_list_rounded,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   size: 20.0,
                 ),
               ),
@@ -55,15 +59,15 @@ class AppliancesSearchBar extends StatelessWidget {
               child: TextField(
                 onChanged: onChanged,
                 textDirection: TextDirection.rtl,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13.5,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                 ),
                 decoration: InputDecoration(
                   hintText: hintText,
-                  hintStyle: const TextStyle(
+                  hintStyle: TextStyle(
                     fontSize: 13.0,
-                    color: Color(0xFF94A3B8),
+                    color: isDark ? AppColors.darkTextMuted : const Color(0xFF94A3B8),
                   ),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
@@ -77,9 +81,9 @@ class AppliancesSearchBar extends StatelessWidget {
             const SizedBox(width: 8.0),
 
             // Search Icon (Right)
-            const Icon(
+            Icon(
               Icons.search_rounded,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
               size: 22.0,
             ),
           ],

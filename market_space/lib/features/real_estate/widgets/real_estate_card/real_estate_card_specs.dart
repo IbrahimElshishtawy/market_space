@@ -11,6 +11,8 @@ class RealEstateCardSpecs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         // Top Row: Rooms, Finish, Floor
@@ -18,6 +20,7 @@ class RealEstateCardSpecs extends StatelessWidget {
           children: [
             Expanded(
               child: _buildSpecChip(
+                isDark: isDark,
                 icon: Icons.bed_rounded,
                 label: '${item.bedsCount} غرفة',
               ),
@@ -25,6 +28,7 @@ class RealEstateCardSpecs extends StatelessWidget {
             const SizedBox(width: 6.0),
             Expanded(
               child: _buildSpecChip(
+                isDark: isDark,
                 icon: Icons.brush_outlined,
                 label: item.finishType,
               ),
@@ -32,6 +36,7 @@ class RealEstateCardSpecs extends StatelessWidget {
             const SizedBox(width: 6.0),
             Expanded(
               child: _buildSpecChip(
+                isDark: isDark,
                 icon: Icons.apartment_rounded,
                 label: item.floorLevel,
               ),
@@ -45,6 +50,7 @@ class RealEstateCardSpecs extends StatelessWidget {
           children: [
             Flexible(
               child: _buildSpecChip(
+                isDark: isDark,
                 icon: Icons.bathtub_outlined,
                 label: '${item.bathsCount} حمام',
               ),
@@ -52,6 +58,7 @@ class RealEstateCardSpecs extends StatelessWidget {
             const SizedBox(width: 6.0),
             Flexible(
               child: _buildSpecChip(
+                isDark: isDark,
                 icon: Icons.aspect_ratio_rounded,
                 label: '${item.areaM2} م²',
               ),
@@ -62,13 +69,19 @@ class RealEstateCardSpecs extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecChip({required IconData icon, required String label}) {
+  Widget _buildSpecChip({
+    required bool isDark,
+    required IconData icon,
+    required String label,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 5.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurfaceSecondary : Colors.white,
         borderRadius: AppRadii.sm,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -79,15 +92,19 @@ class RealEstateCardSpecs extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w600,
-                color: AppColors.neutral,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
               ),
             ),
           ),
           const SizedBox(width: 4.0),
-          Icon(icon, size: 14.0, color: AppColors.neutral),
+          Icon(
+            icon,
+            size: 14.0,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+          ),
         ],
       ),
     );

@@ -107,7 +107,9 @@ class _PropertyGalleryState extends State<PropertyGallery> {
                 width: PropertyGalleryLayout.actionButtonSize,
                 height: PropertyGalleryLayout.actionButtonSize,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkSurface
+                      : Colors.white,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -116,9 +118,11 @@ class _PropertyGalleryState extends State<PropertyGallery> {
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_back_rounded,
-                  color: AppColors.neutral,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.neutral,
                   size: 20.0,
                 ),
               ),

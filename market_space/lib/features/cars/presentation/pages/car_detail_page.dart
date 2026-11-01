@@ -149,6 +149,8 @@ class _CarDetailPageState extends State<CarDetailPage> {
       );
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundOf(context),
       body: CustomScrollView(
@@ -232,22 +234,30 @@ class _CarDetailPageState extends State<CarDetailPage> {
                       Expanded(
                         child: Text(
                           car.fullTitle,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 22.0,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.neutral,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           ),
                         ),
                       ),
                       Container(
                         padding: const EdgeInsetsDirectional.symmetric(horizontal: 8.0, vertical: 4.0),
                         decoration: BoxDecoration(
-                          color: car.condition == CarCondition.newCar ? AppColors.accent : Colors.black87,
+                          color: car.condition == CarCondition.newCar
+                              ? (isDark ? AppColors.darkPrimary : AppColors.accent)
+                              : (isDark ? AppColors.darkSurfaceSecondary : Colors.black87),
                           borderRadius: AppRadii.sm,
                         ),
                         child: Text(
                           car.condition.titleAr,
-                          style: const TextStyle(color: Colors.white, fontSize: 12.0, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: car.condition == CarCondition.newCar && isDark
+                                ? AppColors.darkOnPrimary
+                                : Colors.white,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -257,10 +267,10 @@ class _CarDetailPageState extends State<CarDetailPage> {
                   // Price
                   Text(
                     car.formattedPrice,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.primary,
+                      color: isDark ? AppColors.darkPrimary : AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
@@ -268,43 +278,56 @@ class _CarDetailPageState extends State<CarDetailPage> {
                   // Location
                   Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, size: 16.0, color: AppColors.lightTextSecondary),
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 16.0,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                      ),
                       const SizedBox(width: 4.0),
                       Text(
                         '${car.governorate}، ${car.city}',
-                        style: const TextStyle(fontSize: 13.0, color: AppColors.lightTextSecondary),
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
 
                   // Specifications Grid
-                  const Text(
+                  Text(
                     'المواصفات الفنية',
-                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Container(
                     padding: const EdgeInsetsDirectional.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDark ? AppColors.darkSurface : Colors.white,
                       borderRadius: AppRadii.lg,
-                      border: Border.all(color: AppColors.lightBorder),
+                      border: Border.all(
+                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                      ),
                     ),
                     child: Column(
                       children: [
                         _buildSpecRow('سنة الصنع', '${car.year}'),
-                        const Divider(height: 16.0),
+                        Divider(height: 16.0, color: isDark ? AppColors.darkBorder : null),
                         _buildSpecRow('المسافة المقطوعة', car.condition == CarCondition.newCar ? 'جديدة (زيرو)' : '${car.mileageKm} كم'),
-                        const Divider(height: 16.0),
+                        Divider(height: 16.0, color: isDark ? AppColors.darkBorder : null),
                         _buildSpecRow('نوع ناقل الحركة', car.transmission.titleAr),
-                        const Divider(height: 16.0),
+                        Divider(height: 16.0, color: isDark ? AppColors.darkBorder : null),
                         _buildSpecRow('نوع الوقود', car.fuelType.titleAr),
-                        const Divider(height: 16.0),
+                        Divider(height: 16.0, color: isDark ? AppColors.darkBorder : null),
                         _buildSpecRow('نوع الهيكل', car.bodyType.titleAr),
-                        const Divider(height: 16.0),
+                        Divider(height: 16.0, color: isDark ? AppColors.darkBorder : null),
                         _buildSpecRow('السعة اللترية', car.engineCapacityCc > 0 ? '${car.engineCapacityCc} CC' : 'محرك كهربائي كامل'),
-                        const Divider(height: 16.0),
+                        Divider(height: 16.0, color: isDark ? AppColors.darkBorder : null),
                         _buildSpecRow('اللون الخارجي', car.color),
                       ],
                     ),
@@ -312,45 +335,67 @@ class _CarDetailPageState extends State<CarDetailPage> {
                   const SizedBox(height: AppSpacing.md),
 
                   // Description
-                  const Text(
+                  Text(
                     'وصف السيارة',
-                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsetsDirectional.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDark ? AppColors.darkSurface : Colors.white,
                       borderRadius: AppRadii.lg,
-                      border: Border.all(color: AppColors.lightBorder),
+                      border: Border.all(
+                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                      ),
                     ),
                     child: Text(
                       car.description,
-                      style: const TextStyle(fontSize: 14.0, height: 1.6, color: AppColors.neutral),
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        height: 1.6,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
 
                   // Seller Info Card
-                  const Text(
+                  Text(
                     'بيانات البائع والموقع',
-                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Container(
                     padding: const EdgeInsetsDirectional.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDark ? AppColors.darkSurface : Colors.white,
                       borderRadius: AppRadii.lg,
-                      border: Border.all(color: AppColors.lightBorder),
+                      border: Border.all(
+                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                      ),
                     ),
                     child: Row(
                       children: [
                         CircleAvatar(
                           radius: 24.0,
-                          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                          child: const Icon(Icons.person_rounded, color: AppColors.primary, size: 28.0),
+                          backgroundColor: isDark
+                              ? AppColors.darkSurfaceSecondary
+                              : AppColors.primary.withValues(alpha: 0.1),
+                          child: Icon(
+                            Icons.person_rounded,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.primary,
+                            size: 28.0,
+                          ),
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
@@ -359,17 +404,28 @@ class _CarDetailPageState extends State<CarDetailPage> {
                             children: [
                               Text(
                                 car.sellerName,
-                                style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                ),
                               ),
                               Text(
                                 '${car.sellerType} • تقييم ★ ${car.sellerRating}',
-                                style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                ),
                               ),
                               Directionality(
                                 textDirection: TextDirection.ltr,
                                 child: Text(
                                   car.sellerPhone,
-                                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold, color: AppColors.primary),
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark ? AppColors.darkPrimary : AppColors.primary,
+                                  ),
                                 ),
                               ),
                             ],
@@ -382,9 +438,13 @@ class _CarDetailPageState extends State<CarDetailPage> {
 
                   // Similar Cars Section
                   if (_similarCars.isNotEmpty) ...[
-                    const Text(
+                    Text(
                       'سيارات مشابهة قد تهمك',
-                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     SizedBox(
@@ -417,10 +477,15 @@ class _CarDetailPageState extends State<CarDetailPage> {
       bottomSheet: Container(
         padding: const EdgeInsetsDirectional.all(AppSpacing.md),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkSurface : Colors.white,
+          border: Border(
+            top: BorderSide(
+              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            ),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
               blurRadius: 10.0,
               offset: const Offset(0, -3),
             ),
@@ -436,8 +501,8 @@ class _CarDetailPageState extends State<CarDetailPage> {
                   icon: const Icon(Icons.drive_eta_rounded, size: 18.0),
                   label: const Text('طلب تجربة قيادة'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary),
+                    foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.primary,
+                    side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.primary),
                     padding: const EdgeInsets.symmetric(vertical: 12.0),
                     shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                   ),
@@ -455,8 +520,8 @@ class _CarDetailPageState extends State<CarDetailPage> {
                   icon: const Icon(Icons.phone_rounded, size: 18.0),
                   label: const Text('اتصل بالبائع الآن'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: isDark ? AppColors.darkPrimary : AppColors.primary,
+                    foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12.0),
                     shape: RoundedRectangleBorder(borderRadius: AppRadii.md),
                   ),
@@ -470,16 +535,24 @@ class _CarDetailPageState extends State<CarDetailPage> {
   }
 
   Widget _buildSpecRow(String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 13.5, color: AppColors.lightTextSecondary),
+          style: TextStyle(
+            fontSize: 13.5,
+            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+          ),
         ),
         Text(
           value,
-          style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold, color: AppColors.neutral),
+          style: TextStyle(
+            fontSize: 13.5,
+            fontWeight: FontWeight.bold,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+          ),
         ),
       ],
     );

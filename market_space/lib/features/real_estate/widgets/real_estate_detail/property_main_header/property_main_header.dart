@@ -23,16 +23,18 @@ class PropertyMainHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Property Title
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: PropertyMainHeaderLayout.titleFontSize,
             fontWeight: FontWeight.w800,
-            color: AppColors.neutral,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             height: 1.35,
           ),
         ),
@@ -42,10 +44,10 @@ class PropertyMainHeader extends StatelessWidget {
         // Location Subtitle
         Text(
           location,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: PropertyMainHeaderLayout.locationFontSize,
             fontWeight: FontWeight.w500,
-            color: AppColors.lightTextMuted,
+            color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
           ),
         ),
 

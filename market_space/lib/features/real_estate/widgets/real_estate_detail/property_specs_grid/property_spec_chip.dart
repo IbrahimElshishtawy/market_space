@@ -11,27 +11,35 @@ class PropertySpecChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurfaceSecondary : Colors.white,
         borderRadius: AppRadii.md,
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
+        ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(item.iconType.defaultIcon, size: 16.0, color: AppColors.neutral),
+          Icon(
+            item.iconType.defaultIcon,
+            size: 16.0,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+          ),
           const SizedBox(width: 5.0),
           Flexible(
             child: Text(
               item.label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.w700,
-                color: AppColors.neutral,
+                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
               ),
             ),
           ),

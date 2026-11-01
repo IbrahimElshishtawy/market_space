@@ -23,15 +23,19 @@ class RealEstateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: RealEstateCardLayout.margin(context),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 8.0,
             offset: const Offset(0, 3),
           ),
@@ -59,10 +63,10 @@ class RealEstateCard extends StatelessWidget {
                       item.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                         height: 1.35,
                       ),
                     ),
@@ -74,10 +78,10 @@ class RealEstateCard extends StatelessWidget {
                       item.location,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                       ),
                     ),
 
@@ -89,20 +93,20 @@ class RealEstateCard extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: item.priceFormatted,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w900,
-                              color: AppColors.textPrimary,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                             ),
                           ),
                           if (item.pricePeriod != null) ...[
                             const TextSpan(text: ' / '),
                             TextSpan(
                               text: item.pricePeriod,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13.0,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textSecondary,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                               ),
                             ),
                           ],
@@ -118,7 +122,7 @@ class RealEstateCard extends StatelessWidget {
                     const SizedBox(height: 14.0),
 
                     // Action Details Button
-                    _buildDetailsButton(),
+                    _buildDetailsButton(context),
                   ],
                 ),
               ),
@@ -230,12 +234,14 @@ class RealEstateCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsButton() {
+  Widget _buildDetailsButton(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
       height: 44.0,
       decoration: BoxDecoration(
-        color: AppColors.neutral,
+        color: isDark ? AppColors.darkPrimary : AppColors.neutral,
         borderRadius: AppRadii.md,
       ),
       child: Material(
@@ -243,22 +249,22 @@ class RealEstateCard extends StatelessWidget {
         child: InkWell(
           onTap: onDetailsTap,
           borderRadius: AppRadii.md,
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 'التفاصيل',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: isDark ? AppColors.darkOnPrimary : Colors.white,
                   fontSize: 14.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(width: 8.0),
+              const SizedBox(width: 8.0),
               Icon(
                 Icons.arrow_forward_rounded,
                 size: 18.0,
-                color: Colors.white,
+                color: isDark ? AppColors.darkOnPrimary : Colors.white,
               ),
             ],
           ),

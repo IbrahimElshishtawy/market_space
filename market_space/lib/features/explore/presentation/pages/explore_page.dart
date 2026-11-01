@@ -29,7 +29,9 @@ class _ExplorePageState extends State<ExplorePage> {
   void initState() {
     super.initState();
     _controller = widget.controller ?? ExploreController();
-    _searchFieldController = TextEditingController(text: _controller.value.searchQuery);
+    _searchFieldController = TextEditingController(
+      text: _controller.value.searchQuery,
+    );
   }
 
   @override
@@ -50,123 +52,128 @@ class _ExplorePageState extends State<ExplorePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: AppColors.backgroundOf(context),
       body: SafeArea(
         bottom: false,
         child: ValueListenableBuilder<ExploreState>(
-            valueListenable: _controller,
-            builder: (context, state, _) {
-              if (state.isLoading && state.searchResults.isEmpty && state.categories.isEmpty) {
-                return const Center(child: AppLoadingIndicator());
-              }
+          valueListenable: _controller,
+          builder: (context, state, _) {
+            if (state.isLoading &&
+                state.searchResults.isEmpty &&
+                state.categories.isEmpty) {
+              return const Center(child: AppLoadingIndicator());
+            }
 
-              if (state.errorMessage != null && state.searchResults.isEmpty) {
-                return AppErrorView(
-                  title: 'تعذر تحميل البيانات',
-                  message: state.errorMessage!,
-                  onRetry: () => _controller.loadInitialData(),
-                );
-              }
-
-              return RefreshIndicator(
-                color: AppColors.primary,
-                onRefresh: () => _controller.loadInitialData(),
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
-                  ),
-                  slivers: [
-                    // 1. Header & Search Bar
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.md,
-                          AppSpacing.md,
-                          AppSpacing.md,
-                          AppSpacing.sm,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'استكشف المنصة',
-                              style: TextStyle(
-                                fontSize: 22.0,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.neutral,
-                              ),
-                            ),
-                            const SizedBox(height: 4.0),
-                            const Text(
-                              'ابحث عبر جميع العقارات، مواد البناء، الخدمات والأجهزة',
-                              style: TextStyle(
-                                fontSize: 13.0,
-                                color: AppColors.lightTextSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            _buildSearchBar(state),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // 2. Sector Filter Chips
-                    SliverToBoxAdapter(
-                      child: _buildSectorFilterBar(state),
-                    ),
-
-                    // 3. Search Results or Main Discovery Sections
-                    if (state.isSearching) ...[
-                      _buildSearchResultsList(state),
-                    ] else ...[
-                      // Recent & Popular Searches
-                      if (state.recentSearches.isNotEmpty || state.popularSearches.isNotEmpty)
-                        SliverToBoxAdapter(
-                          child: _buildSearchesSection(state),
-                        ),
-
-                      // Main Categories & Subcategories
-                      SliverToBoxAdapter(
-                        child: _buildMainCategoriesSection(state),
-                      ),
-
-                      // Most Requested Section
-                      SliverToBoxAdapter(
-                        child: _buildDiscoverySection(
-                          title: 'الأكثر طلباً في المنصة',
-                          subtitle: 'عناصر وخدمات مميزة يطلبها المستخدمون بكثرة',
-                          items: state.mostRequested,
-                        ),
-                      ),
-
-                      // Current Offers Section
-                      SliverToBoxAdapter(
-                        child: _buildDiscoverySection(
-                          title: 'أقوى العروض والخصومات',
-                          subtitle: 'عروض حصرية لفترة محدودة على المنتجات والخدمات',
-                          items: state.currentOffers,
-                        ),
-                      ),
-
-                      // Latest Additions Section
-                      SliverToBoxAdapter(
-                        child: _buildDiscoverySection(
-                          title: 'أحدث الإضافات اليوم',
-                          subtitle: 'قوائم ومنتجات مضافة حديثاً في مختلف الأقسام',
-                          items: state.latestAdditions,
-                        ),
-                      ),
-                    ],
-
-                    const SliverToBoxAdapter(child: SizedBox(height: 120.0)),
-                  ],
-                ),
+            if (state.errorMessage != null && state.searchResults.isEmpty) {
+              return AppErrorView(
+                title: 'تعذر تحميل البيانات',
+                message: state.errorMessage!,
+                onRetry: () => _controller.loadInitialData(),
               );
-            },
-          ),
+            }
+
+            return RefreshIndicator(
+              color: AppColors.primary,
+              onRefresh: () => _controller.loadInitialData(),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                slivers: [
+                  // 1. Header & Search Bar
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.md,
+                        AppSpacing.md,
+                        AppSpacing.md,
+                        AppSpacing.sm,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'استكشف المنصة',
+                            style: TextStyle(
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.neutral,
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Text(
+                            'ابحث عبر جميع العقارات، مواد البناء، الخدمات والأجهزة',
+                            style: TextStyle(
+                              fontSize: 13.0,
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.lightTextSecondary,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          _buildSearchBar(state),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // 2. Sector Filter Chips
+                  SliverToBoxAdapter(child: _buildSectorFilterBar(state)),
+
+                  // 3. Search Results or Main Discovery Sections
+                  if (state.isSearching) ...[
+                    _buildSearchResultsList(state),
+                  ] else ...[
+                    // Recent & Popular Searches
+                    if (state.recentSearches.isNotEmpty ||
+                        state.popularSearches.isNotEmpty)
+                      SliverToBoxAdapter(child: _buildSearchesSection(state)),
+
+                    // Main Categories & Subcategories
+                    SliverToBoxAdapter(
+                      child: _buildMainCategoriesSection(state),
+                    ),
+
+                    // Most Requested Section
+                    SliverToBoxAdapter(
+                      child: _buildDiscoverySection(
+                        title: 'الأكثر طلباً في المنصة',
+                        subtitle: 'عناصر وخدمات مميزة يطلبها المستخدمون بكثرة',
+                        items: state.mostRequested,
+                      ),
+                    ),
+
+                    // Current Offers Section
+                    SliverToBoxAdapter(
+                      child: _buildDiscoverySection(
+                        title: 'أقوى العروض والخصومات',
+                        subtitle:
+                            'عروض حصرية لفترة محدودة على المنتجات والخدمات',
+                        items: state.currentOffers,
+                      ),
+                    ),
+
+                    // Latest Additions Section
+                    SliverToBoxAdapter(
+                      child: _buildDiscoverySection(
+                        title: 'أحدث الإضافات اليوم',
+                        subtitle: 'قوائم ومنتجات مضافة حديثاً في مختلف الأقسام',
+                        items: state.latestAdditions,
+                      ),
+                    ),
+                  ],
+
+                  const SliverToBoxAdapter(child: SizedBox(height: 120.0)),
+                ],
+              ),
+            );
+          },
         ),
+      ),
     );
   }
 
@@ -177,7 +184,9 @@ class _ExplorePageState extends State<ExplorePage> {
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.border),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.border,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
@@ -231,6 +240,7 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   Widget _buildSectorFilterBar(ExploreState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(
@@ -252,25 +262,39 @@ class _ExplorePageState extends State<ExplorePage> {
                   Icon(
                     sector.icon,
                     size: 16.0,
-                    color: isSelected ? Colors.white : AppColors.neutral,
+                    color: isSelected
+                        ? Colors.white
+                        : (isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.neutral),
                   ),
                   const SizedBox(width: 6.0),
                   Text(
                     sector.titleAr,
                     style: TextStyle(
                       fontSize: 12.5,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                      color: isSelected ? Colors.white : AppColors.neutral,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w500,
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.neutral),
                     ),
                   ),
                 ],
               ),
-              backgroundColor: AppColors.surfaceSecondary,
-              selectedColor: AppColors.primary,
+              backgroundColor: isDark
+                  ? AppColors.darkSurface
+                  : AppColors.surfaceSecondary,
+              selectedColor: isDark ? AppColors.darkPrimary : AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: AppRadii.full,
                 side: BorderSide(
-                  color: isSelected ? AppColors.primary : AppColors.border,
+                  color: isSelected
+                      ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                      : (isDark ? AppColors.darkBorder : AppColors.border),
                 ),
               ),
               onSelected: (_) => _controller.setSectorFilter(sector),
@@ -282,6 +306,7 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   Widget _buildSearchesSection(ExploreState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -294,23 +319,34 @@ class _ExplorePageState extends State<ExplorePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.history_rounded, size: 16.0, color: AppColors.lightTextSecondary),
-                    SizedBox(width: 4.0),
+                    Icon(
+                      Icons.history_rounded,
+                      size: 16.0,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.lightTextSecondary,
+                    ),
+                    const SizedBox(width: 4.0),
                     Text(
                       'عمليات البحث الأخيرة',
                       style: TextStyle(
                         fontSize: 13.0,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.neutral,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.neutral,
                       ),
                     ),
                   ],
                 ),
                 TextButton(
                   onPressed: () => _controller.clearAllRecentSearches(),
-                  child: const Text('مسح الكل', style: TextStyle(fontSize: 12.0)),
+                  child: const Text(
+                    'مسح الكل',
+                    style: TextStyle(fontSize: 12.0),
+                  ),
                 ),
               ],
             ),
@@ -319,16 +355,30 @@ class _ExplorePageState extends State<ExplorePage> {
               runSpacing: 6.0,
               children: state.recentSearches.map((item) {
                 return InputChip(
-                  label: Text(item, style: const TextStyle(fontSize: 12.0)),
+                  label: Text(
+                    item,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.neutral,
+                    ),
+                  ),
                   onPressed: () {
                     _searchFieldController.text = item;
                     _controller.submitSearch(item);
                   },
                   onDeleted: () => _controller.removeRecentSearch(item),
-                  backgroundColor: Colors.white,
-                  shape: const RoundedRectangleBorder(
+                  backgroundColor: isDark
+                      ? AppColors.darkSurface
+                      : Colors.white,
+                  shape: RoundedRectangleBorder(
                     borderRadius: AppRadii.full,
-                    side: BorderSide(color: Color(0x1A000000)),
+                    side: BorderSide(
+                      color: isDark
+                          ? AppColors.darkBorder
+                          : const Color(0x1A000000),
+                    ),
                   ),
                 );
               }).toList(),
@@ -336,16 +386,22 @@ class _ExplorePageState extends State<ExplorePage> {
             const SizedBox(height: AppSpacing.sm),
           ],
           if (state.popularSearches.isNotEmpty) ...[
-            const Row(
+            Row(
               children: [
-                Icon(Icons.trending_up_rounded, size: 16.0, color: AppColors.primary),
-                SizedBox(width: 4.0),
+                Icon(
+                  Icons.trending_up_rounded,
+                  size: 16.0,
+                  color: isDark ? AppColors.darkPrimary : AppColors.primary,
+                ),
+                const SizedBox(width: 4.0),
                 Text(
                   'الأكثر بحثاً في منطقتك',
                   style: TextStyle(
                     fontSize: 13.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.neutral,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.neutral,
                   ),
                 ),
               ],
@@ -356,16 +412,34 @@ class _ExplorePageState extends State<ExplorePage> {
               runSpacing: 6.0,
               children: state.popularSearches.map((item) {
                 return ActionChip(
-                  label: Text(item, style: const TextStyle(fontSize: 12.0)),
-                  avatar: const Icon(Icons.search_rounded, size: 14.0, color: AppColors.primary),
+                  label: Text(
+                    item,
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.neutral,
+                    ),
+                  ),
+                  avatar: Icon(
+                    Icons.search_rounded,
+                    size: 14.0,
+                    color: isDark ? AppColors.darkPrimary : AppColors.primary,
+                  ),
                   onPressed: () {
                     _searchFieldController.text = item;
                     _controller.submitSearch(item);
                   },
-                  backgroundColor: Colors.white,
-                  shape: const RoundedRectangleBorder(
+                  backgroundColor: isDark
+                      ? AppColors.darkSurface
+                      : Colors.white,
+                  shape: RoundedRectangleBorder(
                     borderRadius: AppRadii.full,
-                    side: BorderSide(color: Color(0x1A000000)),
+                    side: BorderSide(
+                      color: isDark
+                          ? AppColors.darkBorder
+                          : const Color(0x1A000000),
+                    ),
                   ),
                 );
               }).toList(),
@@ -403,7 +477,11 @@ class _ExplorePageState extends State<ExplorePage> {
               decoration: BoxDecoration(
                 color: isDark ? AppColors.darkSurface : Colors.white,
                 borderRadius: AppRadii.lg,
-                border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x12000000)),
+                border: Border.all(
+                  color: isDark
+                      ? AppColors.darkBorder
+                      : const Color(0x12000000),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
@@ -426,7 +504,11 @@ class _ExplorePageState extends State<ExplorePage> {
                               color: cat.themeColor.withValues(alpha: 0.12),
                               borderRadius: AppRadii.md,
                             ),
-                            child: Icon(cat.icon, color: cat.themeColor, size: 22.0),
+                            child: Icon(
+                              cat.icon,
+                              color: cat.themeColor,
+                              size: 22.0,
+                            ),
                           ),
                           const SizedBox(width: AppSpacing.sm),
                           Text(
@@ -434,15 +516,23 @@ class _ExplorePageState extends State<ExplorePage> {
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.neutral,
                             ),
                           ),
                         ],
                       ),
                       TextButton.icon(
                         onPressed: () => _navigateToRoute(cat.targetRoute),
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 12.0),
-                        label: const Text('دخول القسم', style: TextStyle(fontSize: 12.5)),
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 12.0,
+                        ),
+                        label: const Text(
+                          'دخول القسم',
+                          style: TextStyle(fontSize: 12.5),
+                        ),
                       ),
                     ],
                   ),
@@ -455,18 +545,29 @@ class _ExplorePageState extends State<ExplorePage> {
                         onTap: () => _navigateToRoute(sub.targetRoute),
                         borderRadius: AppRadii.full,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 6.0,
+                          ),
                           decoration: BoxDecoration(
-                            color: isDark ? AppColors.darkSurfaceSecondary : const Color(0xFFF1F5F9),
+                            color: isDark
+                                ? AppColors.darkSurfaceSecondary
+                                : const Color(0xFFF1F5F9),
                             borderRadius: AppRadii.full,
-                            border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x0F000000)),
+                            border: Border.all(
+                              color: isDark
+                                  ? AppColors.darkBorder
+                                  : const Color(0x0F000000),
+                            ),
                           ),
                           child: Text(
                             sub.title,
                             style: TextStyle(
                               fontSize: 12.0,
                               fontWeight: FontWeight.w500,
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.neutral,
                             ),
                           ),
                         ),
@@ -501,18 +602,22 @@ class _ExplorePageState extends State<ExplorePage> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 17.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.neutral,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.neutral,
                   ),
                 ),
                 const SizedBox(height: 2.0),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: AppColors.lightTextSecondary,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.lightTextSecondary,
                   ),
                 ),
               ],
@@ -536,10 +641,16 @@ class _ExplorePageState extends State<ExplorePage> {
                   decoration: BoxDecoration(
                     color: isDark ? AppColors.darkSurface : Colors.white,
                     borderRadius: AppRadii.lg,
-                    border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
+                    border: Border.all(
+                      color: isDark
+                          ? AppColors.darkBorder
+                          : const Color(0x14000000),
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+                        color: Colors.black.withValues(
+                          alpha: isDark ? 0.2 : 0.05,
+                        ),
                         blurRadius: 10.0,
                         offset: const Offset(0, 3),
                       ),
@@ -605,7 +716,9 @@ class _ExplorePageState extends State<ExplorePage> {
                                       style: TextStyle(
                                         fontSize: 13.5,
                                         fontWeight: FontWeight.bold,
-                                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                                        color: isDark
+                                            ? AppColors.darkTextPrimary
+                                            : AppColors.neutral,
                                       ),
                                     ),
                                     const SizedBox(height: 2.0),
@@ -615,13 +728,16 @@ class _ExplorePageState extends State<ExplorePage> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 11.5,
-                                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                        color: isDark
+                                            ? AppColors.darkTextSecondary
+                                            : AppColors.lightTextSecondary,
                                       ),
                                     ),
                                   ],
                                 ),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     if (item.price != null)
                                       Text(
@@ -633,11 +749,13 @@ class _ExplorePageState extends State<ExplorePage> {
                                         ),
                                       )
                                     else
-                                      const Text(
+                                      Text(
                                         'حسب الطلب',
                                         style: TextStyle(
                                           fontSize: 12.0,
-                                          color: AppColors.lightTextSecondary,
+                                          color: isDark
+                                              ? AppColors.darkTextSecondary
+                                              : AppColors.lightTextSecondary,
                                         ),
                                       ),
                                     if (item.rating != null)
@@ -683,7 +801,8 @@ class _ExplorePageState extends State<ExplorePage> {
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: AppEmptyState(
             title: 'لا توجد نتائج مطابقة',
-            message: 'لم نعثر على نتائج مطابقة لبحثك عن "${state.searchQuery}". جرب كلمات أخرى أو غير فلتر القسم.',
+            message:
+                'لم نعثر على نتائج مطابقة لبحثك عن "${state.searchQuery}". جرب كلمات أخرى أو غير فلتر القسم.',
           ),
         ),
       );
@@ -692,122 +811,131 @@ class _ExplorePageState extends State<ExplorePage> {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final item = state.searchResults[index];
-            final isDark = Theme.of(context).brightness == Brightness.dark;
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final item = state.searchResults[index];
+          final isDark = Theme.of(context).brightness == Brightness.dark;
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.darkSurface : Colors.white,
-                borderRadius: AppRadii.lg,
-                border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                    blurRadius: 6.0,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+          return Container(
+            margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkSurface : Colors.white,
+              borderRadius: AppRadii.lg,
+              border: Border.all(
+                color: isDark ? AppColors.darkBorder : const Color(0x14000000),
               ),
-              child: InkWell(
-                onTap: () => _navigateToRoute(item.targetRoute),
-                borderRadius: AppRadii.lg,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.sm),
-                  child: Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: AppRadii.md,
-                        child: SafeNetworkImage(
-                          imageUrl: item.imageUrl,
-                          width: 80.0,
-                          height: 80.0,
-                          fit: BoxFit.cover,
-                        ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                  blurRadius: 6.0,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: InkWell(
+              onTap: () => _navigateToRoute(item.targetRoute),
+              borderRadius: AppRadii.lg,
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: AppRadii.md,
+                      child: SafeNetworkImage(
+                        imageUrl: item.imageUrl,
+                        width: 80.0,
+                        height: 80.0,
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6.0,
-                                    vertical: 2.0,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary.withValues(alpha: 0.1),
-                                    borderRadius: AppRadii.xs,
-                                  ),
-                                  child: Text(
-                                    item.resultType,
-                                    style: const TextStyle(
-                                      fontSize: 10.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6.0,
+                                  vertical: 2.0,
                                 ),
-                                const SizedBox(width: 6.0),
-                                Text(
-                                  item.sectorName,
-                                  style: TextStyle(
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  borderRadius: AppRadii.xs,
+                                ),
+                                child: Text(
+                                  item.resultType,
+                                  style: const TextStyle(
                                     fontSize: 10.5,
-                                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
                                   ),
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 4.0),
-                            Text(
-                              item.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                               ),
-                            ),
-                            const SizedBox(height: 2.0),
-                            Text(
-                              item.subtitle,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                              const SizedBox(width: 6.0),
+                              Text(
+                                item.sectorName,
+                                style: TextStyle(
+                                  fontSize: 10.5,
+                                  color: isDark
+                                      ? AppColors.darkTextSecondary
+                                      : AppColors.lightTextSecondary,
+                                ),
                               ),
+                            ],
+                          ),
+                          const SizedBox(height: 4.0),
+                          Text(
+                            item.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.bold,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.neutral,
                             ),
-                            const SizedBox(height: 4.0),
-                            Text(
-                              item.formattedPrice,
-                              style: const TextStyle(
-                                fontSize: 13.0,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
-                              ),
+                          ),
+                          const SizedBox(height: 2.0),
+                          Text(
+                            item.subtitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.lightTextSecondary,
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Text(
+                            item.formattedPrice,
+                            style: const TextStyle(
+                              fontSize: 13.0,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
                       ),
-                      const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 14.0,
-                        color: AppColors.lightTextSecondary,
-                      ),
-                    ],
-                  ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14.0,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.lightTextSecondary,
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
-          childCount: state.searchResults.length,
-        ),
+            ),
+          );
+        }, childCount: state.searchResults.length),
       ),
     );
   }
