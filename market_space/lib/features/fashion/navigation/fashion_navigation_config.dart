@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/navigation/config/floating_action_config.dart';
 import '../../../core/navigation/config/navigation_item_config.dart';
 import '../../../core/navigation/config/section_navigation_config.dart';
 import '../../../core/routing/route_names.dart';
@@ -11,12 +10,6 @@ class FashionNavigationConfig {
   static const SectionNavigationConfig config = SectionNavigationConfig(
     sectionId: sectionId,
     sectionName: 'الملابس والأزياء',
-    floatingAction: FloatingActionConfig(
-      id: 'fashion-cart-fab',
-      label: 'حقيبة التسوق',
-      icon: Icons.shopping_bag_outlined,
-      onPressedRoute: '/fashion/cart',
-    ),
     items: [
       NavigationItemConfig(
         id: 'fashion-home',

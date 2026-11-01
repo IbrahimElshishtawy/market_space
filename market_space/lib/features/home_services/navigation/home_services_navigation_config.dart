@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/navigation/config/floating_action_config.dart';
 import '../../../core/navigation/config/navigation_item_config.dart';
 import '../../../core/navigation/config/section_navigation_config.dart';
 
@@ -10,12 +9,6 @@ class HomeServicesNavigationConfig {
   static const SectionNavigationConfig config = SectionNavigationConfig(
     sectionId: sectionId,
     sectionName: 'الخدمات والمقاولات',
-    floatingAction: FloatingActionConfig(
-      id: 'hs-add',
-      label: 'أضف إعلانك',
-      icon: Icons.add_task_rounded,
-      onPressedRoute: '/home-services/add',
-    ),
     items: [
       NavigationItemConfig(
         id: 'hs-home',

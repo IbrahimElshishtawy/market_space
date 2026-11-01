@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/navigation/config/floating_action_config.dart';
 import '../../../core/navigation/config/navigation_item_config.dart';
 import '../../../core/navigation/config/section_navigation_config.dart';
 import '../../../core/routing/route_names.dart';
@@ -11,12 +10,6 @@ class RealEstateNavigationConfig {
   static const SectionNavigationConfig config = SectionNavigationConfig(
     sectionId: sectionId,
     sectionName: 'العقارات',
-    floatingAction: FloatingActionConfig(
-      id: 're-add-property',
-      label: 'أضف عقارك',
-      icon: Icons.add_home_rounded,
-      onPressedRoute: '/real-estate/add',
-    ),
     items: [
       NavigationItemConfig(
         id: 're-home',

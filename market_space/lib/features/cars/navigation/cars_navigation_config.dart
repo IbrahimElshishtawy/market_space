@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/navigation/config/floating_action_config.dart';
 import '../../../core/navigation/config/navigation_item_config.dart';
 import '../../../core/navigation/config/section_navigation_config.dart';
 import '../../../core/routing/route_names.dart';
@@ -11,12 +10,6 @@ class CarsNavigationConfig {
   static const SectionNavigationConfig config = SectionNavigationConfig(
     sectionId: sectionId,
     sectionName: 'السيارات',
-    floatingAction: FloatingActionConfig(
-      id: 'cars-sell',
-      label: 'بيع سيارتك',
-      icon: Icons.add_circle_outline_rounded,
-      onPressedRoute: '/cars/sell',
-    ),
     items: [
       NavigationItemConfig(
         id: 'cars-home',

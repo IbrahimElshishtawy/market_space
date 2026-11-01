@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/navigation/config/floating_action_config.dart';
 import '../../../core/navigation/config/navigation_item_config.dart';
 import '../../../core/navigation/config/section_navigation_config.dart';
 import '../../../core/routing/route_names.dart';
@@ -11,12 +10,6 @@ class BuildingMaterialsNavigationConfig {
   static const SectionNavigationConfig config = SectionNavigationConfig(
     sectionId: sectionId,
     sectionName: 'مواد البناء والمُوَن',
-    floatingAction: FloatingActionConfig(
-      id: 'bm-add',
-      label: 'أضف إعلانك',
-      icon: Icons.add_box_rounded,
-      onPressedRoute: '/building-materials/add',
-    ),
     items: [
       NavigationItemConfig(
         id: 'bm-home',

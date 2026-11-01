@@ -24,7 +24,7 @@ class AppBottomNavigation extends StatelessWidget {
     this.onFloatingActionPressed,
     this.notificationController,
     this.isVisible = true,
-    this.showFloatingAction = true,
+    this.showFloatingAction = false,
   });
 
   void _handleFabPressed(BuildContext context) {
