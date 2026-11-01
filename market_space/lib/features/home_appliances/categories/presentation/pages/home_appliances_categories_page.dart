@@ -36,7 +36,7 @@ class _HomeAppliancesCategoriesPageState
       textDirection: TextDirection.rtl,
       child: Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('أقسام الأجهزة المنزلية'),
           centerTitle: true,

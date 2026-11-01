@@ -95,7 +95,7 @@ class _HomeAppliancesCheckoutPageState
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('إتمام الشراء'),
           centerTitle: true,

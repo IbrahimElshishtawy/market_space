@@ -170,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final dependencies = AppDependencies.maybeOf(context);
 
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.backgroundOf(context),
       body: SafeArea(
         bottom: false,
           child: ValueListenableBuilder<ProfileState>(
@@ -239,18 +239,20 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileHeader(UserProfile user) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.all(AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0x14000000)),
-        boxShadow: const [
+        border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x06000000),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 8.0,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -275,8 +277,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       left: 0,
                       child: Container(
                         padding: const EdgeInsets.all(2.0),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: isDark ? AppColors.darkSurface : Colors.white,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -297,34 +299,34 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         Text(
                           user.fullName,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.neutral,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           ),
                         ),
                         const SizedBox(width: 6.0),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                           decoration: BoxDecoration(
-                            color: AppColors.surfaceSecondary,
+                            color: isDark ? AppColors.darkSurfaceSecondary : AppColors.surfaceSecondary,
                             borderRadius: AppRadii.xs,
-                            border: Border.all(color: AppColors.border),
+                            border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.border),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.check_circle_rounded,
                                 size: 12.0,
                                 color: AppColors.primary,
                               ),
-                              SizedBox(width: 3.0),
+                              const SizedBox(width: 3.0),
                               Text(
                                 'حساب موثق',
                                 style: TextStyle(
                                   fontSize: 10.5,
-                                  color: AppColors.textPrimary,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -336,16 +338,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 3.0),
                     Text(
                       user.phone,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
-                        color: AppColors.textSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                       ),
                     ),
                     Text(
                       user.email,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.0,
-                        color: AppColors.textSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -363,7 +365,7 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildStatItem('الموقع الأساسي', '${user.city} - ${user.governorate}'),
-              Container(width: 1.0, height: 24.0, color: const Color(0x1F000000)),
+              Container(width: 1.0, height: 24.0, color: isDark ? AppColors.darkBorder : const Color(0x1F000000)),
               _buildStatItem('تاريخ الانضمام', 'يونيو 2023'),
             ],
           ),
@@ -373,23 +375,39 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildStatItem(String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Text(label, style: const TextStyle(fontSize: 11.5, color: AppColors.lightTextSecondary)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11.5,
+            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+          ),
+        ),
         const SizedBox(height: 2.0),
-        Text(value, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold, color: AppColors.neutral)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.bold,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildAddressesSection(ProfileState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0x14000000)),
+        border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,13 +415,17 @@ class _ProfilePageState extends State<ProfilePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.location_on_rounded, size: 20.0, color: AppColors.primary),
-                  SizedBox(width: 6.0),
+                  const Icon(Icons.location_on_rounded, size: 20.0, color: AppColors.primary),
+                  const SizedBox(width: 6.0),
                   Text(
                     'العناوين المحفوظة ومواقع المشاريع',
-                    style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                    ),
                   ),
                 ],
               ),
@@ -416,17 +438,27 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: AppSpacing.xs),
           if (state.addresses.isEmpty)
-            const Text('لم تتم إضافة أي عناوين بعد.', style: TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary))
+            Text(
+              'لم تتم إضافة أي عناوين بعد.',
+              style: TextStyle(
+                fontSize: 12.0,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+              ),
+            )
           else
             ...state.addresses.map((addr) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 8.0),
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: addr.isDefault ? AppColors.primary.withValues(alpha: 0.05) : const Color(0xFFF8FAFC),
+                  color: addr.isDefault
+                      ? AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.05)
+                      : (isDark ? AppColors.darkSurfaceSecondary : const Color(0xFFF8FAFC)),
                   borderRadius: AppRadii.md,
                   border: Border.all(
-                    color: addr.isDefault ? AppColors.primary.withValues(alpha: 0.3) : const Color(0x14000000),
+                    color: addr.isDefault
+                        ? AppColors.primary.withValues(alpha: 0.3)
+                        : (isDark ? AppColors.darkBorder : const Color(0x14000000)),
                   ),
                 ),
                 child: Row(
@@ -440,7 +472,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               Flexible(
                                 child: Text(
                                   addr.title,
-                                  style: const TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                    fontSize: 13.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                                  ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -448,10 +484,16 @@ class _ProfilePageState extends State<ProfilePage> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFE2E8F0),
+                                  color: isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0),
                                   borderRadius: AppRadii.xs,
                                 ),
-                                child: Text(addr.type.label, style: const TextStyle(fontSize: 10.0)),
+                                child: Text(
+                                  addr.type.label,
+                                  style: TextStyle(
+                                    fontSize: 10.0,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                                  ),
+                                ),
                               ),
                               if (addr.isDefault) ...[
                                 const SizedBox(width: 6.0),
@@ -462,7 +504,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           const SizedBox(height: 2.0),
                           Text(
                             '${addr.addressLine} - ${addr.city}',
-                            style: const TextStyle(fontSize: 11.5, color: AppColors.lightTextSecondary),
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                            ),
                           ),
                         ],
                       ),
@@ -486,47 +531,53 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildPaymentMethodsSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0x14000000)),
+        border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
       ),
-      child: const Material(
+      child: Material(
         color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.payment_rounded, size: 20.0, color: AppColors.primary),
-                SizedBox(width: 6.0),
+                const Icon(Icons.payment_rounded, size: 20.0, color: AppColors.primary),
+                const SizedBox(width: 6.0),
                 Text(
                   'طرق الدفع المعتمدة',
-                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: AppSpacing.sm),
-            ListTile(
+            const SizedBox(height: AppSpacing.sm),
+            const ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.local_shipping_outlined, color: Colors.teal),
               title: Text('الدفع عند الاستلام (COD)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
               subtitle: Text('متاح لطلبيات الأجهزة ومواد البناء والخدمات', style: TextStyle(fontSize: 11.5)),
               trailing: Icon(Icons.check_circle_rounded, color: Colors.green, size: 18.0),
             ),
-            Divider(height: 12.0),
-            ListTile(
+            const Divider(height: 12.0),
+            const ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.credit_card_rounded, color: Colors.blue),
               title: Text('البطاقات الائتمانية والبنكية (Visa / Mastercard)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
               subtitle: Text('بوابات دفع إلكترونية آمنة ومعتمدة من البنك المركزي', style: TextStyle(fontSize: 11.5)),
               trailing: Icon(Icons.lock_outline_rounded, size: 18.0, color: Colors.grey),
             ),
-            Divider(height: 12.0),
-            ListTile(
+            const Divider(height: 12.0),
+            const ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.store_rounded, color: Colors.amber),
               title: Text('فوري ومحافظ المحمول (Fawry / Vodafone Cash)', style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold)),
@@ -541,27 +592,32 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildNotificationPreferencesSection(ProfileState state) {
     final prefs = state.notificationPreferences;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0x14000000)),
+        border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
       ),
       child: Material(
         color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.notifications_active_rounded, size: 20.0, color: AppColors.primary),
-                SizedBox(width: 6.0),
+                const Icon(Icons.notifications_active_rounded, size: 20.0, color: AppColors.primary),
+                const SizedBox(width: 6.0),
                 Text(
                   'تفضيلات الإشعارات',
-                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                  ),
                 ),
               ],
             ),
@@ -597,26 +653,32 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildAppSettingsSection(AppDependencies? dependencies) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: const Color(0x14000000)),
+        border: Border.all(color: isDark ? AppColors.darkBorder : const Color(0x14000000)),
       ),
       child: Material(
         color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.tune_rounded, size: 20.0, color: AppColors.primary),
-                SizedBox(width: 6.0),
+                const Icon(Icons.tune_rounded, size: 20.0, color: AppColors.primary),
+                const SizedBox(width: 6.0),
                 Text(
                   'إعدادات التطبيق والمعلومات',
-                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                  ),
                 ),
               ],
             ),
@@ -637,8 +699,15 @@ class _ProfilePageState extends State<ProfilePage> {
             const Divider(height: 12.0),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.dark_mode_outlined, size: 20.0),
+              leading: Icon(
+                isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                size: 20.0,
+              ),
               title: const Text('المظهر الليلي / الفاتح', style: TextStyle(fontSize: 13.0)),
+              subtitle: Text(
+                isDark ? 'الوضع الليلي مفعّل' : 'الوضع الفاتح مفعّل',
+                style: const TextStyle(fontSize: 11.5),
+              ),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14.0),
               onTap: () => dependencies?.themeController.toggleTheme(),
             ),

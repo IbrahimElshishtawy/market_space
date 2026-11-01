@@ -38,11 +38,11 @@ class HomeNavBar extends StatelessWidget {
             bottom: HomeNavBarLayout.bottomMargin,
           ),
           child: Container(
-            decoration: const BoxDecoration(
-              color: HomeNavBarLayout.backgroundColor,
+            decoration: BoxDecoration(
+              color: HomeNavBarLayout.backgroundColorOf(context),
               borderRadius: HomeNavBarLayout.borderRadius,
-              boxShadow: HomeNavBarLayout.containerShadow,
-              border: HomeNavBarLayout.containerBorder,
+              boxShadow: HomeNavBarLayout.containerShadowOf(context),
+              border: HomeNavBarLayout.containerBorderOf(context),
             ),
             child: SafeArea(
               top: false,

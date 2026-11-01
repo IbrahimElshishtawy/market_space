@@ -50,7 +50,7 @@ class _MyActivityPageState extends State<MyActivityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.backgroundOf(context),
       body: SafeArea(
         bottom: false,
           child: ValueListenableBuilder<UnifiedActivityState>(

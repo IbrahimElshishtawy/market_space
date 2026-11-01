@@ -44,7 +44,7 @@ class _ReelAnalyticsPageState extends State<ReelAnalyticsPage> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('لوحة تحليلات أداء الريلز'),
           backgroundColor: Colors.white,

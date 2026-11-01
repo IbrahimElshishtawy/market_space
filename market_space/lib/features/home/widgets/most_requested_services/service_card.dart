@@ -13,6 +13,8 @@ class ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(
@@ -21,14 +23,17 @@ class ServiceCard extends StatelessWidget {
       child: Container(
         width: MostRequestedServicesLayout.cardWidth,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(
             MostRequestedServicesLayout.borderRadius,
           ),
-          border: Border.all(color: AppColors.lightBorder, width: 1.0),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            width: 1.0,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
               blurRadius: 8.0,
               offset: const Offset(0, 2),
             ),
@@ -100,10 +105,10 @@ class ServiceCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textDirection: TextDirection.rtl,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14.0,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.neutral,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                     ),
                   ),
                   const SizedBox(height: 2.0),
@@ -114,10 +119,12 @@ class ServiceCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textDirection: TextDirection.rtl,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.lightTextSecondary,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.lightTextSecondary,
                     ),
                   ),
                   const SizedBox(height: 6.0),
@@ -142,12 +149,14 @@ class ServiceCard extends StatelessWidget {
                       Row(
                         children: [
                           _buildAvatarCircle(
+                            context,
                             0,
                             'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
                           ),
                           Transform.translate(
                             offset: const Offset(-6, 0),
                             child: _buildAvatarCircle(
+                              context,
                               1,
                               'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
                             ),
@@ -158,20 +167,26 @@ class ServiceCard extends StatelessWidget {
                               width: 18.0,
                               height: 18.0,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF1F5F9),
+                                color: isDark
+                                    ? AppColors.darkSurfaceSecondary
+                                    : const Color(0xFFF1F5F9),
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white,
+                                  color: isDark
+                                      ? AppColors.darkBorder
+                                      : Colors.white,
                                   width: 1.0,
                                 ),
                               ),
                               child: Center(
                                 child: Text(
                                   service.avatarStackText,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 7.0,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.lightTextSecondary,
+                                    color: isDark
+                                        ? AppColors.darkTextSecondary
+                                        : AppColors.lightTextSecondary,
                                   ),
                                 ),
                               ),
@@ -192,10 +207,12 @@ class ServiceCard extends StatelessWidget {
                           const SizedBox(width: 3.0),
                           Text(
                             service.rating.toStringAsFixed(1),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12.0,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.neutral,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.neutral,
                             ),
                           ),
                         ],
@@ -211,13 +228,18 @@ class ServiceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatarCircle(int index, String url) {
+  Widget _buildAvatarCircle(BuildContext context, int index, String url) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: 18.0,
       height: 18.0,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 1.0),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : Colors.white,
+          width: 1.0,
+        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(9.0),

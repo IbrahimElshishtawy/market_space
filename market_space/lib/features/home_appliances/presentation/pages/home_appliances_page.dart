@@ -118,7 +118,7 @@ class _HomeAppliancesPageState extends State<HomeAppliancesPage> {
 
     return Scaffold(
       extendBody: true,
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.backgroundOf(context),
       body: SafeArea(
         bottom: false,
         child: ValueListenableBuilder<HomeAppliancesState>(

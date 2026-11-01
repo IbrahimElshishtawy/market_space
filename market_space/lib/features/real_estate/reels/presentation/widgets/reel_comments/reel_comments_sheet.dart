@@ -71,6 +71,7 @@ class _ReelCommentsSheetState extends State<ReelCommentsSheet> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -86,7 +87,7 @@ class _ReelCommentsSheetState extends State<ReelCommentsSheet> {
                 width: 40.0,
                 height: 4.0,
                 decoration: BoxDecoration(
-                  color: AppColors.lightBorder,
+                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
                   borderRadius: BorderRadius.circular(2.0),
                 ),
               ),
@@ -102,23 +103,30 @@ class _ReelCommentsSheetState extends State<ReelCommentsSheet> {
                       builder: (context, state, _) {
                         return Text(
                           'التعليقات (${state.comments.length})',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.neutral,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           ),
                         );
                       },
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, size: 20.0),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        size: 20.0,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
               ),
 
-              const Divider(height: 1.0, color: AppColors.lightBorder),
+              Divider(
+                height: 1.0,
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+              ),
 
               // Comments List
               Expanded(
@@ -141,9 +149,9 @@ class _ReelCommentsSheetState extends State<ReelCommentsSheet> {
                     return ListView.separated(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       itemCount: state.comments.length,
-                      separatorBuilder: (context, index) => const Divider(
+                      separatorBuilder: (context, index) => Divider(
                         height: 1.0,
-                        color: AppColors.lightBorder,
+                        color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
                       ),
                       itemBuilder: (context, index) {
                         return ReelCommentItem(comment: state.comments[index]);
@@ -153,7 +161,10 @@ class _ReelCommentsSheetState extends State<ReelCommentsSheet> {
                 ),
               ),
 
-              const Divider(height: 1.0, color: AppColors.lightBorder),
+              Divider(
+                height: 1.0,
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+              ),
 
               // Comment Input Box
               Padding(
@@ -165,18 +176,22 @@ class _ReelCommentsSheetState extends State<ReelCommentsSheet> {
                         controller: _inputController,
                         textInputAction: TextInputAction.send,
                         onSubmitted: (_) => _submitComment(),
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                        ),
                         decoration: InputDecoration(
                           hintText: 'إضافة تعليق...',
-                          hintStyle: const TextStyle(
+                          hintStyle: TextStyle(
                             fontSize: 13.0,
-                            color: AppColors.lightTextMuted,
+                            color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16.0,
                             vertical: 10.0,
                           ),
                           filled: true,
-                          fillColor: AppColors.lightBackground,
+                          fillColor: isDark ? AppColors.darkSurfaceSecondary : AppColors.lightBackground,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24.0),
                             borderSide: BorderSide.none,

@@ -11,6 +11,8 @@ class ReelCommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Row(
@@ -28,11 +30,11 @@ class ReelCommentItem extends StatelessWidget {
                       fit: BoxFit.cover,
                       fallbackIcon: Icons.person_rounded,
                     )
-                  : const CircleAvatar(
-                      backgroundColor: AppColors.lightBorder,
+                  : CircleAvatar(
+                      backgroundColor: isDark ? AppColors.darkBorder : AppColors.lightBorder,
                       child: Icon(
                         Icons.person_rounded,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
             ),
@@ -49,17 +51,17 @@ class ReelCommentItem extends StatelessWidget {
                   children: [
                     Text(
                       comment.userName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13.0,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
                     Text(
                       _formatDate(comment.createdAt),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10.5,
-                        color: AppColors.lightTextSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                       ),
                     ),
                   ],
@@ -67,9 +69,9 @@ class ReelCommentItem extends StatelessWidget {
                 const SizedBox(height: 3.0),
                 Text(
                   comment.content,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: AppColors.lightTextPrimary,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                     height: 1.3,
                   ),
                 ),

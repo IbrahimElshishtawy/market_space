@@ -66,7 +66,7 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
 
     return Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0.5,

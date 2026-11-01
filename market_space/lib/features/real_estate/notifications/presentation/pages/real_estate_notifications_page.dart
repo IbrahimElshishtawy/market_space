@@ -101,7 +101,7 @@ class _RealEstateNotificationsPageState
       textDirection: TextDirection.rtl,
       child: Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('إشعارات العقارات'),
           centerTitle: true,

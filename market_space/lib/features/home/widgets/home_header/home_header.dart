@@ -20,13 +20,15 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: HomeHeaderLayout.padding(context),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Action Button (Notifications only) on the left (RTL)
           _buildActionButton(
+            context: context,
             icon: Icons.notifications_rounded,
             onTap: onNotificationsTap,
             badgeCount: data.unreadNotificationsCount,
@@ -46,10 +48,10 @@ class HomeHeader extends StatelessWidget {
                   children: [
                     Text(
                       data.appName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                         letterSpacing: -0.3,
                         height: 1.1,
                       ),
@@ -58,8 +60,8 @@ class HomeHeader extends StatelessWidget {
                     Container(
                       width: 6.0,
                       height: 6.0,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkPrimary : AppColors.primary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -74,18 +76,22 @@ class HomeHeader extends StatelessWidget {
                         data.location,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.lightTextSecondary,
+                          color: isDark
+                              ? AppColors.darkTextSecondary
+                              : AppColors.lightTextSecondary,
                         ),
                       ),
                     ),
                     const SizedBox(width: 2.0),
-                    const Icon(
+                    Icon(
                       Icons.location_on_outlined,
                       size: 13.0,
-                      color: AppColors.lightTextSecondary,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.lightTextSecondary,
                     ),
                   ],
                 ),
@@ -98,11 +104,14 @@ class HomeHeader extends StatelessWidget {
   }
 
   Widget _buildActionButton({
+    required BuildContext context,
     required IconData icon,
     required VoidCallback? onTap,
     int badgeCount = 0,
     bool showBadgeDot = false,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(HomeHeaderLayout.actionButtonRadius),
@@ -110,14 +119,17 @@ class HomeHeader extends StatelessWidget {
         width: HomeHeaderLayout.actionButtonSize,
         height: HomeHeaderLayout.actionButtonSize,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(
             HomeHeaderLayout.actionButtonRadius,
           ),
-          border: Border.all(color: AppColors.lightBorder, width: 1.0),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            width: 1.0,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
               blurRadius: 6.0,
               offset: const Offset(0, 2),
             ),
@@ -129,7 +141,7 @@ class HomeHeader extends StatelessWidget {
             Icon(
               icon,
               size: HomeHeaderLayout.iconSize,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkIconPrimary : AppColors.neutral,
             ),
             if (showBadgeDot && badgeCount > 0)
               Positioned(
@@ -141,7 +153,10 @@ class HomeHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.error,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 1.5),
+                    border: Border.all(
+                      color: isDark ? AppColors.darkSurface : Colors.white,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),

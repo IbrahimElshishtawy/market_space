@@ -150,7 +150,7 @@ class _CarDetailPageState extends State<CarDetailPage> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.backgroundOf(context),
       body: CustomScrollView(
         slivers: [
           // 1. Sliver App Bar with Photo Gallery

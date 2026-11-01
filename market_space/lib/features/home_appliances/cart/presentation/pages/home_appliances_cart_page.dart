@@ -71,7 +71,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('سلة تسوق الأجهزة'),
           centerTitle: true,

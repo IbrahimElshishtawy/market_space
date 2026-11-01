@@ -22,9 +22,9 @@ class NavigationTabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected
-        ? NavigationLayout.activeColor
-        : NavigationLayout.inactiveColor;
+    final activeColor = NavigationLayout.activeColorOf(context);
+    final inactiveColor = NavigationLayout.inactiveColorOf(context);
+    final color = isSelected ? activeColor : inactiveColor;
 
     final iconSize = NavigationLayout.getIconSize(isCompact);
 
@@ -69,7 +69,7 @@ class NavigationTabItem extends StatelessWidget {
               width: NavigationLayout.indicatorWidth,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? NavigationLayout.activeColor
+                    ? activeColor
                     : Colors.transparent,
                 borderRadius: NavigationLayout.indicatorRadius,
               ),

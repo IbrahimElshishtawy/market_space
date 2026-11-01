@@ -18,19 +18,22 @@ class RealEstateNotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isUnread = !notification.isRead;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
       decoration: BoxDecoration(
         color: isUnread
-            ? AppColors.primary.withValues(alpha: 0.05)
-            : Colors.white,
+            ? (isDark
+                ? AppColors.darkSurfaceSecondary
+                : AppColors.primary.withValues(alpha: 0.05))
+            : (isDark ? AppColors.darkSurface : Colors.white),
         borderRadius: AppRadii.md,
         border: Border.all(
           color: isUnread
-              ? AppColors.primary.withValues(alpha: 0.3)
-              : AppColors.lightBorder,
+              ? (isDark ? AppColors.darkBorder : AppColors.primary.withValues(alpha: 0.3))
+              : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
         ),
       ),
       child: Material(
@@ -50,7 +53,7 @@ class RealEstateNotificationItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isUnread
                         ? AppColors.primary.withValues(alpha: 0.15)
-                        : AppColors.lightBackground,
+                        : (isDark ? AppColors.darkSurfaceSecondary : AppColors.lightBackground),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -59,8 +62,8 @@ class RealEstateNotificationItem extends StatelessWidget {
                         : Icons.notifications_none_rounded,
                     size: 20.0,
                     color: isUnread
-                        ? AppColors.primary
-                        : AppColors.lightTextSecondary,
+                        ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                        : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
                   ),
                 ),
                 const SizedBox(width: 12.0),
@@ -81,7 +84,9 @@ class RealEstateNotificationItem extends StatelessWidget {
                                 fontWeight: isUnread
                                     ? FontWeight.bold
                                     : FontWeight.w600,
-                                color: AppColors.neutral,
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.neutral,
                               ),
                             ),
                           ),
@@ -89,8 +94,8 @@ class RealEstateNotificationItem extends StatelessWidget {
                             Container(
                               width: 8.0,
                               height: 8.0,
-                              decoration: const BoxDecoration(
-                                color: AppColors.primary,
+                              decoration: BoxDecoration(
+                                color: isDark ? AppColors.darkPrimary : AppColors.primary,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -99,9 +104,11 @@ class RealEstateNotificationItem extends StatelessWidget {
                       const SizedBox(height: 4.0),
                       Text(
                         notification.body,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.0,
-                          color: AppColors.lightTextSecondary,
+                          color: isDark
+                              ? AppColors.darkTextSecondary
+                              : AppColors.lightTextSecondary,
                           height: 1.3,
                         ),
                       ),
@@ -114,8 +121,8 @@ class RealEstateNotificationItem extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10.5,
                               color: isUnread
-                                  ? AppColors.primary
-                                  : AppColors.lightTextSecondary,
+                                  ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                                  : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
                               fontWeight: isUnread
                                   ? FontWeight.bold
                                   : FontWeight.normal,

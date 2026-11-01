@@ -35,7 +35,7 @@ class HomeServiceDetailPage extends StatelessWidget {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
-            backgroundColor: AppColors.lightBackground,
+            backgroundColor: AppColors.backgroundOf(context),
             body: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [

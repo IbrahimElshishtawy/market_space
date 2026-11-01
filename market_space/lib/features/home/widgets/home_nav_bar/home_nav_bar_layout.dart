@@ -19,6 +19,27 @@ class HomeNavBarLayout {
   static const Color inactiveColor = AppColors.iconSecondary;
   static const Color backgroundColor = Colors.white;
 
+  static Color activeColorOf(BuildContext context) =>
+      AppColors.isDark(context) ? AppColors.darkPrimary : AppColors.primary;
+  static Color inactiveColorOf(BuildContext context) =>
+      AppColors.isDark(context) ? AppColors.darkIconSecondary : AppColors.iconSecondary;
+  static Color backgroundColorOf(BuildContext context) =>
+      AppColors.isDark(context) ? AppColors.darkSurface : Colors.white;
+
+  static Border containerBorderOf(BuildContext context) => Border.all(
+    color: AppColors.isDark(context) ? AppColors.darkBorder : const Color(0x12000000),
+    width: 1.0,
+  );
+
+  static List<BoxShadow> containerShadowOf(BuildContext context) => [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: AppColors.isDark(context) ? 0.35 : 0.1),
+      blurRadius: 16.0,
+      offset: const Offset(0, 4),
+      spreadRadius: 0,
+    ),
+  ];
+
   static const List<BoxShadow> containerShadow = [
     BoxShadow(
       color: Color(0x1A000000), // ~10% black opacity

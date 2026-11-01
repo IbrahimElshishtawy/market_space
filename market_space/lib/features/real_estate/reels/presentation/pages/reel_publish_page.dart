@@ -53,7 +53,7 @@ class _ReelPublishPageState extends State<ReelPublishPage> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('نشر ريلز عقاري جديد'),
           backgroundColor: Colors.white,

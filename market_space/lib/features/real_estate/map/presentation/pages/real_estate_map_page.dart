@@ -140,7 +140,7 @@ class _RealEstateMapPageState extends State<RealEstateMapPage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         body: SafeArea(
           bottom: false,
           child: ValueListenableBuilder<RealEstateMapState>(

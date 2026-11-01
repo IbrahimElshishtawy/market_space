@@ -20,9 +20,9 @@ class HomeNavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected
-        ? HomeNavBarLayout.activeColor
-        : HomeNavBarLayout.inactiveColor;
+    final activeColor = HomeNavBarLayout.activeColorOf(context);
+    final inactiveColor = HomeNavBarLayout.inactiveColorOf(context);
+    final color = isSelected ? activeColor : inactiveColor;
 
     final iconSize = HomeNavBarLayout.getIconSize(isCompact);
 
@@ -84,7 +84,7 @@ class HomeNavBarItem extends StatelessWidget {
               width: HomeNavBarLayout.indicatorWidth,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? HomeNavBarLayout.activeColor
+                    ? activeColor
                     : Colors.transparent,
                 borderRadius: HomeNavBarLayout.indicatorRadius,
               ),

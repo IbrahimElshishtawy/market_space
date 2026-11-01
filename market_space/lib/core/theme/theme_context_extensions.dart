@@ -12,7 +12,7 @@ extension ThemeContextExtensions on BuildContext {
   bool get isDarkMode => Theme.of(this).brightness == Brightness.dark;
 
   // Background and Surfaces
-  Color get scaffoldBackground => colorScheme.surface;
+  Color get scaffoldBackground => theme.scaffoldBackgroundColor;
   Color get surfaceColor => colorScheme.surface;
   Color get surfaceSecondaryColor => isDarkMode
       ? AppColors.darkSurfaceSecondary

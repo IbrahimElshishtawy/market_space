@@ -19,17 +19,20 @@ class FavoritePropertyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final property = item.property;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
             blurRadius: 8.0,
             offset: const Offset(0, 2),
           ),
@@ -111,10 +114,10 @@ class FavoritePropertyCard extends StatelessWidget {
                         property.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.neutral,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                         ),
                       ),
                       const SizedBox(height: 3.0),
@@ -122,10 +125,12 @@ class FavoritePropertyCard extends StatelessWidget {
                       // Location
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on_outlined,
                             size: 13.0,
-                            color: AppColors.lightTextSecondary,
+                            color: isDark
+                                ? AppColors.darkTextSecondary
+                                : AppColors.lightTextSecondary,
                           ),
                           const SizedBox(width: 2.0),
                           Expanded(
@@ -133,9 +138,11 @@ class FavoritePropertyCard extends StatelessWidget {
                               property.location,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11.0,
-                                color: AppColors.lightTextSecondary,
+                                color: isDark
+                                    ? AppColors.darkTextSecondary
+                                    : AppColors.lightTextSecondary,
                               ),
                             ),
                           ),
@@ -146,11 +153,11 @@ class FavoritePropertyCard extends StatelessWidget {
                       // Specs Chips Row
                       Row(
                         children: [
-                          _buildSpecBadge('${property.bedsCount} غرف'),
+                          _buildSpecBadge(context, '${property.bedsCount} غرف'),
                           const SizedBox(width: 4.0),
-                          _buildSpecBadge('${property.areaM2} م²'),
+                          _buildSpecBadge(context, '${property.areaM2} م²'),
                           const SizedBox(width: 4.0),
-                          _buildSpecBadge(property.finishType),
+                          _buildSpecBadge(context, property.finishType),
                         ],
                       ),
                     ],
@@ -164,19 +171,25 @@ class FavoritePropertyCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecBadge(String label) {
+  Widget _buildSpecBadge(BuildContext context, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
       decoration: BoxDecoration(
-        color: AppColors.lightBackground,
+        color: isDark ? AppColors.darkSurfaceSecondary : AppColors.lightBackground,
         borderRadius: BorderRadius.circular(4.0),
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 10.0,
-          color: AppColors.lightTextSecondary,
+          color: isDark
+              ? AppColors.darkTextSecondary
+              : AppColors.lightTextSecondary,
         ),
       ),
     );

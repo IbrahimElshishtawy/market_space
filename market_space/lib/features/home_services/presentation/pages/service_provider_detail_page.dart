@@ -38,7 +38,7 @@ class ServiceProviderDetailPage extends StatelessWidget {
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
-            backgroundColor: AppColors.lightBackground,
+            backgroundColor: AppColors.backgroundOf(context),
             appBar: AppBar(
               backgroundColor: Colors.white,
               elevation: 0.5,

@@ -100,11 +100,11 @@ class AppBottomNavigation extends StatelessWidget {
 
               // 5-Item Navigation Container
               Container(
-                decoration: const BoxDecoration(
-                  color: NavigationLayout.backgroundColor,
+                decoration: BoxDecoration(
+                  color: NavigationLayout.backgroundColorOf(context),
                   borderRadius: NavigationLayout.borderRadius,
-                  boxShadow: NavigationLayout.containerShadow,
-                  border: NavigationLayout.containerBorder,
+                  boxShadow: NavigationLayout.containerShadowOf(context),
+                  border: NavigationLayout.containerBorderOf(context),
                 ),
                 child: SafeArea(
                   top: false,

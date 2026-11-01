@@ -107,7 +107,7 @@ class _RealEstateFavoritesPageState extends State<RealEstateFavoritesPage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('العقارات المفضلة'),
           centerTitle: true,

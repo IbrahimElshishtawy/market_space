@@ -98,7 +98,7 @@ class _CarsPageState extends State<CarsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.backgroundOf(context),
       appBar: AppBar(
         title: const Row(
           children: [
@@ -555,7 +555,7 @@ class _CarsPageState extends State<CarsPage> {
             children: [
               CircleAvatar(
                 radius: 14.0,
-                backgroundColor: AppColors.lightBackground,
+                backgroundColor: AppColors.backgroundOf(context),
                 child: Text(
                   brand.name[0],
                   style: const TextStyle(fontSize: 11.0, fontWeight: FontWeight.bold, color: AppColors.primary),

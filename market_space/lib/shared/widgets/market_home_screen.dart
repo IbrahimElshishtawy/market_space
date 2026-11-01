@@ -94,7 +94,7 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         body: SafeArea(
           bottom: false,
           child: ValueListenableBuilder<MarketSector>(

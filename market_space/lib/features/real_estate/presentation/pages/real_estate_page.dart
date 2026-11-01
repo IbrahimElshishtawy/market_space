@@ -144,7 +144,7 @@ class _RealEstatePageState extends State<RealEstatePage> {
 
     return Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         body: SafeArea(
           bottom: false,
           child: ValueListenableBuilder<RealEstateState>(

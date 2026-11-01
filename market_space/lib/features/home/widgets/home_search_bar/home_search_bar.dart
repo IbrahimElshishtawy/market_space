@@ -21,17 +21,22 @@ class HomeSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: HomeSearchBarLayout.padding(context),
       child: Container(
         height: HomeSearchBarLayout.height,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(HomeSearchBarLayout.cornerRadius),
-          border: Border.all(color: AppColors.lightBorder, width: 1.0),
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+            width: 1.0,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
               blurRadius: 8.0,
               offset: const Offset(0, 2),
             ),
@@ -46,12 +51,12 @@ class HomeSearchBar extends StatelessWidget {
                 topRight: Radius.circular(HomeSearchBarLayout.cornerRadius),
                 bottomRight: Radius.circular(HomeSearchBarLayout.cornerRadius),
               ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 14.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14.0),
                 child: Icon(
                   Icons.filter_list_rounded,
                   size: 22.0,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkIconPrimary : AppColors.neutral,
                 ),
               ),
             ),
@@ -62,17 +67,19 @@ class HomeSearchBar extends StatelessWidget {
                 controller: controller,
                 onChanged: onChanged,
                 textDirection: TextDirection.rtl,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13.5,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
                   isDense: true,
                   hintText: hintText,
-                  hintStyle: const TextStyle(
+                  hintStyle: TextStyle(
                     fontSize: 13.0,
-                    color: AppColors.lightTextMuted,
+                    color: isDark
+                        ? AppColors.darkTextMuted
+                        : AppColors.lightTextMuted,
                     fontWeight: FontWeight.normal,
                   ),
                   border: InputBorder.none,
@@ -95,10 +102,12 @@ class HomeSearchBar extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.search_rounded,
                       size: 22.0,
-                      color: AppColors.neutral,
+                      color: isDark
+                          ? AppColors.darkIconPrimary
+                          : AppColors.neutral,
                     ),
                   ],
                 ),

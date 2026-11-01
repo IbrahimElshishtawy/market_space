@@ -54,7 +54,7 @@ class _RealEstateDetailPageState extends State<RealEstateDetailPage> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         body: ValueListenableBuilder<RealEstateDetailState>(
           valueListenable: _controller,
           builder: (context, state, _) {

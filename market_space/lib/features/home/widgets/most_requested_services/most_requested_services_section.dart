@@ -19,6 +19,8 @@ class MostRequestedServicesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -31,16 +33,18 @@ class MostRequestedServicesSection extends StatelessWidget {
               InkWell(
                 onTap: onViewAllTap,
                 borderRadius: BorderRadius.circular(4.0),
-                child: const Text(
+                child: Text(
                   'عرض الكل',
                   style: TextStyle(
                     fontSize: 13.0,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.lightTextSecondary,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.lightTextSecondary,
                   ),
                 ),
               ),
-              const Flexible(
+              Flexible(
                 child: Text(
                   'الخدمات الأكثر طلباً',
                   maxLines: 1,
@@ -48,7 +52,7 @@ class MostRequestedServicesSection extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 17.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   ),
                 ),
               ),

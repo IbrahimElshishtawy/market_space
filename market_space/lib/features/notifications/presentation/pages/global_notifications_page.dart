@@ -64,7 +64,7 @@ class _GlobalNotificationsPageState extends State<GlobalNotificationsPage> {
     final controller = widget.controller ?? AppDependencies.of(context).notificationController;
 
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('الإشعارات والتنبيهات', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
           centerTitle: false,

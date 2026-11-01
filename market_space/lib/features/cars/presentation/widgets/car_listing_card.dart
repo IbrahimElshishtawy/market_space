@@ -29,14 +29,16 @@ class CarListingCard extends StatelessWidget {
   }
 
   Widget _buildVerticalCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 8.0,
             offset: const Offset(0, 2),
           ),
@@ -89,7 +91,7 @@ class CarListingCard extends StatelessWidget {
                     top: AppSpacing.sm,
                     end: AppSpacing.sm,
                     child: Material(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: isDark ? AppColors.darkSurface.withValues(alpha: 0.85) : Colors.white.withValues(alpha: 0.9),
                       shape: const CircleBorder(),
                       child: InkWell(
                         customBorder: const CircleBorder(),
@@ -98,7 +100,7 @@ class CarListingCard extends StatelessWidget {
                           padding: const EdgeInsets.all(6.0),
                           child: Icon(
                             car.isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                            color: car.isFavorite ? Colors.red : AppColors.neutral,
+                            color: car.isFavorite ? Colors.red : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                             size: 18.0,
                           ),
                         ),
@@ -120,7 +122,7 @@ class CarListingCard extends StatelessWidget {
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10.0,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -137,10 +139,10 @@ class CarListingCard extends StatelessWidget {
                     // Brand & Model & Year
                     Text(
                       car.fullTitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -162,16 +164,19 @@ class CarListingCard extends StatelessWidget {
                     Row(
                       children: [
                         _buildSpecTag(
+                          context: context,
                           icon: Icons.speed_rounded,
                           label: car.condition == CarCondition.newCar ? 'زيرو' : '${car.mileageKm} كم',
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         _buildSpecTag(
+                          context: context,
                           icon: Icons.settings_rounded,
                           label: car.transmission.titleAr,
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         _buildSpecTag(
+                          context: context,
                           icon: Icons.local_gas_station_rounded,
                           label: car.fuelType.titleAr,
                         ),
@@ -186,18 +191,18 @@ class CarListingCard extends StatelessWidget {
                         Expanded(
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.location_on_outlined,
                                 size: 14.0,
-                                color: AppColors.lightTextSecondary,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                               ),
                               const SizedBox(width: 4.0),
                               Expanded(
                                 child: Text(
                                   '${car.governorate}، ${car.city}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12.0,
-                                    color: AppColors.lightTextSecondary,
+                                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -226,16 +231,18 @@ class CarListingCard extends StatelessWidget {
   }
 
   Widget _buildHorizontalCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: 280.0,
       margin: const EdgeInsetsDirectional.only(end: AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
             blurRadius: 6.0,
             offset: const Offset(0, 2),
           ),
@@ -282,7 +289,7 @@ class CarListingCard extends StatelessWidget {
                     top: 8.0,
                     end: 8.0,
                     child: Material(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: isDark ? AppColors.darkSurface.withValues(alpha: 0.85) : Colors.white.withValues(alpha: 0.85),
                       shape: const CircleBorder(),
                       child: InkWell(
                         customBorder: const CircleBorder(),
@@ -291,7 +298,7 @@ class CarListingCard extends StatelessWidget {
                           padding: const EdgeInsets.all(5.0),
                           child: Icon(
                             car.isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                            color: car.isFavorite ? Colors.red : AppColors.neutral,
+                            color: car.isFavorite ? Colors.red : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                             size: 16.0,
                           ),
                         ),
@@ -307,7 +314,11 @@ class CarListingCard extends StatelessWidget {
                   children: [
                     Text(
                       car.fullTitle,
-                      style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -319,9 +330,17 @@ class CarListingCard extends StatelessWidget {
                     const SizedBox(height: 4.0),
                     Row(
                       children: [
-                        _buildSpecTag(icon: Icons.speed_rounded, label: car.condition == CarCondition.newCar ? 'زيرو' : '${car.mileageKm} كم'),
+                        _buildSpecTag(
+                          context: context,
+                          icon: Icons.speed_rounded,
+                          label: car.condition == CarCondition.newCar ? 'زيرو' : '${car.mileageKm} كم',
+                        ),
                         const SizedBox(width: 4.0),
-                        _buildSpecTag(icon: Icons.location_on_outlined, label: car.governorate),
+                        _buildSpecTag(
+                          context: context,
+                          icon: Icons.location_on_outlined,
+                          label: car.governorate,
+                        ),
                       ],
                     ),
                   ],
@@ -334,24 +353,34 @@ class CarListingCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecTag({required IconData icon, required String label}) {
+  Widget _buildSpecTag({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsetsDirectional.symmetric(horizontal: 6.0, vertical: 2.0),
       decoration: BoxDecoration(
-        color: AppColors.lightBackground,
+        color: isDark ? AppColors.darkSurfaceSecondary : AppColors.lightBackground,
         borderRadius: AppRadii.xs,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12.0, color: AppColors.lightTextSecondary),
+          Icon(
+            icon,
+            size: 12.0,
+            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+          ),
           const SizedBox(width: 3.0),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11.0,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
               fontWeight: FontWeight.w500,
             ),
           ),

@@ -19,15 +19,17 @@ class PropertyMapPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.12),
             blurRadius: 16.0,
             offset: const Offset(0, 4),
           ),
@@ -110,10 +112,10 @@ class PropertyMapPreviewCard extends StatelessWidget {
                         property.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13.0,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.neutral,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                         ),
                       ),
                       const SizedBox(height: 2.0),
@@ -121,10 +123,10 @@ class PropertyMapPreviewCard extends StatelessWidget {
                       // Location
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on_outlined,
                             size: 13.0,
-                            color: AppColors.lightTextSecondary,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                           ),
                           const SizedBox(width: 2.0),
                           Expanded(
@@ -132,9 +134,9 @@ class PropertyMapPreviewCard extends StatelessWidget {
                               property.location,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 10.5,
-                                color: AppColors.lightTextSecondary,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                               ),
                             ),
                           ),
@@ -145,11 +147,11 @@ class PropertyMapPreviewCard extends StatelessWidget {
                       // Specs Chips
                       Row(
                         children: [
-                          _buildSpecPill('${property.bedsCount} غرف'),
+                          _buildSpecPill(context, '${property.bedsCount} غرف'),
                           const SizedBox(width: 4.0),
-                          _buildSpecPill('${property.areaM2} م²'),
+                          _buildSpecPill(context, '${property.areaM2} م²'),
                           const SizedBox(width: 4.0),
-                          _buildSpecPill(property.finishType),
+                          _buildSpecPill(context, property.finishType),
                           const Spacer(),
                           const Text(
                             'التفاصيل >',
@@ -172,19 +174,20 @@ class PropertyMapPreviewCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecPill(String label) {
+  Widget _buildSpecPill(BuildContext context, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 2.0),
       decoration: BoxDecoration(
-        color: AppColors.lightBackground,
+        color: isDark ? AppColors.darkSurfaceSecondary : AppColors.lightBackground,
         borderRadius: BorderRadius.circular(4.0),
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 9.5,
-          color: AppColors.lightTextSecondary,
+          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
         ),
       ),
     );

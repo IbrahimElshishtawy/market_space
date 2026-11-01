@@ -51,7 +51,7 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.backgroundOf(context),
       body: SafeArea(
         bottom: false,
         child: ValueListenableBuilder<ExploreState>(

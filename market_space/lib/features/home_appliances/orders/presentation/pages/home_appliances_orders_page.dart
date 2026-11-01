@@ -178,7 +178,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
           title: const Text('طلبات الأجهزة المنزلية'),
           centerTitle: true,

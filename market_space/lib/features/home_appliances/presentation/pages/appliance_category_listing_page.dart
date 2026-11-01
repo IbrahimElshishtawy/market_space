@@ -56,7 +56,7 @@ class _ApplianceCategoryListingPageState
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         body: SafeArea(
           child: ValueListenableBuilder<ApplianceCategoryListingState>(
             valueListenable: _controller,

@@ -50,7 +50,7 @@ class _GlobalNavigationScaffoldState extends State<GlobalNavigationScaffold> {
       },
       child: Scaffold(
         extendBody: true,
-        backgroundColor: AppColors.lightBackground,
+        backgroundColor: AppColors.backgroundOf(context),
         body: IndexedStack(
           index: _currentIndex,
           children: const [

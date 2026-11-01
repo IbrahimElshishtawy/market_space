@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.backgroundOf(context),
       body: SafeArea(
         bottom: false,
         child: NotificationListener<UserScrollNotification>(
