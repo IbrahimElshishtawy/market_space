@@ -19,18 +19,24 @@ class CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       height: CategoriesGridLayout.itemHeight,
       decoration: BoxDecoration(
-        color: isSelected ? AppColors.primaryTint : Colors.white,
+        color: isSelected
+            ? (isDark ? AppColors.primary.withValues(alpha: 0.15) : AppColors.primaryTint)
+            : (isDark ? AppColors.darkSurface : Colors.white),
         borderRadius: AppRadii.lg,
         border: Border.all(
-          color: isSelected ? AppColors.primary : AppColors.lightBorder,
+          color: isSelected
+              ? AppColors.primary
+              : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
           width: isSelected ? 1.5 : 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.02),
             blurRadius: 4.0,
             offset: const Offset(0, 2),
           ),
@@ -55,7 +61,7 @@ class CategoryTile extends StatelessWidget {
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
                     color: isSelected
                         ? AppColors.primary
-                        : AppColors.lightTextPrimary,
+                        : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
                   ),
                 ),
               ),
@@ -66,7 +72,9 @@ class CategoryTile extends StatelessWidget {
               Icon(
                 category.icon,
                 size: 20.0,
-                color: isSelected ? AppColors.primary : AppColors.neutral,
+                color: isSelected
+                    ? AppColors.primary
+                    : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
               ),
             ],
           ),
