@@ -32,6 +32,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
       builder: (context, _) {
         final services = favCtrl.favoriteServices;
         final providers = favCtrl.favoriteProviders;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
 
         return Column(
           children: [
@@ -40,7 +41,7 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: isDark ? AppColors.darkSurface : Colors.grey.shade200,
                   borderRadius: AppRadii.lg,
                 ),
                 padding: const EdgeInsets.all(4.0),
@@ -53,12 +54,14 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           decoration: BoxDecoration(
-                            color: _selectedSegment == 0 ? Colors.white : Colors.transparent,
+                            color: _selectedSegment == 0
+                                ? (isDark ? AppColors.darkBackground : Colors.white)
+                                : Colors.transparent,
                             borderRadius: AppRadii.md,
                             boxShadow: _selectedSegment == 0
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
+                                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
                                       blurRadius: 4.0,
                                     ),
                                   ]
@@ -70,7 +73,9 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                             style: TextStyle(
                               fontSize: 13.0,
                               fontWeight: _selectedSegment == 0 ? FontWeight.bold : FontWeight.normal,
-                              color: _selectedSegment == 0 ? AppColors.primary : AppColors.neutral,
+                              color: _selectedSegment == 0
+                                  ? AppColors.primary
+                                  : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                             ),
                           ),
                         ),
@@ -83,12 +88,14 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           decoration: BoxDecoration(
-                            color: _selectedSegment == 1 ? Colors.white : Colors.transparent,
+                            color: _selectedSegment == 1
+                                ? (isDark ? AppColors.darkBackground : Colors.white)
+                                : Colors.transparent,
                             borderRadius: AppRadii.md,
                             boxShadow: _selectedSegment == 1
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
+                                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
                                       blurRadius: 4.0,
                                     ),
                                   ]
@@ -100,7 +107,9 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                             style: TextStyle(
                               fontSize: 13.0,
                               fontWeight: _selectedSegment == 1 ? FontWeight.bold : FontWeight.normal,
-                              color: _selectedSegment == 1 ? AppColors.primary : AppColors.neutral,
+                              color: _selectedSegment == 1
+                                  ? AppColors.primary
+                                  : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                             ),
                           ),
                         ),
@@ -129,10 +138,10 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                           itemBuilder: (context, index) {
                             final s = services[index];
                             return ListTile(
-                              tileColor: Colors.white,
+                              tileColor: isDark ? AppColors.darkSurface : Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: AppRadii.lg,
-                                side: const BorderSide(color: AppColors.lightBorder),
+                                side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
                               ),
                               leading: ClipRRect(
                                 borderRadius: AppRadii.md,
@@ -192,10 +201,10 @@ class _HomeServicesFavoritesViewState extends State<HomeServicesFavoritesView> {
                           itemBuilder: (context, index) {
                             final p = providers[index];
                             return ListTile(
-                              tileColor: Colors.white,
+                              tileColor: isDark ? AppColors.darkSurface : Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: AppRadii.lg,
-                                side: const BorderSide(color: AppColors.lightBorder),
+                                side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
                               ),
                               leading: ClipRRect(
                                 borderRadius: AppRadii.md,

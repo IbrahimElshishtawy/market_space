@@ -98,18 +98,27 @@ class _HomeServicesBookingWizardPageState
           child: Scaffold(
             backgroundColor: AppColors.backgroundOf(context),
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.darkSurface
+                  : Colors.white,
               elevation: 0.5,
               title: Text(
                 _getStepTitle(currentStep),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.neutral,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.neutral,
                 ),
               ),
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_rounded, color: AppColors.neutral),
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.neutral,
+                ),
                 onPressed: () {
                   if (currentStep > 1 && currentStep < 7) {
                     bookingCtrl.goToStep(currentStep - 1);
@@ -319,15 +328,28 @@ class _HomeServicesBookingWizardPageState
                   const SizedBox(height: 8.0),
                   Text(
                     provider.description,
-                    style: const TextStyle(fontSize: 12.0, color: AppColors.neutral),
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.neutral,
+                    ),
                   ),
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected ? AppColors.primary : Colors.grey.shade100,
-                        foregroundColor: isSelected ? Colors.white : AppColors.neutral,
+                        backgroundColor: isSelected
+                            ? AppColors.primary
+                            : (Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.darkSurface
+                                : Colors.grey.shade100),
+                        foregroundColor: isSelected
+                            ? Colors.white
+                            : (Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.neutral),
                         elevation: 0,
                       ),
                       onPressed: () {
@@ -923,9 +945,15 @@ class _HomeServicesBookingWizardPageState
             child: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 70.0),
           ),
           const SizedBox(height: AppSpacing.md),
-          const Text(
+          Text(
             'تم تأكيد حجزك بنجاح!',
-            style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+            style: TextStyle(
+              fontSize: 22.0,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.neutral,
+            ),
           ),
           const SizedBox(height: 6.0),
           Text(

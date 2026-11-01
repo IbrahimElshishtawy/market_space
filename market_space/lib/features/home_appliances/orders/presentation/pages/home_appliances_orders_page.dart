@@ -44,9 +44,12 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
   }
 
   void _showOrderDetailsSheet(ApplianceOrderModel order) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -69,18 +72,22 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                   children: [
                     Text(
                       'تفاصيل الطلب: ${order.orderNumber}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                      ),
                       onPressed: () => Navigator.pop(ctx),
                     ),
                   ],
                 ),
-                const Divider(),
+                Divider(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
                 const SizedBox(height: 8.0),
 
                 // Order Timeline
@@ -88,9 +95,13 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                 const SizedBox(height: 16.0),
 
                 // Items list
-                const Text(
+                Text(
                   'المنتجات المشتراة:',
-                  style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                  ),
                 ),
                 const SizedBox(height: 8.0),
                 ...order.items.map((item) {
@@ -113,14 +124,18 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                         Expanded(
                           child: Text(
                             '${item.title} (x${item.quantity})',
-                            style: const TextStyle(fontSize: 12.0),
+                            style: TextStyle(
+                              fontSize: 12.0,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                            ),
                           ),
                         ),
                         Text(
                           '${item.totalPrice.toStringAsFixed(0)} ج.م',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.0,
                             fontWeight: FontWeight.bold,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           ),
                         ),
                       ],
@@ -128,19 +143,24 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                   );
                 }),
 
-                const Divider(height: 24.0),
+                Divider(height: 24.0, color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
 
                 // Pricing Summary
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('الإجمالي الشامل:'),
+                    Text(
+                      'الإجمالي الشامل:',
+                      style: TextStyle(
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                      ),
+                    ),
                     Text(
                       '${order.grandTotal.toStringAsFixed(0)} ج.م',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.neutral,
+                        color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                       ),
                     ),
                   ],
@@ -148,16 +168,16 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                 const SizedBox(height: 6.0),
                 Text(
                   'طريقة الدفع: ${order.paymentMethod}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11.5,
-                    color: AppColors.lightTextSecondary,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                   ),
                 ),
                 Text(
                   'العنوان: ${order.deliveryAddress}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11.5,
-                    color: AppColors.lightTextSecondary,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                   ),
                 ),
 
@@ -173,6 +193,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
   @override
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -182,9 +203,9 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
         appBar: AppBar(
           title: const Text('طلبات الأجهزة المنزلية'),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
           elevation: 0.5,
-          foregroundColor: AppColors.neutral,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
         ),
         body: SafeArea(
           bottom: false,
@@ -207,7 +228,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
               final ordersList = state.filteredOrders;
 
               return RefreshIndicator(
-                color: AppColors.neutral,
+                color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                 onRefresh: _controller.loadOrders,
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(
@@ -223,21 +244,24 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           children: [
-                            _buildFilterChip('الكل', null, state.statusFilter),
+                            _buildFilterChip('الكل', null, state.statusFilter, isDark),
                             _buildFilterChip(
                               'جاري الشحن',
                               ApplianceOrderStatus.shipped,
                               state.statusFilter,
+                              isDark,
                             ),
                             _buildFilterChip(
                               'تم التسليم',
                               ApplianceOrderStatus.delivered,
                               state.statusFilter,
+                              isDark,
                             ),
                             _buildFilterChip(
                               'ملغي',
                               ApplianceOrderStatus.cancelled,
                               state.statusFilter,
+                              isDark,
                             ),
                           ],
                         ),
@@ -264,9 +288,11 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                               vertical: 6.0,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: isDark ? AppColors.darkSurface : Colors.white,
                               borderRadius: AppRadii.lg,
-                              border: Border.all(color: AppColors.lightBorder),
+                              border: Border.all(
+                                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                              ),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(14.0),
@@ -280,9 +306,10 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                                     children: [
                                       Text(
                                         'رقم الطلب: ${order.orderNumber}',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 13.5,
                                           fontWeight: FontWeight.bold,
+                                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                                         ),
                                       ),
                                       Container(
@@ -291,15 +318,15 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                                           vertical: 3.0,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.neutral.withValues(
-                                            alpha: 0.1,
-                                          ),
+                                          color: isDark
+                                              ? AppColors.darkPrimary.withValues(alpha: 0.15)
+                                              : AppColors.neutral.withValues(alpha: 0.1),
                                           borderRadius: AppRadii.xs,
                                         ),
                                         child: Text(
                                           order.status.label,
-                                          style: const TextStyle(
-                                            color: AppColors.neutral,
+                                          style: TextStyle(
+                                            color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                                             fontSize: 11.0,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -314,7 +341,10 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                                     currentStatus: order.status,
                                   ),
 
-                                  const Divider(height: 20.0),
+                                  Divider(
+                                    height: 20.0,
+                                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                                  ),
 
                                   // Products Thumbnails & Info Row
                                   Row(
@@ -353,22 +383,22 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
                                         children: [
                                           Text(
                                             '${order.grandTotal.toStringAsFixed(0)} ج.م',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.w900,
-                                              color: AppColors.neutral,
+                                              color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                                             ),
                                           ),
                                           const SizedBox(height: 2.0),
                                           InkWell(
                                             onTap: () =>
                                                 _showOrderDetailsSheet(order),
-                                            child: const Text(
+                                            child: Text(
                                               'عرض التفاصيل >',
                                               style: TextStyle(
                                                 fontSize: 11.0,
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.neutral,
+                                                color: isDark ? AppColors.darkPrimary : AppColors.neutral,
                                               ),
                                             ),
                                           ),
@@ -416,6 +446,7 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
     String label,
     ApplianceOrderStatus? status,
     ApplianceOrderStatus? selectedStatus,
+    bool isDark,
   ) {
     final isSelected = status == selectedStatus;
     return Padding(
@@ -423,9 +454,10 @@ class _HomeAppliancesOrdersPageState extends State<HomeAppliancesOrdersPage> {
       child: ChoiceChip(
         label: Text(label),
         selected: isSelected,
-        selectedColor: AppColors.neutral,
+        selectedColor: isDark ? AppColors.darkPrimary : AppColors.neutral,
+        backgroundColor: isDark ? AppColors.darkSurface : null,
         labelStyle: TextStyle(
-          color: isSelected ? Colors.white : AppColors.neutral,
+          color: isSelected ? Colors.white : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
           fontSize: 12.0,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),

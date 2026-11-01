@@ -30,25 +30,27 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           orElse: () => bookingCtrl.bookings.first,
         );
 
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
             backgroundColor: AppColors.backgroundOf(context),
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
               elevation: 0.5,
               title: Text(
                 'حجز #${booking.id}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                 ),
               ),
               leading: IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_back_rounded,
-                  color: AppColors.neutral,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                 ),
                 onPressed: () => context.pop(),
               ),
@@ -105,6 +107,7 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     BuildContext context,
     HomeServiceBookingModel booking,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -143,9 +146,9 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   booking.cancellationReason != null
                       ? 'تم الإلغاء: ${booking.cancellationReason}'
                       : 'تاريخ الإنشاء: ${booking.createdAt.day}/${booking.createdAt.month}/${booking.createdAt.year}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.0,
-                    color: AppColors.lightTextSecondary,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                   ),
                 ),
               ],
@@ -160,19 +163,26 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     BuildContext context,
     HomeServiceBookingModel booking,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'الخدمة ومقدم الصيانة',
-            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+            ),
           ),
           const Divider(height: 16.0),
           Row(
@@ -194,17 +204,18 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   children: [
                     Text(
                       booking.serviceTitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
                     const SizedBox(height: 2.0),
                     Text(
                       booking.providerName ?? 'الشركة الهندسية للصيانة',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.0,
-                        color: AppColors.lightTextSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                       ),
                     ),
                   ],
@@ -221,12 +232,15 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     BuildContext context,
     HomeServiceBookingModel booking,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,9 +248,13 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'الفني المسؤول',
-                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                ),
               ),
               if (booking.status == BookingStatus.technicianOnTheWay ||
                   booking.status == BookingStatus.technicianAssigned)
@@ -282,9 +300,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                   children: [
                     Text(
                       booking.technicianName!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                       ),
                     ),
                     const SizedBox(height: 2.0),
@@ -326,19 +345,26 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     BuildContext context,
     HomeServiceBookingModel booking,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'الموعد والعنوان',
-            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+            ),
           ),
           const Divider(height: 16.0),
           Row(
@@ -351,9 +377,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
               const SizedBox(width: AppSpacing.xs),
               Text(
                 '${booking.scheduledDate.year}/${booking.scheduledDate.month}/${booking.scheduledDate.day} — ${booking.scheduledTimeSlot}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13.0,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                 ),
               ),
             ],
@@ -371,7 +398,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
               Expanded(
                 child: Text(
                   booking.address.fullAddress,
-                  style: const TextStyle(fontSize: 13.0),
+                  style: TextStyle(
+                    fontSize: 13.0,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                  ),
                 ),
               ),
             ],
@@ -380,9 +410,9 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
             const SizedBox(height: 6.0),
             Text(
               'ملاحظات الوصول: ${booking.address.specialInstructions}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11.0,
-                color: AppColors.lightTextSecondary,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
               ),
             ),
           ],
@@ -395,24 +425,35 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     BuildContext context,
     HomeServiceBookingModel booking,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'تفاصيل المشكلة والطلب',
-            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+            ),
           ),
           const Divider(height: 16.0),
           Text(
             booking.problemDescription,
-            style: const TextStyle(fontSize: 13.0, height: 1.4),
+            style: TextStyle(
+              fontSize: 13.0,
+              height: 1.4,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+            ),
           ),
           if (booking.problemImages.isNotEmpty) ...[
             const SizedBox(height: 10.0),
@@ -445,27 +486,44 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     BuildContext context,
     HomeServiceBookingModel booking,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final p = booking.pricing;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'الفاتورة والدفع',
-            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+            ),
           ),
           const Divider(height: 16.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('سعر الخدمة:'),
-              Text('${p.servicePrice.toStringAsFixed(0)} ج.م'),
+              Text(
+                'سعر الخدمة:',
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                ),
+              ),
+              Text(
+                '${p.servicePrice.toStringAsFixed(0)} ج.م',
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                ),
+              ),
             ],
           ),
           if (p.inspectionFee > 0) ...[
@@ -473,8 +531,18 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('رسوم المعاينة:'),
-                Text('${p.inspectionFee.toStringAsFixed(0)} ج.م'),
+                Text(
+                  'رسوم المعاينة:',
+                  style: TextStyle(
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                  ),
+                ),
+                Text(
+                  '${p.inspectionFee.toStringAsFixed(0)} ج.م',
+                  style: TextStyle(
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                  ),
+                ),
               ],
             ),
           ],
@@ -482,8 +550,18 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('رسوم الانتقال:'),
-              Text('${p.transportationFee.toStringAsFixed(0)} ج.م'),
+              Text(
+                'رسوم الانتقال:',
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                ),
+              ),
+              Text(
+                '${p.transportationFee.toStringAsFixed(0)} ج.م',
+                style: TextStyle(
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                ),
+              ),
             ],
           ),
           if (p.discountAmount > 0) ...[
@@ -503,9 +581,13 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'الإجمالي المستحق:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                ),
               ),
               Text(
                 '${p.total.toStringAsFixed(0)} ج.م',
@@ -526,19 +608,26 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
     BuildContext context,
     HomeServiceBookingModel booking,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'الخط الزمني للحجز',
-            style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+            ),
           ),
           const Divider(height: 16.0),
           ...booking.timeline.map((event) {
@@ -566,9 +655,10 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                           children: [
                             Text(
                               event.title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13.0,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                               ),
                             ),
                             Text(
@@ -583,9 +673,9 @@ class HomeServiceBookingDetailPage extends StatelessWidget {
                         const SizedBox(height: 2.0),
                         Text(
                           event.description,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11.0,
-                            color: AppColors.lightTextSecondary,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                           ),
                         ),
                       ],

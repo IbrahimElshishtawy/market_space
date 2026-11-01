@@ -83,7 +83,7 @@ class HomeServicesHomeView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'أقسام الخدمات المنزلية',
                         maxLines: 1,
@@ -91,7 +91,9 @@ class HomeServicesHomeView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.neutral,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.neutral,
                         ),
                       ),
                     ),
@@ -125,6 +127,7 @@ class HomeServicesHomeView extends StatelessWidget {
             // 5. Popular Services
             SliverToBoxAdapter(
               child: _buildSectionHeader(
+                context,
                 'الخدمات الأكثر طلباً',
                 'خدمات موثوقة حظيت بأعلى تقييمات العملاء',
                 onSeeAll: onExploreServicesTap,
@@ -150,6 +153,7 @@ class HomeServicesHomeView extends StatelessWidget {
             // 6. Featured Providers
             SliverToBoxAdapter(
               child: _buildSectionHeader(
+                context,
                 'أفضل شركات ومقدمي الخدمة المعتمدين',
                 'شركات مرخصة وتضمن حقوق العملاء وجودة التنفيذ',
               ),
@@ -174,6 +178,7 @@ class HomeServicesHomeView extends StatelessWidget {
             // 7. Recommended / New Services
             SliverToBoxAdapter(
               child: _buildSectionHeader(
+                context,
                 'خدمات مضافة حديثاً وعروض موسمية',
                 'حلول صيانة دورية لمنزلك',
                 onSeeAll: onExploreServicesTap,
@@ -315,12 +320,14 @@ class HomeServicesHomeView extends StatelessWidget {
   }
 
   Widget _buildUpcomingBookingCard(BuildContext context, HomeServiceBookingModel booking) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.amber.shade50,
+        color: isDark ? const Color(0xFF2E2415) : Colors.amber.shade50,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: Colors.amber.shade300),
+        border: Border.all(color: isDark ? Colors.amber.shade800 : Colors.amber.shade300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +338,7 @@ class HomeServicesHomeView extends StatelessWidget {
               Expanded(
                 child: Row(
                   children: [
-                    Icon(Icons.access_time_filled_rounded, size: 18.0, color: Colors.amber.shade900),
+                    Icon(Icons.access_time_filled_rounded, size: 18.0, color: Colors.amber.shade700),
                     const SizedBox(width: 6.0),
                     Expanded(
                       child: Text(
@@ -341,7 +348,7 @@ class HomeServicesHomeView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13.0,
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber.shade900,
+                          color: Colors.amber.shade700,
                         ),
                       ),
                     ),
@@ -369,16 +376,19 @@ class HomeServicesHomeView extends StatelessWidget {
           const SizedBox(height: 8.0),
           Text(
             booking.serviceTitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15.0,
               fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             ),
           ),
           const SizedBox(height: 4.0),
           Text(
             'الموعد: ${booking.scheduledDate.year}/${booking.scheduledDate.month}/${booking.scheduledDate.day} — ${booking.scheduledTimeSlot}',
-            style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
+            style: TextStyle(
+              fontSize: 12.0,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+            ),
           ),
           if (booking.technicianName != null) ...[
             const SizedBox(height: 4.0),
@@ -457,7 +467,11 @@ class HomeServicesHomeView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11.0,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? AppColors.primary : AppColors.neutral,
+                color: isSelected
+                    ? AppColors.primary
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.neutral),
               ),
             ),
           ],
@@ -466,7 +480,9 @@ class HomeServicesHomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title, String subtitle, {VoidCallback? onSeeAll}) {
+  Widget _buildSectionHeader(BuildContext context, String title, String subtitle, {VoidCallback? onSeeAll}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.md,
@@ -483,15 +499,18 @@ class HomeServicesHomeView extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 17.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   ),
                 ),
                 Text(
                   subtitle,
-                  style: const TextStyle(fontSize: 12.0, color: AppColors.lightTextSecondary),
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  ),
                 ),
               ],
             ),
@@ -512,16 +531,17 @@ class HomeServicesHomeView extends StatelessWidget {
     HomeServicesFavoritesController favCtrl,
   ) {
     final isFav = favCtrl.isServiceFavorite(service.id);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: 220.0,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 6.0,
             offset: const Offset(0, 2),
           ),
@@ -550,7 +570,9 @@ class HomeServicesHomeView extends StatelessWidget {
                 left: 6.0,
                 child: CircleAvatar(
                   radius: 16.0,
-                  backgroundColor: Colors.white.withValues(alpha: 0.9),
+                  backgroundColor: isDark
+                      ? AppColors.darkSurface.withValues(alpha: 0.9)
+                      : Colors.white.withValues(alpha: 0.9),
                   child: IconButton(
                     padding: EdgeInsets.zero,
                     icon: Icon(
@@ -596,10 +618,10 @@ class HomeServicesHomeView extends StatelessWidget {
                   service.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   ),
                 ),
                 const SizedBox(height: 2.0),
@@ -607,7 +629,10 @@ class HomeServicesHomeView extends StatelessWidget {
                   service.shortDescription,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 11.0, color: AppColors.lightTextSecondary),
+                  style: TextStyle(
+                    fontSize: 11.0,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  ),
                 ),
                 const SizedBox(height: 6.0),
                 Row(
@@ -653,13 +678,22 @@ class HomeServicesHomeView extends StatelessWidget {
   }
 
   Widget _buildProviderCard(BuildContext context, ServiceProviderModel provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: 240.0,
       padding: const EdgeInsets.all(AppSpacing.sm),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 6.0,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -688,9 +722,10 @@ class HomeServicesHomeView extends StatelessWidget {
                             provider.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13.0,
                               fontWeight: FontWeight.bold,
+                              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                             ),
                           ),
                         ),
@@ -705,7 +740,10 @@ class HomeServicesHomeView extends StatelessWidget {
                         const SizedBox(width: 2.0),
                         Text(
                           '${provider.rating} (${provider.reviewsCount})',
-                          style: const TextStyle(fontSize: 11.0, color: AppColors.lightTextSecondary),
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -719,7 +757,10 @@ class HomeServicesHomeView extends StatelessWidget {
             provider.description,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 11.0, color: AppColors.lightTextSecondary),
+            style: TextStyle(
+              fontSize: 11.0,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+            ),
           ),
           const Spacer(),
           Row(

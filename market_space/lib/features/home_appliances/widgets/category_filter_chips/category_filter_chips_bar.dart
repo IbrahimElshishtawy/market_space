@@ -19,6 +19,8 @@ class CategoryFilterChipsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SizedBox(
       height: CategoryFilterChipsLayout.chipHeight,
       child: ListView.separated(
@@ -39,12 +41,14 @@ class CategoryFilterChipsBar extends StatelessWidget {
                 vertical: 6.0,
               ),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.neutral : Colors.white,
+                color: isSelected
+                    ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                    : (isDark ? AppColors.darkSurface : Colors.white),
                 borderRadius: AppRadii.md,
                 border: Border.all(
                   color: isSelected
-                      ? AppColors.neutral
-                      : const Color(0xFFE2E8F0),
+                      ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                      : (isDark ? AppColors.darkBorder : const Color(0xFFE2E8F0)),
                 ),
               ),
               child: Center(
@@ -53,7 +57,9 @@ class CategoryFilterChipsBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12.5,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                    color: isSelected ? Colors.white : AppColors.neutral,
+                    color: isSelected
+                        ? (isDark ? AppColors.darkOnPrimary : Colors.white)
+                        : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
                   ),
                 ),
               ),

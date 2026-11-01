@@ -147,15 +147,16 @@ class HomeServicesCatalogView extends StatelessWidget {
     HomeServicesFavoritesController favCtrl,
   ) {
     final isFav = favCtrl.isServiceFavorite(service.id);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 6.0,
             offset: const Offset(0, 2),
           ),
@@ -199,10 +200,10 @@ class HomeServicesCatalogView extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 service.title,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.neutral,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                                 ),
                               ),
                             ),

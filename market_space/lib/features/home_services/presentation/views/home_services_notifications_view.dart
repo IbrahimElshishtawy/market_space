@@ -192,12 +192,18 @@ class _HomeServicesNotificationsViewState
         iconColor = AppColors.primary;
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: item.isRead ? Colors.white : AppColors.primary.withValues(alpha: 0.05),
+        color: item.isRead
+            ? (isDark ? AppColors.darkSurface : Colors.white)
+            : (isDark ? AppColors.darkBackground : AppColors.primary.withValues(alpha: 0.05)),
         borderRadius: AppRadii.lg,
         border: Border.all(
-          color: item.isRead ? AppColors.lightBorder : AppColors.primary.withValues(alpha: 0.3),
+          color: item.isRead
+              ? (isDark ? AppColors.darkBorder : AppColors.lightBorder)
+              : (isDark ? AppColors.darkPrimary.withValues(alpha: 0.4) : AppColors.primary.withValues(alpha: 0.3)),
         ),
       ),
       child: Material(
@@ -228,7 +234,7 @@ class _HomeServicesNotificationsViewState
                   style: TextStyle(
                     fontSize: 14.0,
                     fontWeight: item.isRead ? FontWeight.bold : FontWeight.w800,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   ),
                 ),
               ),

@@ -71,7 +71,9 @@ class _HomeAppliancesCheckoutPageState
           content: Text(
             'تم إنشاء الطلب بنجاح! رقم الطلب: ${order.orderNumber}',
           ),
-          backgroundColor: AppColors.neutral,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.darkSurface
+              : AppColors.neutral,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -84,6 +86,7 @@ class _HomeAppliancesCheckoutPageState
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dependencies = AppDependencies.maybeOf(context);
     final cartController = HomeAppliancesCartController(
       repository: dependencies?.mockDataProvider != null ? null : null,
@@ -99,9 +102,9 @@ class _HomeAppliancesCheckoutPageState
         appBar: AppBar(
           title: const Text('إتمام الشراء'),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
           elevation: 0.5,
-          foregroundColor: AppColors.neutral,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.md),
@@ -113,26 +116,28 @@ class _HomeAppliancesCheckoutPageState
                 width: double.infinity,
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? AppColors.darkSurface : Colors.white,
                   borderRadius: AppRadii.lg,
-                  border: Border.all(color: AppColors.lightBorder),
+                  border: Border.all(
+                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       children: [
                         Icon(
                           Icons.location_on_rounded,
-                          color: AppColors.neutral,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                         ),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Text(
                           'عنوان الشحن والتوصيل',
                           style: TextStyle(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.neutral,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           ),
                         ),
                       ],
@@ -140,9 +145,9 @@ class _HomeAppliancesCheckoutPageState
                     const SizedBox(height: 10.0),
                     Text(
                       _selectedAddress,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
-                        color: AppColors.lightTextSecondary,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                         height: 1.3,
                       ),
                     ),
@@ -157,58 +162,87 @@ class _HomeAppliancesCheckoutPageState
                 width: double.infinity,
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? AppColors.darkSurface : Colors.white,
                   borderRadius: AppRadii.lg,
-                  border: Border.all(color: AppColors.lightBorder),
+                  border: Border.all(
+                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.payment_rounded, color: AppColors.neutral),
-                        SizedBox(width: 8.0),
+                        Icon(
+                          Icons.payment_rounded,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                        ),
+                        const SizedBox(width: 8.0),
                         Text(
                           'اختر طريقة الدفع المناسبة',
                           style: TextStyle(
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.neutral,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 10.0),
                     RadioListTile<String>(
-                      title: const Text('الدفع كاش عند الاستلام'),
-                      subtitle: const Text(
+                      title: Text(
+                        'الدفع كاش عند الاستلام',
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                        ),
+                      ),
+                      subtitle: Text(
                         'ادفع نقدًا فور وصول الشحنة وباب المنزل',
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                        ),
                       ),
                       value: 'الدفع عند الاستلام',
                       groupValue: _selectedPaymentMethod,
-                      activeColor: AppColors.neutral,
+                      activeColor: isDark ? AppColors.darkPrimary : AppColors.neutral,
                       onChanged: (val) =>
                           setState(() => _selectedPaymentMethod = val!),
                     ),
                     RadioListTile<String>(
-                      title: const Text('بطاقة ائتمان / خصم مباشر'),
-                      subtitle: const Text(
+                      title: Text(
+                        'بطاقة ائتمان / خصم مباشر',
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                        ),
+                      ),
+                      subtitle: Text(
                         'دفع أونلاين آمن عبر الفيزا أو الماستركارد',
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                        ),
                       ),
                       value: 'بطاقة ائتمان',
                       groupValue: _selectedPaymentMethod,
-                      activeColor: AppColors.neutral,
+                      activeColor: isDark ? AppColors.darkPrimary : AppColors.neutral,
                       onChanged: (val) =>
                           setState(() => _selectedPaymentMethod = val!),
                     ),
                     RadioListTile<String>(
-                      title: const Text('تقسيط أجهزة على 12 شهر'),
-                      subtitle: const Text(
+                      title: Text(
+                        'تقسيط أجهزة على 12 شهر',
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                        ),
+                      ),
+                      subtitle: Text(
                         'برنامج التقسيط الميسر بدون فوائد مع البنوك المعتمدة',
+                        style: TextStyle(
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                        ),
                       ),
                       value: 'تقسيط ميسر',
                       groupValue: _selectedPaymentMethod,
-                      activeColor: AppColors.neutral,
+                      activeColor: isDark ? AppColors.darkPrimary : AppColors.neutral,
                       onChanged: (val) =>
                           setState(() => _selectedPaymentMethod = val!),
                     ),
@@ -227,7 +261,7 @@ class _HomeAppliancesCheckoutPageState
                       ? null
                       : () => _placeOrder(cartController, orderController),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.neutral,
+                    backgroundColor: isDark ? AppColors.darkPrimary : AppColors.neutral,
                     foregroundColor: Colors.white,
                     shape: const RoundedRectangleBorder(
                       borderRadius: AppRadii.md,

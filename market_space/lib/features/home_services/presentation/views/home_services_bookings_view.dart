@@ -135,14 +135,16 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
     HomeServiceBookingModel booking,
     HomeServicesBookingController ctrl,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: AppRadii.lg,
-        border: Border.all(color: AppColors.lightBorder),
+        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
             blurRadius: 8.0,
             offset: const Offset(0, 2),
           ),
@@ -164,10 +166,10 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                 children: [
                   Text(
                     'رقم الحجز: ${booking.id}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13.0,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.neutral,
+                      color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                     ),
                   ),
                   Container(
@@ -212,18 +214,18 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                       children: [
                         Text(
                           booking.serviceTitle,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15.0,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.neutral,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                           ),
                         ),
                         const SizedBox(height: 3.0),
                         Text(
                           booking.providerName ?? 'الشركة الهندسية للصيانة',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.0,
-                            color: AppColors.lightTextSecondary,
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                           ),
                         ),
                         if (booking.technicianName != null) ...[
@@ -255,7 +257,7 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.sm),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
+                  color: isDark ? AppColors.darkBackground : Colors.grey.shade50,
                   borderRadius: AppRadii.md,
                 ),
                 child: Row(
@@ -264,7 +266,11 @@ class _HomeServicesBookingsViewState extends State<HomeServicesBookingsView> {
                     const SizedBox(width: 6.0),
                     Text(
                       '${booking.scheduledDate.year}/${booking.scheduledDate.month}/${booking.scheduledDate.day} — ${booking.scheduledTimeSlot}',
-                      style: const TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                      ),
                     ),
                   ],
                 ),

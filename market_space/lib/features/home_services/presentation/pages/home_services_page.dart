@@ -62,18 +62,19 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dependencies = AppDependencies.maybeOf(context);
 
     return Scaffold(
         extendBody: true,
         backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
           elevation: 0.5,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_rounded,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             ),
             onPressed: () {
               if (Navigator.of(context).canPop()) {
@@ -85,10 +86,10 @@ class _HomeServicesPageState extends State<HomeServicesPage> {
           ),
           title: Text(
             _getAppBarTitle(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             ),
           ),
           actions: [

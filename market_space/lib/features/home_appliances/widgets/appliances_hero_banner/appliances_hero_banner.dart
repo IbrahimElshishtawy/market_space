@@ -233,17 +233,21 @@ class AppliancesHeroBanner extends StatelessWidget {
                           children: [
                             Text(
                               banner.ctaText,
-                              style: const TextStyle(
-                                color: AppColors.neutral,
+                              style: TextStyle(
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.neutral,
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(width: 4.0),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward_rounded,
                               size: 14.0,
-                              color: AppColors.neutral,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.neutral,
                             ),
                           ],
                         ),

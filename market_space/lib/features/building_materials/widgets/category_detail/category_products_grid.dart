@@ -21,6 +21,8 @@ class CategoryProductsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
@@ -35,21 +37,21 @@ class CategoryProductsGrid extends StatelessWidget {
             children: [
               Text(
                 'المنتجات المتاحة',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16.5,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.lightTextPrimary,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                 ),
               ),
               InkWell(
                 onTap: onViewAllTap,
                 borderRadius: BorderRadius.circular(4.0),
-                child: const Text(
+                child: Text(
                   'عرض الكل',
                   style: TextStyle(
                     fontSize: 13.0,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.lightTextSecondary,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                   ),
                 ),
               ),

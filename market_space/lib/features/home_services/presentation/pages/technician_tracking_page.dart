@@ -36,22 +36,27 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
       orElse: () => bookingCtrl.bookings.first,
     );
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
           elevation: 0.5,
-          title: const Text(
+          title: Text(
             'تتبع موقع الفني المباشر',
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
-              color: AppColors.neutral,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
             ),
           ),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: AppColors.neutral),
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+            ),
             onPressed: () => context.pop(),
           ),
         ),
@@ -143,8 +148,11 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.95),
+                  color: isDark ? AppColors.darkSurface.withValues(alpha: 0.95) : Colors.white.withValues(alpha: 0.95),
                   borderRadius: AppRadii.lg,
+                  border: Border.all(
+                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.1),
@@ -164,13 +172,13 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
                       ),
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'الفني في الطريق إليك (المسافة التقريبية 2.1 كم)',
                         style: TextStyle(
                           fontSize: 13.0,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.neutral,
+                          color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                         ),
                       ),
                     ),
@@ -195,8 +203,11 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
               child: Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark ? AppColors.darkSurface : Colors.white,
                   borderRadius: AppRadii.lg,
+                  border: Border.all(
+                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.12),
@@ -226,10 +237,10 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
                             children: [
                               Text(
                                 booking.technicianName ?? 'المهندس أحمد محمود',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.neutral,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                                 ),
                               ),
                               const SizedBox(height: 2.0),
@@ -237,9 +248,9 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
                                 booking.serviceTitle,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12.0,
-                                  color: AppColors.lightTextSecondary,
+                                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                                 ),
                               ),
                             ],
@@ -266,18 +277,23 @@ class _TechnicianTrackingPageState extends State<TechnicianTrackingPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
+                        color: isDark ? AppColors.darkSurfaceSecondary : Colors.grey.shade50,
                         borderRadius: AppRadii.md,
-                        border: Border.all(color: AppColors.lightBorder),
+                        border: Border.all(
+                          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        ),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.shield_rounded, size: 16.0, color: Colors.blue),
-                          SizedBox(width: 6.0),
+                          const Icon(Icons.shield_rounded, size: 16.0, color: Colors.blue),
+                          const SizedBox(width: 6.0),
                           Expanded(
                             child: Text(
                               'تتم حماية خصوصية موقعك وتتوقف مشاركة التتبع فور إتمام المهمة.',
-                              style: TextStyle(fontSize: 10.5, color: AppColors.lightTextSecondary),
+                              style: TextStyle(
+                                fontSize: 10.5,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                              ),
                             ),
                           ),
                         ],

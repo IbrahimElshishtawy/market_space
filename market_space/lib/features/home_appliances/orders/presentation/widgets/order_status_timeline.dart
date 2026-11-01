@@ -61,6 +61,7 @@ class OrderStatusTimeline extends StatelessWidget {
     }
 
     final currentIdx = _currentStepIndex;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Row(
       children: List.generate(_timelineSteps.length, (index) {
@@ -78,12 +79,14 @@ class OrderStatusTimeline extends StatelessWidget {
                     width: 20.0,
                     height: 20.0,
                     decoration: BoxDecoration(
-                      color: isCompleted ? AppColors.neutral : Colors.white,
+                      color: isCompleted
+                          ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                          : (isDark ? AppColors.darkSurface : Colors.white),
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isCompleted
-                            ? AppColors.neutral
-                            : AppColors.lightBorder,
+                            ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                            : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                         width: 2.0,
                       ),
                     ),
@@ -105,8 +108,8 @@ class OrderStatusTimeline extends StatelessWidget {
                           ? FontWeight.bold
                           : FontWeight.normal,
                       color: isCompleted
-                          ? AppColors.neutral
-                          : AppColors.lightTextSecondary,
+                          ? (isDark ? AppColors.darkTextPrimary : AppColors.neutral)
+                          : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
                     ),
                   ),
                 ],
@@ -117,8 +120,8 @@ class OrderStatusTimeline extends StatelessWidget {
                     height: 2.0,
                     margin: const EdgeInsets.only(bottom: 14.0),
                     color: index < currentIdx
-                        ? AppColors.neutral
-                        : AppColors.lightBorder,
+                        ? (isDark ? AppColors.darkPrimary : AppColors.neutral)
+                        : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                   ),
                 ),
             ],

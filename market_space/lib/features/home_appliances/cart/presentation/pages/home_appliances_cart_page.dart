@@ -66,6 +66,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
   @override
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -73,11 +74,17 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
         extendBody: true,
         backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
-          title: const Text('سلة تسوق الأجهزة'),
+          title: Text(
+            'سلة تسوق الأجهزة',
+            style: TextStyle(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
           elevation: 0.5,
-          foregroundColor: AppColors.neutral,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
           actions: [
             TextButton(
               onPressed: _controller.clearCart,
@@ -152,19 +159,21 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                         margin: const EdgeInsets.symmetric(horizontal: 16.0),
                         padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDark ? AppColors.darkSurface : Colors.white,
                           borderRadius: AppRadii.lg,
-                          border: Border.all(color: AppColors.lightBorder),
+                          border: Border.all(
+                            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'هل لديك كوبون خصم؟ (جرّب MARKET500)',
                               style: TextStyle(
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.neutral,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                               ),
                             ),
                             const SizedBox(height: 8.0),
@@ -173,12 +182,18 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                                 Expanded(
                                   child: TextField(
                                     controller: _couponController,
-                                    decoration: const InputDecoration(
+                                    style: TextStyle(
+                                      color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                                    ),
+                                    decoration: InputDecoration(
                                       hintText: 'أدخل كود الكوبون...',
-                                      border: OutlineInputBorder(
+                                      hintStyle: TextStyle(
+                                        color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
+                                      ),
+                                      border: const OutlineInputBorder(
                                         borderRadius: AppRadii.md,
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 12.0,
                                         vertical: 8.0,
                                       ),
@@ -189,8 +204,8 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                                 ElevatedButton(
                                   onPressed: _applyCoupon,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.neutral,
-                                    foregroundColor: Colors.white,
+                                    backgroundColor: isDark ? AppColors.darkPrimary : AppColors.neutral,
+                                    foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: AppRadii.md,
                                     ),
@@ -220,30 +235,34 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                         margin: const EdgeInsets.symmetric(horizontal: 16.0),
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: isDark ? AppColors.darkSurface : Colors.white,
                           borderRadius: AppRadii.lg,
-                          border: Border.all(color: AppColors.lightBorder),
+                          border: Border.all(
+                            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'ملخص الطلب والحساب',
                               style: TextStyle(
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.neutral,
+                                color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                               ),
                             ),
                             const SizedBox(height: 12.0),
                             _buildSummaryRow(
                               'المجموع الفرعي',
                               '${cart.subtotal.toStringAsFixed(0)} ج.م',
+                              isDark: isDark,
                             ),
                             const SizedBox(height: 6.0),
                             _buildSummaryRow(
                               'مصاريف الشحن والتوصيل',
                               '${cart.shippingFee.toStringAsFixed(0)} ج.م',
+                              isDark: isDark,
                             ),
                             if (cart.discountAmount > 0) ...[
                               const SizedBox(height: 6.0),
@@ -251,6 +270,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                                 'خصم الكوبون (${cart.appliedCouponCode})',
                                 '-${cart.discountAmount.toStringAsFixed(0)} ج.م',
                                 isDiscount: true,
+                                isDark: isDark,
                               ),
                             ],
                             const Divider(height: 20.0),
@@ -258,6 +278,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                               'الإجمالي النهائي',
                               '${cart.grandTotal.toStringAsFixed(0)} ج.م',
                               isTotal: true,
+                              isDark: isDark,
                             ),
                             const SizedBox(height: 16.0),
 
@@ -268,8 +289,8 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
                               child: ElevatedButton(
                                 onPressed: _proceedToCheckout,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.neutral,
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: isDark ? AppColors.darkPrimary : AppColors.neutral,
+                                  foregroundColor: isDark ? AppColors.darkOnPrimary : Colors.white,
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: AppRadii.md,
                                   ),
@@ -323,6 +344,7 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
     String value, {
     bool isDiscount = false,
     bool isTotal = false,
+    bool isDark = false,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,7 +354,9 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
           style: TextStyle(
             fontSize: isTotal ? 14.0 : 12.0,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-            color: isDiscount ? AppColors.secondary : AppColors.neutral,
+            color: isDiscount
+                ? AppColors.secondary
+                : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
           ),
         ),
         Text(
@@ -340,7 +364,9 @@ class _HomeAppliancesCartPageState extends State<HomeAppliancesCartPage> {
           style: TextStyle(
             fontSize: isTotal ? 15.0 : 12.5,
             fontWeight: isTotal ? FontWeight.w900 : FontWeight.bold,
-            color: isDiscount ? AppColors.secondary : AppColors.neutral,
+            color: isDiscount
+                ? AppColors.secondary
+                : (isDark ? AppColors.darkTextPrimary : AppColors.neutral),
           ),
         ),
       ],

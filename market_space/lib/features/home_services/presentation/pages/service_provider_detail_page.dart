@@ -40,17 +40,34 @@ class ServiceProviderDetailPage extends StatelessWidget {
           child: Scaffold(
             backgroundColor: AppColors.backgroundOf(context),
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.darkSurface
+                  : Colors.white,
               elevation: 0.5,
+              iconTheme: IconThemeData(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.neutral,
+              ),
               title: Text(
                 provider.name,
-                style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: AppColors.neutral),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.neutral,
+                ),
               ),
               actions: [
                 IconButton(
                   icon: Icon(
                     isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                    color: isFav ? Colors.red : AppColors.neutral,
+                    color: isFav
+                        ? Colors.red
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.neutral),
                   ),
                   onPressed: () => favCtrl.toggleProvider(provider),
                 ),
@@ -66,9 +83,15 @@ class ServiceProviderDetailPage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.darkSurface
+                          : Colors.white,
                       borderRadius: AppRadii.lg,
-                      border: Border.all(color: AppColors.lightBorder),
+                      border: Border.all(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.darkBorder
+                            : AppColors.lightBorder,
+                      ),
                     ),
                     child: Column(
                       children: [
@@ -130,7 +153,13 @@ class ServiceProviderDetailPage extends StatelessWidget {
 
                         Text(
                           provider.description,
-                          style: const TextStyle(fontSize: 13.0, color: AppColors.neutral, height: 1.4),
+                          style: TextStyle(
+                            fontSize: 13.0,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.neutral,
+                            height: 1.4,
+                          ),
                         ),
 
                         const SizedBox(height: 12.0),

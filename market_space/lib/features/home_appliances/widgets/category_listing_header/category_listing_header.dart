@@ -19,6 +19,8 @@ class CategoryListingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -37,10 +39,10 @@ class CategoryListingHeader extends StatelessWidget {
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                   ),
                 ),
               ),
@@ -56,9 +58,9 @@ class CategoryListingHeader extends StatelessWidget {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: AppColors.neutral,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                     size: 20.0,
                   ),
                 ),
@@ -74,10 +76,10 @@ class CategoryListingHeader extends StatelessWidget {
             child: Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.w500,
-                color: AppColors.lightTextMuted,
+                color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextMuted,
                 height: 1.35,
               ),
             ),

@@ -51,6 +51,7 @@ class _HomeAppliancesNotificationsPageState
   @override
   Widget build(BuildContext context) {
     final dependencies = AppDependencies.maybeOf(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -60,9 +61,9 @@ class _HomeAppliancesNotificationsPageState
         appBar: AppBar(
           title: const Text('إشعارات الأجهزة المنزلية'),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
           elevation: 0.5,
-          foregroundColor: AppColors.neutral,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
           actions: [
             TextButton(
               onPressed: _controller.markAllAsRead,

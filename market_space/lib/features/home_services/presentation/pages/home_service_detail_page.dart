@@ -30,6 +30,7 @@ class HomeServiceDetailPage extends StatelessWidget {
     return ListenableBuilder(
       listenable: favCtrl,
       builder: (context, _) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         final isFav = favCtrl.isServiceFavorite(service.id);
 
         return Directionality(
@@ -45,19 +46,32 @@ class HomeServiceDetailPage extends StatelessWidget {
                   pinned: true,
                   backgroundColor: AppColors.primary,
                   leading: CircleAvatar(
-                    backgroundColor: Colors.white.withValues(alpha: 0.9),
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? AppColors.darkSurface.withValues(alpha: 0.9)
+                        : Colors.white.withValues(alpha: 0.9),
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back_rounded, color: AppColors.neutral),
+                      icon: Icon(
+                        Icons.arrow_back_rounded,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.neutral,
+                      ),
                       onPressed: () => context.pop(),
                     ),
                   ),
                   actions: [
                     CircleAvatar(
-                      backgroundColor: Colors.white.withValues(alpha: 0.9),
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.darkSurface.withValues(alpha: 0.9)
+                          : Colors.white.withValues(alpha: 0.9),
                       child: IconButton(
                         icon: Icon(
                           isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                          color: isFav ? Colors.red : AppColors.neutral,
+                          color: isFav
+                              ? Colors.red
+                              : (Theme.of(context).brightness == Brightness.dark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.neutral),
                         ),
                         onPressed: () => favCtrl.toggleService(service),
                       ),
@@ -107,10 +121,12 @@ class HomeServiceDetailPage extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 service.title,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.neutral,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.neutral,
                                 ),
                               ),
                             ),
@@ -162,10 +178,12 @@ class HomeServiceDetailPage extends StatelessWidget {
                         const SizedBox(height: 6.0),
                         Text(
                           service.detailedDescription,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14.0,
                             height: 1.5,
-                            color: AppColors.neutral,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.neutral,
                           ),
                         ),
 
@@ -221,6 +239,7 @@ class HomeServiceDetailPage extends StatelessWidget {
                           content: service.warrantyText ?? 'ضمان 30 يوماً على سلامة وجودة الصيانة المنفذة.',
                           icon: Icons.verified_user_outlined,
                           color: Colors.blue.shade700,
+                          isDark: isDark,
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         _buildInfoCard(
@@ -228,6 +247,7 @@ class HomeServiceDetailPage extends StatelessWidget {
                           content: service.cancellationPolicy,
                           icon: Icons.policy_outlined,
                           color: Colors.orange.shade800,
+                          isDark: isDark,
                         ),
 
                         // FAQs
@@ -339,6 +359,7 @@ class HomeServiceDetailPage extends StatelessWidget {
     required String content,
     required IconData icon,
     required Color color,
+    required bool isDark,
   }) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -367,7 +388,10 @@ class HomeServiceDetailPage extends StatelessWidget {
                 const SizedBox(height: 2.0),
                 Text(
                   content,
-                  style: const TextStyle(fontSize: 12.0, color: AppColors.neutral),
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+                  ),
                 ),
               ],
             ),

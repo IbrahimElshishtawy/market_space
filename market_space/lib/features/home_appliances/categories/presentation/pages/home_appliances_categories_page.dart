@@ -32,17 +32,25 @@ class _HomeAppliancesCategoriesPageState
       return cat.title.toLowerCase().contains(q);
     }).toList();
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         extendBody: true,
         backgroundColor: AppColors.backgroundOf(context),
         appBar: AppBar(
-          title: const Text('أقسام الأجهزة المنزلية'),
+          title: Text(
+            'أقسام الأجهزة المنزلية',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
+            ),
+          ),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
           elevation: 0.5,
-          foregroundColor: AppColors.neutral,
+          foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
         ),
         body: SafeArea(
           bottom: false,
@@ -76,12 +84,14 @@ class _HomeAppliancesCategoriesPageState
                     final cat = categories[index];
                     return Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? AppColors.darkSurface : Colors.white,
                         borderRadius: AppRadii.lg,
-                        border: Border.all(color: AppColors.lightBorder),
+                        border: Border.all(
+                          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
+                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
                             blurRadius: 6.0,
                             offset: const Offset(0, 2),
                           ),
@@ -122,10 +132,10 @@ class _HomeAppliancesCategoriesPageState
                                 Text(
                                   cat.title,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 13.5,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.neutral,
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.neutral,
                                   ),
                                 ),
                                 if (cat.itemCount != null) ...[
@@ -133,9 +143,9 @@ class _HomeAppliancesCategoriesPageState
                                   Text(
                                     '${cat.itemCount} أجهزة',
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 10.5,
-                                      color: AppColors.lightTextSecondary,
+                                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                                     ),
                                   ),
                                 ],
@@ -149,7 +159,7 @@ class _HomeAppliancesCategoriesPageState
                 ),
               ),
 
-              const SliverToBoxAdapter(child: SizedBox(height: 140.0)),
+              const SliverToBoxAdapter(child: SizedBox(height: 90.0)),
             ],
           ),
         ),
