@@ -95,7 +95,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
+      redis_cache:
+        condition: service_healthy
+      redis_queue:
         condition: service_healthy
     networks:
       - deal_one_internal
@@ -115,7 +117,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
+      redis_queue:
         condition: service_healthy
     networks:
       - deal_one_internal
@@ -139,15 +141,42 @@ services:
     networks:
       - deal_one_internal
 
-  redis:
+  redis_cache:
     image: redis:7.2-alpine
-    container_name: deal_one_redis
+    container_name: deal_one_redis_cache
     restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
+    command: [
+      "redis-server",
+      "--maxmemory", "512mb",
+      "--maxmemory-policy", "allkeys-lru",
+      "--requirepass", "${REDIS_CACHE_PASSWORD}"
+    ]
     volumes:
-      - redis_data:/data
+      - redis_cache_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_CACHE_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - deal_one_internal
+
+  redis_queue:
+    image: redis:7.2-alpine
+    container_name: deal_one_redis_queue
+    restart: unless-stopped
+    command: [
+      "redis-server",
+      "--appendonly", "yes",
+      "--appendfsync", "everysec",
+      "--maxmemory", "512mb",
+      "--maxmemory-policy", "noeviction",
+      "--requirepass", "${REDIS_QUEUE_PASSWORD}"
+    ]
+    volumes:
+      - redis_queue_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_QUEUE_PASSWORD}", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -162,7 +191,8 @@ networks:
 
 volumes:
   postgres_data:
-  redis_data:
+  redis_cache_data:
+  redis_queue_data:
 ```
 
 ---

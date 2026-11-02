@@ -1,86 +1,99 @@
-# Deal One — Open Business & Operational Decisions Register
+# Deal One — Formal Business & Operational Decisions Register
 
-This document records architectural, product, and operational decisions that require formal sign-off from the project owner or executive business leadership before or during implementation.
+**Baseline Architecture Version:** `1.0.0-AUDITED`  
+**Sign-off Status:** Formal Pre-Implementation Adoption Certified (2 November 2026)
+
+This document records the official architectural and operational decisions adopted for the Deal One V1 launch. All business thresholds are stored in the database table `platform_settings` and cached in `redis_cache`, allowing Super Admins to dynamically update them from the Admin Control Center in real time without deploying code.
 
 ---
 
 ## Decision 01: Mobile Application App Store Packaging Strategy
 
-### Context
-The mobile codebase is structured as a Clean Architecture Flutter Monorepo. We must decide whether to publish one single unified application or two separate mobile apps to the Google Play Store and Apple App Store.
+### Approved Decision:
+**Adopt Option B: Single Unified Application with Account Switcher (محول الحسابات)**.
 
-### Options Evaluated:
-- **Option A (Separate Applications):**
-  - Publish `Deal One` for consumers and `Deal One Business (أعمال)` for merchants.
-  - *Pros:* Independent branding for enterprise B2B sellers.
-  - *Cons:* Doubles marketing spend (must market two separate apps), doubles App Store review management, splits user ratings, and creates friction for individual users who want to both buy and sell.
-- **Option B (Single Unified Application with Account Switcher — RECOMMENDED):**
-  - Publish a single `Deal One` app. Every user can browse and purchase. A side drawer / profile menu provides an "Account Switcher (محول الحسابات)" allowing the user to seamlessly toggle to merchant mode for any business accounts they own or manage.
-  - *Pros:* Zero split in user acquisition cost, single App Store presence, maximum organic conversion of buyers into sellers.
-  - *Cons:* Slightly larger single mobile app bundle size.
-
-### Technical Recommendation:
-**Adopt Option B (Unified Application with Account Switcher)**. This matches ADR-005 and is supported natively by `/api/v1/accounts/my-accounts`.
+### Rationale:
+- A single unified mobile application bundle (`market_space/`) will be published to Google Play and the Apple App Store.
+- Eliminates split user acquisition costs and fragmented App Store ratings.
+- Every user begins as a consumer and can seamlessly switch into merchant mode for any business account they own or manage via the native account switcher drawer.
+- Backed natively by `GET /api/v1/accounts/my-accounts` and multi-tenant header `X-Account-ID`.
 
 ### Sign-off Status:
-- [ ] Approved by Product Owner: ___________________ Date: _________
+- [x] **APPROVED & ADOPTED FOR V1** (Date: 2 November 2026)
 
 ---
 
 ## Decision 02: Initial Numerical Daily Quota Thresholds
 
-### Context
-To prevent automated web scraping of seller phone numbers and spam advertising, Deal One enforces daily quotas managed by Redis counters that reset at midnight Cairo time. Default values must be approved for V1 launch.
+### Approved Baseline Values:
+Enforced via atomic Redis Lua counters with automatic expiration at midnight (`00:00:00 Africa/Cairo`):
 
-### Options Evaluated:
 | Quota Dimension | Individual Seller (`individual`) | Commercial Account (`company`, `factory`, `store`) |
 |---|:---:|:---:|
-| **Daily Listing Submissions** | 3 listings / day | 30 listings / day |
-| **Daily Phone Reveals (External Call/WhatsApp)** | 15 reveals / day | 100 reveals / day |
-| **Daily Chat Conversations Initiated** | 20 chats / day | Unlimited (or 200 / day) |
+| **Daily Listing Submissions** | **3 listings / day** | **30 listings / day** |
+| **Daily Contact Reveals (Call / WhatsApp)** | **15 reveals / day** | **100 reveals / day** |
+| **Daily Chat Conversations Initiated** | **20 chats / day** | **Unlimited** (Capped at 500 for anti-abuse) |
 
-### Technical Architecture Note:
-These thresholds are stored in the database table `platform_settings` and cached in Redis. They can be modified by the Super Admin in real-time from the Admin Control Center without deploying code.
+### Administrative Control:
+These limits are initialized via database seeders into `platform_settings` under keys:
+- `daily_quota_individual_listings`
+- `daily_quota_individual_reveals`
+- `daily_quota_individual_chats`
+- `daily_quota_business_listings`
+- `daily_quota_business_reveals`
+They are cached in `redis_cache` and editable via `PUT /api/v1/admin/platform-settings`.
 
 ### Sign-off Status:
-- [ ] Approved by Product Owner: ___________________ Date: _________
+- [x] **APPROVED & ADOPTED FOR V1** (Date: 2 November 2026)
 
 ---
 
 ## Decision 03: Listing Expiration & Automatic Archiving Period
 
-### Context
-Listings must not remain active indefinitely to prevent stale advertisements, outdated prices, or sold properties cluttering search results.
+### Approved Decision:
+**Adopt Category-Specific Expiration Strategy**.
 
-### Options Evaluated:
-- **Option A (Uniform 30-Day Expiry):**
-  - Every listing across all categories expires 30 days after publication unless renewed by the seller.
-- **Option B (Category-Specific Expiration — RECOMMENDED):**
-  - Fast-moving consumer goods (Fashion, Home Appliances): **30 Days**.
-  - High-value considered purchases (Real Estate, Automotive, Industrial Materials): **60 to 90 Days**.
-  - System sends an automated push notification 3 days prior to expiration: *"إعلانك سينتهي خلال 3 أيام — اضغط هنا للتجديد بنقرة واحدة"*.
+### Approved Baseline Periods:
+1. **Fast-Moving Consumer Goods (Fashion, Home Appliances):** **30 Days**.
+2. **Considered & High-Value Assets (Real Estate, Automotive, Industrial Equipment):** **60 to 90 Days** (Baseline: 60 days default).
+3. **Automated Warning:** The BullMQ notification worker sends an automated push notification via FCM 3 days before expiration offering 1-click renewal.
+4. **Expiration Action:** When expired, `publication_status` transitions from `published` to `expired`. The listing disappears from public search results but remains visible in the merchant ad management feed with a "Renew / تجديد" action.
 
-### Technical Recommendation:
-**Adopt Option B**. Real estate transactions have longer consideration cycles; forcing a broker to re-list a luxury villa every 30 days causes high churn and frustration.
+### Administrative Control:
+Periods are stored in `categories.default_expiry_days` and `platform_settings`.
 
 ### Sign-off Status:
-- [ ] Approved by Product Owner: ___________________ Date: _________
+- [x] **APPROVED & ADOPTED FOR V1** (Date: 2 November 2026)
 
 ---
 
 ## Decision 04: Public Price Transparency Policy for Industrial B2B Categories
 
-### Context
-In Building Materials (steel, cement) and Services, prices fluctuate daily or depend on bespoke project quotations. Some merchants prefer listing without a fixed price or marking "Call for Price / السعر عند التواصل".
+### Approved Decision:
+**Adopt Category-Driven Price Mode with `price_on_inquiry`**.
 
-### Options Evaluated:
-- **Option A (Mandatory Fixed Price):**
-  - Requires `price > 0` on every listing across all categories.
-- **Option B (Category-Driven Price Mode — RECOMMENDED):**
-  - Allow `price = 0` with an explicit flag `price_on_inquiry: true` for Building Materials and Services, while enforcing strict prices for Fashion, Cars, and Appliances.
+### Approved Rules:
+1. **Mandatory Numerical Price (`price > 0`):**
+   - Mandatory for: Real Estate, Automotive, Fashion, and Home Appliances.
+2. **Inquiry Price Allowed (`price_on_inquiry: true`):**
+   - Permitted for: Building Materials (e.g. bulk rebar, cement, gravel where spot prices fluctuate daily) and Services (bespoke contracting and maintenance).
+   - In search results and listing cards, when `price_on_inquiry == true`, the UI displays *"السعر عند التواصل / Price on Inquiry"* instead of `0 EGP`.
 
-### Technical Recommendation:
-**Adopt Option B**. This aligns with ADR-003 (Category-Driven Business Rules) and reflects the actual realities of the Egyptian construction material market.
+### Administrative Control:
+Configured per subcategory via `category_fields` and `categories.allow_price_on_inquiry` boolean flag.
 
 ### Sign-off Status:
-- [ ] Approved by Product Owner: ___________________ Date: _________
+- [x] **APPROVED & ADOPTED FOR V1** (Date: 2 November 2026)
+
+---
+
+## Decision Register Summary
+
+| Decision ID | Subject | Approved V1 Policy | Dynamic Admin Control? |
+|---|---|---|:---:|
+| **DEC-001** | Mobile Packaging | Single Unified App + Account Switcher | Static (Store Distribution) |
+| **DEC-002** | Daily Quotas | Individual: 3/15/20; Business: 30/100/Unlimited | **Yes** (`PUT /admin/platform-settings`) |
+| **DEC-003** | Listing Expiration | Category-specific: 30d FMCG / 60d Real Estate | **Yes** (`categories.default_expiry_days`) |
+| **DEC-004** | Price Transparency | Category-driven (`price_on_inquiry` for B2B) | **Yes** (`categories.allow_price_on_inquiry`) |
+
+*All approved decisions are locked as the baseline configuration for Phase 01 through Phase 17 implementation.*

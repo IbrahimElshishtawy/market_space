@@ -1,0 +1,13 @@
+{
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.0/schema.json": [
+      "backend_blueprint/openapi/*.yaml",
+      "backend_blueprint/15_OPENAPI/*.yaml"
+    ]
+  },
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend_tests/.venv/bin/python",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/backend_tests"
+  ]
+}
