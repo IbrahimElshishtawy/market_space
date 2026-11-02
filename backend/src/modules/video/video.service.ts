@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ListingStatus, MediaType, MediaStatus } from '@prisma/client';
 import * as crypto from 'crypto';
@@ -31,7 +31,7 @@ export class VideoService {
   /**
    * Requests a direct-creator upload URL from Cloudflare Stream with strict 30s max duration limit.
    */
-  async requestDirectUploadToken(userId: string) {
+  async requestDirectUploadToken(_userId: string) {
     // Generates a mock or direct upload token with max 30s duration
     const streamUid = crypto.randomUUID();
     const uploadUrl = `https://upload.videodelivery.net/${streamUid}`;
@@ -47,7 +47,7 @@ export class VideoService {
   /**
    * Handles asynchronous encoding webhook callbacks from Cloudflare Stream.
    */
-  async handleWebhook(payload: any, signatureHeader?: string) {
+  async handleWebhook(payload: any, _signatureHeader?: string) {
     // In production, verifies webhook secret signature
     const uid = payload?.uid || payload?.data?.uid;
     const readyToStream =

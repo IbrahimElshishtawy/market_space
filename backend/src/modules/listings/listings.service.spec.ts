@@ -6,7 +6,6 @@ import { ListingsService } from './listings.service';
 import { PrismaService } from '../../core/database/prisma.service';
 import {
   assertValidListingTransition,
-  VALID_LISTING_TRANSITIONS,
 } from './listings-state-machine';
 
 describe('Listings Service & State Machine (Milestone 3)', () => {
@@ -41,6 +40,7 @@ describe('Listings Service & State Machine (Milestone 3)', () => {
 
     service = module.get<ListingsService>(ListingsService);
     prisma = module.get<PrismaService>(PrismaService);
+    expect(prisma).toBeDefined();
     jest.clearAllMocks();
   });
 

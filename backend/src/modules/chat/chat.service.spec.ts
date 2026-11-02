@@ -35,6 +35,7 @@ describe('ChatService (Milestone 5)', () => {
 
     service = module.get<ChatService>(ChatService);
     prisma = module.get<PrismaService>(PrismaService);
+    expect(prisma).toBeDefined();
     jest.clearAllMocks();
   });
 

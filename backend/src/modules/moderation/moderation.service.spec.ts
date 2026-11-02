@@ -33,6 +33,7 @@ describe('ModerationService (Milestone 8)', () => {
 
     service = module.get<ModerationService>(ModerationService);
     prisma = module.get<PrismaService>(PrismaService);
+    expect(prisma).toBeDefined();
     jest.clearAllMocks();
   });
 

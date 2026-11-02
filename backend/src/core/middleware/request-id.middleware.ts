@@ -22,9 +22,10 @@ export class RequestIdMiddleware implements NestMiddleware {
       (rawHeaders[TRACE_ID_HEADER] as string) ||
       (rawHeaders[REQUEST_ID_HEADER] as string);
 
-    const traceId = existingTraceId && existingTraceId.trim().length > 0
-      ? existingTraceId
-      : uuidv4();
+    const traceId =
+      existingTraceId && existingTraceId.trim().length > 0
+        ? existingTraceId
+        : uuidv4();
 
     // Attach to raw request headers
     req.headers[REQUEST_ID_HEADER] = traceId;

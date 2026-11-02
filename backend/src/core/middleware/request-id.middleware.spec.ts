@@ -1,4 +1,8 @@
-import { RequestIdMiddleware, REQUEST_ID_HEADER, TRACE_ID_HEADER } from './request-id.middleware';
+import {
+  RequestIdMiddleware,
+  REQUEST_ID_HEADER,
+  TRACE_ID_HEADER,
+} from './request-id.middleware';
 
 describe('RequestIdMiddleware', () => {
   let middleware: RequestIdMiddleware;
@@ -16,7 +20,9 @@ describe('RequestIdMiddleware', () => {
 
     expect(req.headers[REQUEST_ID_HEADER]).toBeDefined();
     expect(req.headers[TRACE_ID_HEADER]).toBeDefined();
-    expect(req.headers[REQUEST_ID_HEADER]).toEqual(req.headers[TRACE_ID_HEADER]);
+    expect(req.headers[REQUEST_ID_HEADER]).toEqual(
+      req.headers[TRACE_ID_HEADER],
+    );
     expect(res.setHeader).toHaveBeenCalledWith(
       REQUEST_ID_HEADER,
       req.headers[REQUEST_ID_HEADER],
@@ -38,7 +44,10 @@ describe('RequestIdMiddleware', () => {
 
     expect(req.headers[TRACE_ID_HEADER]).toBe(existingTraceId);
     expect(req.headers[REQUEST_ID_HEADER]).toBe(existingTraceId);
-    expect(res.setHeader).toHaveBeenCalledWith(TRACE_ID_HEADER, existingTraceId);
+    expect(res.setHeader).toHaveBeenCalledWith(
+      TRACE_ID_HEADER,
+      existingTraceId,
+    );
     expect(next).toHaveBeenCalled();
   });
 });

@@ -26,7 +26,10 @@ describe('HttpExceptionFilter', () => {
       }),
     };
 
-    const exception = new HttpException('Forbidden access', HttpStatus.FORBIDDEN);
+    const exception = new HttpException(
+      'Forbidden access',
+      HttpStatus.FORBIDDEN,
+    );
     filter.catch(exception, mockHost);
 
     expect(mockStatus).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);

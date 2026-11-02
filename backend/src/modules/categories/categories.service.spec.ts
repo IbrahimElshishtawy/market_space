@@ -28,6 +28,7 @@ describe('CategoriesService (Milestone 2)', () => {
 
     service = module.get<CategoriesService>(CategoriesService);
     prisma = module.get<PrismaService>(PrismaService);
+    expect(prisma).toBeDefined();
     jest.clearAllMocks();
   });
 

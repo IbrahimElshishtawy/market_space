@@ -23,7 +23,10 @@ export interface StandardApiErrorResponse {
 
 function normalizeErrorCode(status: number, rawError?: unknown): string {
   if (typeof rawError === 'string' && rawError.trim().length > 0) {
-    return rawError.trim().toUpperCase().replace(/[\s-]+/g, '_');
+    return rawError
+      .trim()
+      .toUpperCase()
+      .replace(/[\s-]+/g, '_');
   }
   const statusText = HttpStatus[status];
   if (statusText) {
