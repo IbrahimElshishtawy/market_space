@@ -9,10 +9,18 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { VideoService } from './video.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser, AuthenticatedUser } from '../auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Video')
 @Controller()
@@ -23,7 +31,9 @@ export class VideoController {
   @ApiBearerAuth('BearerAuth')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Request Cloudflare Stream direct-upload token (30s max limit)' })
+  @ApiOperation({
+    summary: 'Request Cloudflare Stream direct-upload token (30s max limit)',
+  })
   @ApiResponse({ status: 200, description: 'Direct upload token returned' })
   async getUploadToken(@CurrentUser() user: AuthenticatedUser) {
     return this.videoService.requestDirectUploadToken(user.id);

@@ -20,11 +20,15 @@ export class ChatService {
     });
 
     if (!listing || listing.status !== ListingStatus.PUBLISHED) {
-      throw new NotFoundException('Listing not found or is no longer published');
+      throw new NotFoundException(
+        'Listing not found or is no longer published',
+      );
     }
 
     if (listing.userId === buyerId) {
-      throw new BadRequestException('You cannot start a conversation on your own listing');
+      throw new BadRequestException(
+        'You cannot start a conversation on your own listing',
+      );
     }
 
     const existing = await this.prisma.conversation.findUnique({
@@ -88,7 +92,12 @@ export class ChatService {
   /**
    * Retrieves paginated messages in a conversation, ensuring participant authorization (IDOR check).
    */
-  async getMessages(conversationId: string, userId: string, page = 1, limit = 30) {
+  async getMessages(
+    conversationId: string,
+    userId: string,
+    page = 1,
+    limit = 30,
+  ) {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
     });
@@ -98,7 +107,9 @@ export class ChatService {
     }
 
     if (conversation.buyerId !== userId && conversation.sellerId !== userId) {
-      throw new ForbiddenException('You are not a participant in this conversation');
+      throw new ForbiddenException(
+        'You are not a participant in this conversation',
+      );
     }
 
     // Mark unread messages sent by the other party as read
@@ -152,8 +163,13 @@ export class ChatService {
       throw new NotFoundException('Conversation not found');
     }
 
-    if (conversation.buyerId !== senderId && conversation.sellerId !== senderId) {
-      throw new ForbiddenException('You are not a participant in this conversation');
+    if (
+      conversation.buyerId !== senderId &&
+      conversation.sellerId !== senderId
+    ) {
+      throw new ForbiddenException(
+        'You are not a participant in this conversation',
+      );
     }
 
     return this.prisma.$transaction(async (tx) => {

@@ -7,14 +7,23 @@ export class NotificationsService {
   private readonly firebaseProjectId: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.firebaseProjectId = this.configService.get<string>('FIREBASE_PROJECT_ID', '');
+    this.firebaseProjectId = this.configService.get<string>(
+      'FIREBASE_PROJECT_ID',
+      '',
+    );
   }
 
   /**
    * Registers or updates an FCM device token for mobile push delivery.
    */
-  async registerDeviceToken(userId: string, token: string, platform: 'ios' | 'android') {
-    this.logger.log(`📲 Registered device token for user ${userId} on platform ${platform}`);
+  async registerDeviceToken(
+    userId: string,
+    token: string,
+    platform: 'ios' | 'android',
+  ) {
+    this.logger.log(
+      `📲 Registered device token for user ${userId} on platform ${platform}`,
+    );
     return { success: true, message: 'Device token registered successfully' };
   }
 

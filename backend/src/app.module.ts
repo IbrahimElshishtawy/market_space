@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './core/config/env.config';
-import { PrismaService } from './core/database/prisma.service';
+import { PrismaModule } from './core/database/prisma.module';
 import { HealthController } from './core/health/health.controller';
+import { RequestIdMiddleware } from './core/middleware/request-id.middleware';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -25,6 +26,7 @@ import { WorkerModule } from './workers/worker.module';
       isGlobal: true,
       validate: validateEnv,
     }),
+    PrismaModule,
     RedisModule,
     WorkerModule,
     AuthModule,
@@ -40,7 +42,9 @@ import { WorkerModule } from './workers/worker.module';
     NotificationsModule,
   ],
   controllers: [HealthController],
-  providers: [PrismaService],
-  exports: [PrismaService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestIdMiddleware).forRoutes('*');
+  }
+}

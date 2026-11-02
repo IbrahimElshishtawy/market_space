@@ -14,9 +14,18 @@ export class VideoService {
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
   ) {
-    this.streamApiToken = this.configService.get<string>('CLOUDFLARE_STREAM_API_TOKEN', '');
-    this.streamAccountId = this.configService.get<string>('CLOUDFLARE_STREAM_ACCOUNT_ID', '');
-    this.webhookSecret = this.configService.get<string>('CLOUDFLARE_STREAM_WEBHOOK_SECRET', '');
+    this.streamApiToken = this.configService.get<string>(
+      'CLOUDFLARE_STREAM_API_TOKEN',
+      '',
+    );
+    this.streamAccountId = this.configService.get<string>(
+      'CLOUDFLARE_STREAM_ACCOUNT_ID',
+      '',
+    );
+    this.webhookSecret = this.configService.get<string>(
+      'CLOUDFLARE_STREAM_WEBHOOK_SECRET',
+      '',
+    );
   }
 
   /**
@@ -41,14 +50,19 @@ export class VideoService {
   async handleWebhook(payload: any, signatureHeader?: string) {
     // In production, verifies webhook secret signature
     const uid = payload?.uid || payload?.data?.uid;
-    const readyToStream = payload?.readyToStream || payload?.data?.readyToStream;
+    const readyToStream =
+      payload?.readyToStream || payload?.data?.readyToStream;
 
     if (uid) {
       await this.prisma.listingMedia.updateMany({
         where: { streamUid: uid },
         data: {
-          processingStatus: readyToStream ? MediaStatus.READY : MediaStatus.FAILED,
-          durationSeconds: payload?.duration ? Number(payload.duration) : undefined,
+          processingStatus: readyToStream
+            ? MediaStatus.READY
+            : MediaStatus.FAILED,
+          durationSeconds: payload?.duration
+            ? Number(payload.duration)
+            : undefined,
         },
       });
     }

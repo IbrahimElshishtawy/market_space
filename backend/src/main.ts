@@ -10,7 +10,7 @@ import helmet from '@fastify/helmet';
 import cors from '@fastify/cors';
 
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './core/errors/all-exceptions.filter';
+import { HttpExceptionFilter } from './core/filters/http-exception.filter';
 import { TransformInterceptor } from './core/interceptors/transform.interceptor';
 import { LoggingInterceptor } from './core/interceptors/logging.interceptor';
 
@@ -19,7 +19,9 @@ async function bootstrap() {
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter({ logger: false }),
+    new FastifyAdapter({
+      logger: false, // Structured logging handled by LoggingInterceptor / Pino
+    }),
   );
 
   const configService = app.get(ConfigService);
@@ -28,7 +30,7 @@ async function bootstrap() {
 
   // Security Middleware
   await app.register(helmet, {
-    contentSecurityPolicy: false, // Swagger needs this disabled or customized
+    contentSecurityPolicy: false, // Allow Swagger UI
   });
 
   await app.register(cors, {
@@ -36,7 +38,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Global Pipelines & Filters
+  // Global Validation & Exception Pipelines
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -46,21 +48,28 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(
     new LoggingInterceptor(),
     new TransformInterceptor(),
   );
 
-  // Global API Prefix
+  // Global API Prefix with health endpoint exclusions
   app.setGlobalPrefix('api/v1', {
-    exclude: ['health/live', 'health/ready'],
+    exclude: [
+      'health/live',
+      'health/ready',
+      'health/liveness',
+      'health/readiness',
+    ],
   });
 
   // Swagger Documentation Setup
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Market Space API (سوق سبيس)')
-    .setDescription('Classifieds marketplace backend API for Egypt')
+    .setTitle('Deal One API (صفقة ون)')
+    .setDescription(
+      'Production Modular Monolith classifieds marketplace backend API for Egypt',
+    )
     .setVersion('1.0.0')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
@@ -71,12 +80,14 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
-  // Enable Graceful Shutdown
+  // Enable Graceful Shutdown Hooks
   app.enableShutdownHooks();
 
   await app.listen(port, '0.0.0.0');
-  logger.log(`🚀 Market Space Backend running on http://0.0.0.0:${port}`);
-  logger.log(`📚 OpenAPI Documentation available at http://0.0.0.0:${port}/api/docs`);
+  logger.log(`🚀 Deal One Backend running on http://0.0.0.0:${port}`);
+  logger.log(
+    `📚 OpenAPI Documentation available at http://0.0.0.0:${port}/api/docs`,
+  );
 }
 
 bootstrap();

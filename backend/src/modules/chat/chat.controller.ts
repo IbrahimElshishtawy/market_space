@@ -9,12 +9,20 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ChatService } from './chat.service';
 import { StartConversationDto } from './dto/start-conversation.dto';
 import { SendMessageDto } from './dto/send-message.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser, AuthenticatedUser } from '../auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Chat & Messages')
 @ApiBearerAuth('BearerAuth')
@@ -32,8 +40,13 @@ export class ChatController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Start or get an existing conversation for a listing' })
-  @ApiResponse({ status: 201, description: 'Conversation started or retrieved' })
+  @ApiOperation({
+    summary: 'Start or get an existing conversation for a listing',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Conversation started or retrieved',
+  })
   async startConversation(
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: StartConversationDto,
@@ -51,7 +64,12 @@ export class ChatController {
     @Query('page') page = 1,
     @Query('limit') limit = 30,
   ) {
-    return this.chatService.getMessages(conversationId, user.id, Number(page), Number(limit));
+    return this.chatService.getMessages(
+      conversationId,
+      user.id,
+      Number(page),
+      Number(limit),
+    );
   }
 
   @Post(':id/messages')

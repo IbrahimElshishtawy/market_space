@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
-import { PresignedUploadDto, AllowedImageMime } from './dto/presigned-upload.dto';
+import {
+  PresignedUploadDto,
+  AllowedImageMime,
+} from './dto/presigned-upload.dto';
 
 export interface PresignedTarget {
   key: string;

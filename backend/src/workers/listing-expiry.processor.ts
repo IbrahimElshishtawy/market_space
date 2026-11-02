@@ -21,7 +21,9 @@ export class ListingExpiryProcessor {
    */
   async processExpiredListings(): Promise<{ expiredCount: number }> {
     const now = new Date();
-    this.logger.log(`🔍 [Worker: ListingExpiry] Scanning for listings expired before ${now.toISOString()}...`);
+    this.logger.log(
+      `🔍 [Worker: ListingExpiry] Scanning for listings expired before ${now.toISOString()}...`,
+    );
 
     const result = await this.prisma.listing.updateMany({
       where: {
@@ -33,7 +35,9 @@ export class ListingExpiryProcessor {
       },
     });
 
-    this.logger.log(`✅ [Worker: ListingExpiry] Marked ${result.count} listings as EXPIRED.`);
+    this.logger.log(
+      `✅ [Worker: ListingExpiry] Marked ${result.count} listings as EXPIRED.`,
+    );
     return { expiredCount: result.count };
   }
 }

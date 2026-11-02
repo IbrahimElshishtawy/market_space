@@ -23,7 +23,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Dispatch SMS OTP verification code' })
   @ApiResponse({ status: 200, description: 'OTP dispatched successfully' })
-  @ApiResponse({ status: 429, description: 'Rate limit exceeded (Max 3 OTP per 15 min)' })
+  @ApiResponse({
+    status: 429,
+    description: 'Rate limit exceeded (Max 3 OTP per 15 min)',
+  })
   async sendOtp(@Body() dto: SendOtpDto) {
     return this.authService.sendOtp(dto);
   }
@@ -31,7 +34,10 @@ export class AuthController {
   @Post('otp/verify')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify OTP & Authenticate/Register user' })
-  @ApiResponse({ status: 200, description: 'Authenticated successfully with tokens' })
+  @ApiResponse({
+    status: 200,
+    description: 'Authenticated successfully with tokens',
+  })
   @ApiResponse({ status: 400, description: 'Invalid or expired OTP' })
   async verifyOtp(@Body() dto: VerifyOtpDto, @Req() req: FastifyRequest) {
     const userAgent = req.headers['user-agent'];
@@ -44,7 +50,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Password login fallback' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async loginWithPassword(@Body() dto: LoginPasswordDto, @Req() req: FastifyRequest) {
+  async loginWithPassword(
+    @Body() dto: LoginPasswordDto,
+    @Req() req: FastifyRequest,
+  ) {
     const userAgent = req.headers['user-agent'];
     const ipAddress = req.ip;
     return this.authService.loginWithPassword(dto, userAgent, ipAddress);

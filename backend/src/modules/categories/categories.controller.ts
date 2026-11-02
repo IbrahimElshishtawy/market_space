@@ -8,7 +8,12 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -65,7 +70,9 @@ export class AdminCategoriesController {
 
   @Post(':id/fields')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Define or update a dynamic attribute field for a subcategory' })
+  @ApiOperation({
+    summary: 'Define or update a dynamic attribute field for a subcategory',
+  })
   @ApiResponse({ status: 200, description: 'Field schema saved' })
   async upsertField(
     @Param('id') categoryId: string,

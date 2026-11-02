@@ -47,7 +47,10 @@ describe('Listings Service & State Machine (Milestone 3)', () => {
   describe('State Machine Transitions', () => {
     it('should allow valid transition from PUBLISHED to SOLD', () => {
       expect(() =>
-        assertValidListingTransition(ListingStatus.PUBLISHED, ListingStatus.SOLD),
+        assertValidListingTransition(
+          ListingStatus.PUBLISHED,
+          ListingStatus.SOLD,
+        ),
       ).not.toThrow();
     });
 
@@ -71,14 +74,15 @@ describe('Listings Service & State Machine (Milestone 3)', () => {
         categoryId: 'cat-1',
         cityId: 1,
         title: 'سيارة تويوتا بحالة ممتازة للبيع',
-        description: 'سيارة تويوتا كورولا 2020 فابريكا بالكامل صيانات منتظمة...',
+        description:
+          'سيارة تويوتا كورولا 2020 فابريكا بالكامل صيانات منتظمة...',
         price: 600000,
         mediaKeys: ['uploads/images/2026-10/VICTIM_USER_ID/photo.jpg'], // Not belonging to user-123
       };
 
-      await expect(service.createListing('user-123', stolenMediaDto)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        service.createListing('user-123', stolenMediaDto),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 

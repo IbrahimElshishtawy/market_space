@@ -26,13 +26,18 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {
-    this.otpSalt = this.configService.get<string>('JWT_ACCESS_SECRET', 'marketspace_salt');
+    this.otpSalt = this.configService.get<string>(
+      'JWT_ACCESS_SECRET',
+      'marketspace_salt',
+    );
   }
 
   /**
    * Dispatches a 6-digit SMS OTP with sliding-window rate limiting.
    */
-  async sendOtp(dto: SendOtpDto): Promise<{ message: string; cooldownSeconds: number }> {
+  async sendOtp(
+    dto: SendOtpDto,
+  ): Promise<{ message: string; cooldownSeconds: number }> {
     const { phone } = dto;
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
 
@@ -71,7 +76,9 @@ export class AuthService {
     });
 
     // Development / Staging simulation logger
-    this.logger.log(`📱 [SMS Gateway Simulation] OTP code for ${phone} is: [ ${code} ] (expires in 180s)`);
+    this.logger.log(
+      `📱 [SMS Gateway Simulation] OTP code for ${phone} is: [ ${code} ] (expires in 180s)`,
+    );
 
     return {
       message: 'OTP verification code dispatched successfully via SMS',
@@ -82,11 +89,7 @@ export class AuthService {
   /**
    * Verifies submitted OTP code, activates user account, and returns JWT session pair.
    */
-  async verifyOtp(
-    dto: VerifyOtpDto,
-    userAgent?: string,
-    ipAddress?: string,
-  ) {
+  async verifyOtp(dto: VerifyOtpDto, userAgent?: string, ipAddress?: string) {
     const { phone, code } = dto;
 
     const activeOtp = await this.prisma.otp.findFirst({
@@ -99,7 +102,9 @@ export class AuthService {
     });
 
     if (!activeOtp) {
-      throw new BadRequestException('Invalid or expired OTP code. Please request a new one.');
+      throw new BadRequestException(
+        'Invalid or expired OTP code. Please request a new one.',
+      );
     }
 
     // Brute-force protection: max 5 attempts per active OTP
@@ -108,7 +113,9 @@ export class AuthService {
         where: { id: activeOtp.id },
         data: { isConsumed: true },
       });
-      throw new BadRequestException('Maximum verification attempts exceeded. Please request a new OTP code.');
+      throw new BadRequestException(
+        'Maximum verification attempts exceeded. Please request a new OTP code.',
+      );
     }
 
     const expectedHash = this.hashOtp(code);
@@ -141,20 +148,29 @@ export class AuthService {
       });
     } else {
       if (user.status === 'SUSPENDED') {
-        throw new UnauthorizedException('Your account has been suspended by administration.');
+        throw new UnauthorizedException(
+          'Your account has been suspended by administration.',
+        );
       }
       user = await this.prisma.user.update({
         where: { id: user.id },
         data: {
           phoneVerifiedAt: user.phoneVerifiedAt ?? new Date(),
           lastLoginAt: new Date(),
-          status: user.status === 'PENDING_VERIFICATION' ? 'ACTIVE' : user.status,
+          status:
+            user.status === 'PENDING_VERIFICATION' ? 'ACTIVE' : user.status,
         },
       });
     }
 
     // Generate tokens & save session
-    const tokens = await this.createSession(user.id, user.phone, user.role, userAgent, ipAddress);
+    const tokens = await this.createSession(
+      user.id,
+      user.phone,
+      user.role,
+      userAgent,
+      ipAddress,
+    );
 
     return {
       user: {
@@ -197,7 +213,13 @@ export class AuthService {
       data: { lastLoginAt: new Date() },
     });
 
-    const tokens = await this.createSession(user.id, user.phone, user.role, userAgent, ipAddress);
+    const tokens = await this.createSession(
+      user.id,
+      user.phone,
+      user.role,
+      userAgent,
+      ipAddress,
+    );
 
     return {
       user: {
@@ -214,7 +236,11 @@ export class AuthService {
   /**
    * Rotates refresh token, invalidating old token and issuing new JWT pair.
    */
-  async refreshToken(dto: RefreshTokenDto, userAgent?: string, ipAddress?: string) {
+  async refreshToken(
+    dto: RefreshTokenDto,
+    userAgent?: string,
+    ipAddress?: string,
+  ) {
     const incomingHash = this.hashRefreshToken(dto.refreshToken);
 
     const session = await this.prisma.userSession.findFirst({
@@ -255,7 +281,9 @@ export class AuthService {
   /**
    * Revokes the active session upon logout.
    */
-  async logout(dto: RefreshTokenDto): Promise<{ success: boolean; message: string }> {
+  async logout(
+    dto: RefreshTokenDto,
+  ): Promise<{ success: boolean; message: string }> {
     const hash = this.hashRefreshToken(dto.refreshToken);
 
     await this.prisma.userSession.updateMany({

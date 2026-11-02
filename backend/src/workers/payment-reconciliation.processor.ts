@@ -18,7 +18,9 @@ export class PaymentReconciliationProcessor {
    */
   async processStaleTransactions(): Promise<{ reconciledCount: number }> {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    this.logger.log(`💳 [Worker: PaymentReconciliation] Checking stale payments created before ${oneHourAgo.toISOString()}...`);
+    this.logger.log(
+      `💳 [Worker: PaymentReconciliation] Checking stale payments created before ${oneHourAgo.toISOString()}...`,
+    );
 
     const result = await this.prisma.payment.updateMany({
       where: {
@@ -30,7 +32,9 @@ export class PaymentReconciliationProcessor {
       },
     });
 
-    this.logger.log(`✅ [Worker: PaymentReconciliation] Reconciled ${result.count} stale pending transactions to FAILED.`);
+    this.logger.log(
+      `✅ [Worker: PaymentReconciliation] Reconciled ${result.count} stale pending transactions to FAILED.`,
+    );
     return { reconciledCount: result.count };
   }
 }

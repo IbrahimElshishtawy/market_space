@@ -21,7 +21,10 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RedisService.name);
   private client: Redis | null = null;
   private isConnected = false;
-  private inMemoryFallback = new Map<string, { value: string; expiresAt?: number }>();
+  private inMemoryFallback = new Map<
+    string,
+    { value: string; expiresAt?: number }
+  >();
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -39,7 +42,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         maxRetriesPerRequest: 2,
         retryStrategy: (times) => {
           if (times > 5) {
-            this.logger.warn(`⚠️ Redis retry limit reached (${times}). Falling back to memory cache.`);
+            this.logger.warn(
+              `⚠️ Redis retry limit reached (${times}). Falling back to memory cache.`,
+            );
             return null; // Stop retrying immediately, switch to fallback
           }
           return Math.min(times * 200, 2000);
@@ -62,10 +67,14 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
       // Attempt initial connection without blocking app startup if offline
       await this.client.connect().catch((err) => {
-        this.logger.warn(`Redis not accessible at startup (${err.message}). Using resilient in-memory fallback.`);
+        this.logger.warn(
+          `Redis not accessible at startup (${err.message}). Using resilient in-memory fallback.`,
+        );
       });
     } catch (err: any) {
-      this.logger.warn(`Redis initialization failed (${err.message}). Operating in in-memory mode.`);
+      this.logger.warn(
+        `Redis initialization failed (${err.message}). Operating in in-memory mode.`,
+      );
     }
   }
 
@@ -89,7 +98,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         if (!raw) return null;
         return JSON.parse(raw) as T;
       } catch (err) {
-        this.logger.error(`Error reading from Redis key [${key}]: ${(err as Error).message}`);
+        this.logger.error(
+          `Error reading from Redis key [${key}]: ${(err as Error).message}`,
+        );
       }
     }
 
@@ -118,12 +129,15 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         }
         return;
       } catch (err) {
-        this.logger.error(`Error writing to Redis key [${key}]: ${(err as Error).message}`);
+        this.logger.error(
+          `Error writing to Redis key [${key}]: ${(err as Error).message}`,
+        );
       }
     }
 
     // In-memory fallback
-    const expiresAt = ttlSeconds && ttlSeconds > 0 ? Date.now() + ttlSeconds * 1000 : undefined;
+    const expiresAt =
+      ttlSeconds && ttlSeconds > 0 ? Date.now() + ttlSeconds * 1000 : undefined;
     this.inMemoryFallback.set(key, { value: serialized, expiresAt });
   }
 
@@ -135,7 +149,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       try {
         await this.client.del(key);
       } catch (err) {
-        this.logger.error(`Error deleting Redis key [${key}]: ${(err as Error).message}`);
+        this.logger.error(
+          `Error deleting Redis key [${key}]: ${(err as Error).message}`,
+        );
       }
     }
     this.inMemoryFallback.delete(key);
@@ -149,11 +165,13 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       try {
         return await this.client.incr(key);
       } catch (err) {
-        this.logger.error(`Error incrementing Redis key [${key}]: ${(err as Error).message}`);
+        this.logger.error(
+          `Error incrementing Redis key [${key}]: ${(err as Error).message}`,
+        );
       }
     }
 
-    const current = await this.get<number>(key) || 0;
+    const current = (await this.get<number>(key)) || 0;
     const next = current + 1;
     await this.set(key, next);
     return next;
@@ -163,7 +181,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
    * Sliding window rate limiter helper using Redis.
    * Returns true if allowed, false if limit exceeded.
    */
-  async checkRateLimit(key: string, maxRequests: number, windowSeconds: number): Promise<{ allowed: boolean; remaining: number }> {
+  async checkRateLimit(
+    key: string,
+    maxRequests: number,
+    windowSeconds: number,
+  ): Promise<{ allowed: boolean; remaining: number }> {
     const current = await this.incr(key);
     if (current === 1) {
       if (this.isConnected && this.client) {

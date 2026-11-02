@@ -16,7 +16,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ListingCondition } from '@prisma/client';
 
 export class SearchQueryDto {
-  @ApiProperty({ example: 'تويوتا كورولا', description: 'Arabic or English search term' })
+  @ApiProperty({
+    example: 'تويوتا كورولا',
+    description: 'Arabic or English search term',
+  })
   @IsNotEmpty({ message: 'Search term (q) is required' })
   @IsString()
   @MinLength(2, { message: 'Search term must be at least 2 characters' })

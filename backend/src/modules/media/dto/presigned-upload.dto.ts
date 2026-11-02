@@ -17,6 +17,9 @@ export class PresignedUploadDto {
   @IsArray()
   @ArrayMinSize(1, { message: 'At least 1 image is required' })
   @ArrayMaxSize(10, { message: 'Maximum 10 images allowed per listing' })
-  @IsEnum(AllowedImageMime, { each: true, message: 'Only JPEG, PNG, and WebP are permitted' })
+  @IsEnum(AllowedImageMime, {
+    each: true,
+    message: 'Only JPEG, PNG, and WebP are permitted',
+  })
   contentTypes!: AllowedImageMime[];
 }

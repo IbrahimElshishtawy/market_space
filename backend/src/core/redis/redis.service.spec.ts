@@ -20,6 +20,10 @@ describe('RedisService', () => {
 
     service = module.get<RedisService>(RedisService);
     await service.onModuleInit();
+    await service.del('test_key');
+    await service.del('to_delete');
+    await service.del('view_counter');
+    await service.del('rate_test');
   });
 
   afterEach(async () => {

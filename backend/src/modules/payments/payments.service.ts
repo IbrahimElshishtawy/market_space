@@ -21,7 +21,10 @@ export class PaymentsService {
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
   ) {
-    this.hmacSecret = this.configService.get<string>('PAYMOB_HMAC_SECRET', 'test_hmac_secret');
+    this.hmacSecret = this.configService.get<string>(
+      'PAYMOB_HMAC_SECRET',
+      'test_hmac_secret',
+    );
   }
 
   /**
@@ -47,7 +50,9 @@ export class PaymentsService {
     }
 
     if (listing.userId !== userId) {
-      throw new ForbiddenException('You can only purchase promotions for your own listings');
+      throw new ForbiddenException(
+        'You can only purchase promotions for your own listings',
+      );
     }
 
     const pkg = await this.prisma.promotionPackage.findUnique({
@@ -55,7 +60,9 @@ export class PaymentsService {
     });
 
     if (!pkg || !pkg.isActive) {
-      throw new BadRequestException('Selected promotion package is invalid or inactive');
+      throw new BadRequestException(
+        'Selected promotion package is invalid or inactive',
+      );
     }
 
     // Create pending payment record
@@ -105,7 +112,9 @@ export class PaymentsService {
     });
 
     if (existingPayment && existingPayment.status === PaymentStatus.SUCCESS) {
-      this.logger.log(`Payment transaction ${transactionId} already processed (Idempotency check).`);
+      this.logger.log(
+        `Payment transaction ${transactionId} already processed (Idempotency check).`,
+      );
       return { success: true, processed: false };
     }
 
@@ -162,7 +171,9 @@ export class PaymentsService {
       ) {
         // Feature listing for specified duration
         const durationDays = pkg.durationDays || 7;
-        const featuredUntil = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000);
+        const featuredUntil = new Date(
+          Date.now() + durationDays * 24 * 60 * 60 * 1000,
+        );
 
         await tx.listing.update({
           where: { id: payment.listingId },
@@ -175,7 +186,9 @@ export class PaymentsService {
       }
     });
 
-    this.logger.log(`✅ Promotion ${payment.packageId} activated for listing ${payment.listingId}`);
+    this.logger.log(
+      `✅ Promotion ${payment.packageId} activated for listing ${payment.listingId}`,
+    );
     return { success: true, processed: true };
   }
 
@@ -203,7 +216,9 @@ export class PaymentsService {
       obj.success,
     ];
 
-    const concatenated = fields.map((f) => (f !== undefined && f !== null ? String(f) : '')).join('');
+    const concatenated = fields
+      .map((f) => (f !== undefined && f !== null ? String(f) : ''))
+      .join('');
     const calculated = crypto
       .createHmac('sha512', this.hmacSecret)
       .update(concatenated)

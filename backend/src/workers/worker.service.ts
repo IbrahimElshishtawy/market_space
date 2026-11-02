@@ -1,8 +1,16 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { ListingExpiryProcessor } from './listing-expiry.processor';
 import { MediaCleanupProcessor } from './media-cleanup.processor';
 import { PaymentReconciliationProcessor } from './payment-reconciliation.processor';
-import { NotificationProcessor, PushNotificationJobData } from './notification.processor';
+import {
+  NotificationProcessor,
+  PushNotificationJobData,
+} from './notification.processor';
 
 /**
  * WorkerService manages background scheduled maintenance tasks and async queues.
@@ -25,14 +33,18 @@ export class WorkerService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    this.logger.log('⚙️ Initializing Market Space background maintenance workers...');
+    this.logger.log(
+      '⚙️ Initializing Market Space background maintenance workers...',
+    );
 
     // In production or long-running daemon, register intervals
     // Expiry check every 30 minutes
     const expiryInterval = setInterval(
       () => {
         this.listingExpiry.processExpiredListings().catch((err) => {
-          this.logger.error(`Error in listing expiry background job: ${err.message}`);
+          this.logger.error(
+            `Error in listing expiry background job: ${err.message}`,
+          );
         });
       },
       30 * 60 * 1000,
@@ -43,7 +55,9 @@ export class WorkerService implements OnModuleInit, OnModuleDestroy {
     const paymentInterval = setInterval(
       () => {
         this.paymentReconciliation.processStaleTransactions().catch((err) => {
-          this.logger.error(`Error in payment reconciliation job: ${err.message}`);
+          this.logger.error(
+            `Error in payment reconciliation job: ${err.message}`,
+          );
         });
       },
       15 * 60 * 1000,

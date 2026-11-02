@@ -10,13 +10,21 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ListingsService } from './listings.service';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { FilterListingsDto } from './dto/filter-listings.dto';
 import { UpdateListingStatusDto } from './dto/update-listing-status.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser, AuthenticatedUser } from '../auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Listings')
 @Controller('listings')
@@ -24,7 +32,9 @@ export class ListingsController {
   constructor(private readonly listingsService: ListingsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Public listings feed with multi-filtering and cursor pagination' })
+  @ApiOperation({
+    summary: 'Public listings feed with multi-filtering and cursor pagination',
+  })
   @ApiResponse({ status: 200, description: 'Feed items returned' })
   async getFeed(@Query() filters: FilterListingsDto) {
     return this.listingsService.getListingsFeed(filters);
@@ -56,7 +66,9 @@ export class ListingsController {
   @ApiBearerAuth('BearerAuth')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update listing lifecycle status (PAUSED, SOLD, ARCHIVED)' })
+  @ApiOperation({
+    summary: 'Update listing lifecycle status (PAUSED, SOLD, ARCHIVED)',
+  })
   @ApiResponse({ status: 200, description: 'Status updated' })
   @ApiResponse({ status: 403, description: 'Forbidden (Not the owner)' })
   async updateStatus(
@@ -74,7 +86,9 @@ export class ListingsController {
 
   @Post(':id/contact')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Record buyer contact action and reveal seller phone number' })
+  @ApiOperation({
+    summary: 'Record buyer contact action and reveal seller phone number',
+  })
   @ApiResponse({ status: 200, description: 'Phone number revealed' })
   async contactSeller(@Param('id') id: string) {
     return this.listingsService.recordContactAction(id);

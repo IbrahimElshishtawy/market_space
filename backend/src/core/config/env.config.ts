@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
 export const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  NODE_ENV: z
+    .enum(['development', 'test', 'production'])
+    .default('development'),
   PORT: z.coerce.number().default(3000),
   API_BASE_URL: z.string().url().default('http://localhost:3000/api/v1'),
   CORS_ORIGIN: z.string().default('*'),
@@ -15,8 +17,12 @@ export const envSchema = z.object({
   REDIS_PASSWORD: z.string().optional().default(''),
 
   // Security & JWT
-  JWT_ACCESS_SECRET: z.string().min(16, 'JWT_ACCESS_SECRET must be at least 16 chars'),
-  JWT_REFRESH_SECRET: z.string().min(16, 'JWT_REFRESH_SECRET must be at least 16 chars'),
+  JWT_ACCESS_SECRET: z
+    .string()
+    .min(16, 'JWT_ACCESS_SECRET must be at least 16 chars'),
+  JWT_REFRESH_SECRET: z
+    .string()
+    .min(16, 'JWT_REFRESH_SECRET must be at least 16 chars'),
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('30d'),
 

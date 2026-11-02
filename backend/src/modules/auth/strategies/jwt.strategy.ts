@@ -42,7 +42,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     if (user.status === 'SUSPENDED') {
-      throw new UnauthorizedException('Account has been suspended by administration');
+      throw new UnauthorizedException(
+        'Account has been suspended by administration',
+      );
     }
 
     if (user.status === 'DELETED') {

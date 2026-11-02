@@ -8,11 +8,19 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
 import { CheckoutDto } from './dto/checkout.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser, AuthenticatedUser } from '../auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Payments & Promotions')
 @Controller('payments')
@@ -43,10 +51,7 @@ export class PaymentsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Paymob payment transaction callback webhook' })
   @ApiResponse({ status: 200, description: 'Webhook processed' })
-  async webhook(
-    @Body() payload: any,
-    @Query('hmac') hmac?: string,
-  ) {
+  async webhook(@Body() payload: any, @Query('hmac') hmac?: string) {
     return this.paymentsService.handlePaymobWebhook(payload, hmac);
   }
 }

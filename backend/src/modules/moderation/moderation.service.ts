@@ -39,8 +39,12 @@ export class ModerationService {
         orderBy: { createdAt: 'asc' },
         include: {
           reporter: { select: { id: true, fullName: true, phone: true } },
-          listing: { select: { id: true, title: true, price: true, status: true } },
-          reportedUser: { select: { id: true, fullName: true, phone: true, status: true } },
+          listing: {
+            select: { id: true, title: true, price: true, status: true },
+          },
+          reportedUser: {
+            select: { id: true, fullName: true, phone: true, status: true },
+          },
         },
       }),
     ]);

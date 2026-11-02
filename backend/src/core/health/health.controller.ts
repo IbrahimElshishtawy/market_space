@@ -8,19 +8,19 @@ import { PrismaService } from '../database/prisma.service';
 export class HealthController {
   constructor(private readonly prisma: PrismaService) {}
 
-  @Get('live')
+  @Get(['liveness', 'live'])
   @ApiOperation({ summary: 'Liveness probe' })
-  @ApiResponse({ status: 200, description: 'Service is alive' })
+  @ApiResponse({ status: 200, description: 'Service is alive and responsive' })
   getLiveness() {
     return {
       status: 'ok',
-      uptimeSeconds: process.uptime(),
+      uptimeSeconds: Math.floor(process.uptime()),
       memoryRssMb: Math.round(process.memoryUsage().rss / 1024 / 1024),
       timestamp: new Date().toISOString(),
     };
   }
 
-  @Get('ready')
+  @Get(['readiness', 'ready'])
   @ApiOperation({ summary: 'Readiness probe' })
   @ApiResponse({ status: 200, description: 'Dependencies are healthy' })
   async getReadiness(@Res() res: FastifyReply) {

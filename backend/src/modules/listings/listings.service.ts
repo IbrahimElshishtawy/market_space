@@ -36,14 +36,22 @@ export class ListingsService {
     });
 
     if (!category || !category.isActive) {
-      throw new BadRequestException('Selected category does not exist or is inactive');
+      throw new BadRequestException(
+        'Selected category does not exist or is inactive',
+      );
     }
 
     // Validate required dynamic attributes
     const dynamicAttrs = dto.attributes || {};
     for (const field of category.fields) {
-      if (field.isRequired && (dynamicAttrs[field.fieldKey] === undefined || dynamicAttrs[field.fieldKey] === null)) {
-        throw new BadRequestException(`Required attribute '${field.labelAr} (${field.fieldKey})' is missing`);
+      if (
+        field.isRequired &&
+        (dynamicAttrs[field.fieldKey] === undefined ||
+          dynamicAttrs[field.fieldKey] === null)
+      ) {
+        throw new BadRequestException(
+          `Required attribute '${field.labelAr} (${field.fieldKey})' is missing`,
+        );
       }
     }
 
@@ -52,14 +60,18 @@ export class ListingsService {
       where: { id: dto.cityId },
     });
     if (!city || !city.isActive) {
-      throw new BadRequestException('Selected city does not exist or is inactive');
+      throw new BadRequestException(
+        'Selected city does not exist or is inactive',
+      );
     }
 
     // 3. Media Ownership Security Check
     // Verifies that every mediaKey belongs to the requesting user's folder
     for (const key of dto.mediaKeys) {
       if (!key.includes(`/${userId}/`)) {
-        throw new ForbiddenException(`Unauthorized media key: ${key}. You can only attach your own uploaded media.`);
+        throw new ForbiddenException(
+          `Unauthorized media key: ${key}. You can only attach your own uploaded media.`,
+        );
       }
     }
 
@@ -117,8 +129,12 @@ export class ListingsService {
         where: { id: listing.id },
         include: {
           media: { orderBy: { sortOrder: 'asc' } },
-          category: { select: { id: true, nameAr: true, nameEn: true, slug: true } },
-          city: { select: { id: true, nameAr: true, nameEn: true, governorate: true } },
+          category: {
+            select: { id: true, nameAr: true, nameEn: true, slug: true },
+          },
+          city: {
+            select: { id: true, nameAr: true, nameEn: true, governorate: true },
+          },
         },
       });
     });
@@ -161,10 +177,7 @@ export class ListingsService {
     const items = await this.prisma.listing.findMany({
       where,
       take: limit + 1, // Fetch +1 to check for next page cursor
-      orderBy: [
-        { isFeatured: 'desc' },
-        { refreshedAt: 'desc' },
-      ],
+      orderBy: [{ isFeatured: 'desc' }, { refreshedAt: 'desc' }],
       include: {
         media: {
           where: { mediaType: MediaType.IMAGE },
@@ -210,7 +223,9 @@ export class ListingsService {
       where: { id },
       include: {
         media: { orderBy: { sortOrder: 'asc' } },
-        category: { select: { id: true, nameAr: true, nameEn: true, slug: true } },
+        category: {
+          select: { id: true, nameAr: true, nameEn: true, slug: true },
+        },
         city: { include: { governorate: true } },
         user: {
           select: {
@@ -255,7 +270,9 @@ export class ListingsService {
 
     // Ownership check (IDOR Protection)
     if (listing.userId !== userId && userRole !== 'SUPER_ADMIN') {
-      throw new ForbiddenException('You do not have permission to modify this listing');
+      throw new ForbiddenException(
+        'You do not have permission to modify this listing',
+      );
     }
 
     // Enforce state machine transitions

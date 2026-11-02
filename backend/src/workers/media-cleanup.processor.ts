@@ -17,7 +17,9 @@ export class MediaCleanupProcessor {
    */
   async processAbandonedMedia(): Promise<{ purgedCount: number }> {
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    this.logger.log(`🧹 [Worker: MediaCleanup] Scanning for unattached media older than ${twentyFourHoursAgo.toISOString()}...`);
+    this.logger.log(
+      `🧹 [Worker: MediaCleanup] Scanning for unattached media older than ${twentyFourHoursAgo.toISOString()}...`,
+    );
 
     const result = await this.prisma.listingMedia.deleteMany({
       where: {
@@ -26,7 +28,9 @@ export class MediaCleanupProcessor {
       },
     });
 
-    this.logger.log(`✅ [Worker: MediaCleanup] Removed ${result.count} orphaned media records.`);
+    this.logger.log(
+      `✅ [Worker: MediaCleanup] Removed ${result.count} orphaned media records.`,
+    );
     return { purgedCount: result.count };
   }
 }

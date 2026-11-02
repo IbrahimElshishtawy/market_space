@@ -8,11 +8,19 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser, AuthenticatedUser } from '../auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Users')
 @ApiBearerAuth('BearerAuth')
@@ -41,7 +49,9 @@ export class UsersController {
 
   @Delete('me')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Request account deletion (Soft delete & anonymize)' })
+  @ApiOperation({
+    summary: 'Request account deletion (Soft delete & anonymize)',
+  })
   @ApiResponse({ status: 200, description: 'Account deleted' })
   async deleteMyAccount(@CurrentUser() user: AuthenticatedUser) {
     return this.usersService.softDeleteAccount(user.id);

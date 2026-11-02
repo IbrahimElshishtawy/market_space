@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsEnum, IsOptional, IsUUID, IsString, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEnum,
+  IsOptional,
+  IsUUID,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ReportReason } from '@prisma/client';
 
@@ -18,7 +25,9 @@ export class CreateReportDto {
   @IsEnum(ReportReason)
   reason!: ReportReason;
 
-  @ApiPropertyOptional({ example: 'هذا الإعلان يحتوي على معلومات مضللة وسعر غير حقيقي' })
+  @ApiPropertyOptional({
+    example: 'هذا الإعلان يحتوي على معلومات مضللة وسعر غير حقيقي',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(1000)

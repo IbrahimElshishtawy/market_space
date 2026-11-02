@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+} from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -11,9 +16,7 @@ export class PrismaService
   constructor() {
     super({
       log:
-        process.env.NODE_ENV === 'development'
-          ? ['warn', 'error']
-          : ['error'],
+        process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
     });
   }
 

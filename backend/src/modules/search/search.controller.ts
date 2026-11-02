@@ -9,7 +9,9 @@ export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Fuzzy search across listings with faceted filters' })
+  @ApiOperation({
+    summary: 'Fuzzy search across listings with faceted filters',
+  })
   @ApiResponse({ status: 200, description: 'Search results returned' })
   async search(@Query() queryDto: SearchQueryDto) {
     return this.searchService.searchListings(queryDto);

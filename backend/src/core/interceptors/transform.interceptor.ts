@@ -18,19 +18,19 @@ export class TransformInterceptor<T>
   implements NestInterceptor<T, StandardApiResponse<T>>
 {
   intercept(
-    context: ExecutionContext,
+    _context: ExecutionContext,
     next: CallHandler,
   ): Observable<StandardApiResponse<T>> {
     return next.handle().pipe(
       map((response) => {
-        // If already structured or binary/redirect, return as-is
+        // If already structured standard envelope, return as-is
         if (
           response &&
           typeof response === 'object' &&
           'success' in response &&
           'data' in response
         ) {
-          return response;
+          return response as StandardApiResponse<T>;
         }
 
         // Handle case where service returns { data, meta }
@@ -49,7 +49,7 @@ export class TransformInterceptor<T>
 
         return {
           success: true,
-          data: response,
+          data: response ?? null,
         };
       }),
     );

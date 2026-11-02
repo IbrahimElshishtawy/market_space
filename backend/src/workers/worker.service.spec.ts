@@ -25,11 +25,19 @@ describe('WorkerService', () => {
         { provide: ListingExpiryProcessor, useValue: listingExpiryMock },
         {
           provide: MediaCleanupProcessor,
-          useValue: { processAbandonedMedia: jest.fn().mockResolvedValue({ purgedCount: 0 }) },
+          useValue: {
+            processAbandonedMedia: jest
+              .fn()
+              .mockResolvedValue({ purgedCount: 0 }),
+          },
         },
         {
           provide: PaymentReconciliationProcessor,
-          useValue: { processStaleTransactions: jest.fn().mockResolvedValue({ reconciledCount: 0 }) },
+          useValue: {
+            processStaleTransactions: jest
+              .fn()
+              .mockResolvedValue({ reconciledCount: 0 }),
+          },
         },
         { provide: NotificationProcessor, useValue: notificationProcessorMock },
       ],
@@ -54,7 +62,9 @@ describe('WorkerService', () => {
     });
 
     expect(result).toBe(true);
-    expect(notificationProcessorMock.processNotificationJob).toHaveBeenCalledWith(
+    expect(
+      notificationProcessorMock.processNotificationJob,
+    ).toHaveBeenCalledWith(
       expect.objectContaining({ targetUserId: 'user-123' }),
     );
   });

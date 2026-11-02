@@ -8,7 +8,9 @@ export class UpdateProfileDto {
   @MaxLength(120)
   fullName?: string;
 
-  @ApiPropertyOptional({ example: 'https://cdn.marketspace.eg/avatars/user-123.jpg' })
+  @ApiPropertyOptional({
+    example: 'https://cdn.marketspace.eg/avatars/user-123.jpg',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(500)

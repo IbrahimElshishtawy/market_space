@@ -36,7 +36,8 @@ export class CreateListingDto {
   title!: string;
 
   @ApiProperty({
-    example: 'سيارة هيونداي إلنترا موديل 2021 فئة تانية عداد 45000 كم بدون أي دهانات...',
+    example:
+      'سيارة هيونداي إلنترا موديل 2021 فئة تانية عداد 45000 كم بدون أي دهانات...',
   })
   @IsNotEmpty()
   @IsString()
@@ -50,7 +51,10 @@ export class CreateListingDto {
   @Min(0, { message: 'Price must be greater than or equal to 0' })
   price!: number;
 
-  @ApiPropertyOptional({ enum: ListingCondition, default: ListingCondition.USED })
+  @ApiPropertyOptional({
+    enum: ListingCondition,
+    default: ListingCondition.USED,
+  })
   @IsOptional()
   @IsEnum(ListingCondition)
   condition?: ListingCondition;
@@ -67,10 +71,13 @@ export class CreateListingDto {
       'uploads/images/2026-10/user-1/img1.jpg',
       'uploads/images/2026-10/user-1/img2.jpg',
     ],
-    description: 'Array of storage keys returned from media upload endpoint (1-10 items)',
+    description:
+      'Array of storage keys returned from media upload endpoint (1-10 items)',
   })
   @IsArray()
-  @ArrayMinSize(1, { message: 'At least 1 image is required to publish a listing' })
+  @ArrayMinSize(1, {
+    message: 'At least 1 image is required to publish a listing',
+  })
   @ArrayMaxSize(10, { message: 'Maximum 10 images allowed' })
   @IsString({ each: true })
   mediaKeys!: string[];

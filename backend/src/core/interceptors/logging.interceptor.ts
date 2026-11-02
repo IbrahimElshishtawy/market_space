@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { FastifyRequest, FastifyReply } from 'fastify';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -18,23 +19,69 @@ export class LoggingInterceptor implements NestInterceptor {
     const req = ctx.getRequest<FastifyRequest>();
     const res = ctx.getResponse<FastifyReply>();
 
-    const requestId =
-      (req.headers['x-request-id'] as string) ||
-      `req-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const rawReq = req?.raw as any;
+    const traceId =
+      (req?.headers?.['x-trace-id'] as string) ||
+      (req?.headers?.['x-request-id'] as string) ||
+      rawReq?.traceId ||
+      rawReq?.requestId ||
+      uuidv4();
 
-    // Set X-Request-Id header in response
-    res.header('x-request-id', requestId);
+    // Ensure trace headers in response
+    if (res.header) {
+      res.header('x-trace-id', traceId);
+      res.header('x-request-id', traceId);
+    }
 
     const startTime = Date.now();
     const { method, url } = req;
 
     return next.handle().pipe(
-      tap(() => {
-        const duration = Date.now() - startTime;
-        const statusCode = res.statusCode;
-        this.logger.log(
-          `[${requestId}] ${method} ${url} ${statusCode} - ${duration}ms`,
-        );
+      tap({
+        next: () => {
+          const duration = Date.now() - startTime;
+          const statusCode = res.statusCode;
+          this.logger.log(
+            JSON.stringify({
+              level: 'info',
+              time: Date.now(),
+              trace_id: traceId,
+              req: {
+                method,
+                url,
+                ip: req.ip,
+                user_agent: req.headers?.['user-agent'],
+              },
+              res: {
+                status_code: statusCode,
+                duration_ms: duration,
+              },
+              msg: `${method} ${url} ${statusCode} - ${duration}ms`,
+            }),
+          );
+        },
+        error: (err) => {
+          const duration = Date.now() - startTime;
+          this.logger.error(
+            JSON.stringify({
+              level: 'error',
+              time: Date.now(),
+              trace_id: traceId,
+              req: {
+                method,
+                url,
+                ip: req.ip,
+                user_agent: req.headers?.['user-agent'],
+              },
+              res: {
+                status_code: err?.status || 500,
+                duration_ms: duration,
+              },
+              err: err?.message,
+              msg: `${method} ${url} FAILED - ${duration}ms`,
+            }),
+          );
+        },
       }),
     );
   }

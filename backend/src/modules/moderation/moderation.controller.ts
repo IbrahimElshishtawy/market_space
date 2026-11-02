@@ -11,7 +11,12 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
 import { UserRole } from '@prisma/client';
 import { ModerationService } from './moderation.service';
@@ -20,7 +25,10 @@ import { AdjudicateReportDto } from './dto/adjudicate-report.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { CurrentUser, AuthenticatedUser } from '../auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Trust & Safety / Moderation')
 @Controller()
@@ -47,7 +55,10 @@ export class ModerationController {
   @ApiOperation({ summary: 'Get pending moderation queue' })
   @ApiResponse({ status: 200, description: 'Moderation items returned' })
   async getQueue(@Query('page') page = 1, @Query('limit') limit = 20) {
-    return this.moderationService.getModerationQueue(Number(page), Number(limit));
+    return this.moderationService.getModerationQueue(
+      Number(page),
+      Number(limit),
+    );
   }
 
   @Patch('admin/moderation/reports/:id')
@@ -64,7 +75,13 @@ export class ModerationController {
   ) {
     const ip = req.ip;
     const ua = req.headers['user-agent'];
-    return this.moderationService.adjudicateReport(reportId, user.id, dto, ip, ua);
+    return this.moderationService.adjudicateReport(
+      reportId,
+      user.id,
+      dto,
+      ip,
+      ua,
+    );
   }
 
   @Get('admin/audit-logs')

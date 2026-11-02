@@ -18,9 +18,13 @@ export class NotificationProcessor {
 
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  async processNotificationJob(data: PushNotificationJobData): Promise<boolean> {
+  async processNotificationJob(
+    data: PushNotificationJobData,
+  ): Promise<boolean> {
     try {
-      this.logger.log(`📬 [Worker: Notification] Processing push dispatch to user ${data.targetUserId}...`);
+      this.logger.log(
+        `📬 [Worker: Notification] Processing push dispatch to user ${data.targetUserId}...`,
+      );
       await this.notificationsService.sendPushNotification(
         data.targetUserId,
         data.title,
@@ -29,7 +33,9 @@ export class NotificationProcessor {
       );
       return true;
     } catch (err: any) {
-      this.logger.error(`❌ [Worker: Notification] Failed to deliver push to ${data.targetUserId}: ${err.message}`);
+      this.logger.error(
+        `❌ [Worker: Notification] Failed to deliver push to ${data.targetUserId}: ${err.message}`,
+      );
       return false;
     }
   }

@@ -6,11 +6,19 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { MediaService } from './media.service';
 import { PresignedUploadDto } from './dto/presigned-upload.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser, AuthenticatedUser } from '../auth/decorators/current-user.decorator';
+import {
+  CurrentUser,
+  AuthenticatedUser,
+} from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Media')
 @ApiBearerAuth('BearerAuth')
@@ -21,7 +29,9 @@ export class MediaController {
 
   @Post('images/upload-url')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Request presigned direct-to-storage upload URLs for images' })
+  @ApiOperation({
+    summary: 'Request presigned direct-to-storage upload URLs for images',
+  })
   @ApiResponse({ status: 200, description: 'Presigned upload URLs generated' })
   async requestImageUploadUrls(
     @CurrentUser() user: AuthenticatedUser,
