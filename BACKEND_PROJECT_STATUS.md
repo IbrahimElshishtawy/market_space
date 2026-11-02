@@ -66,10 +66,14 @@
 ---
 
 ## 5. Technical Deliverables & Readiness Matrix
-- **OpenAPI 3.1.0 Specification:** [`backend_blueprint/openapi/deal_one_openapi.yaml`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/openapi/deal_one_openapi.yaml) (55 REST APIs 100% certified)
+- **OpenAPI 3.0.3 Specification:** [`backend_blueprint/openapi/deal_one_openapi.yaml`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/openapi/deal_one_openapi.yaml) (55 REST APIs 100% certified)
 - **Pre-Implementation Audit:** [`backend_blueprint/17_PRE_IMPLEMENTATION_AUDIT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/17_PRE_IMPLEMENTATION_AUDIT.md)
 - **Master Checklist:** [`backend_blueprint/18_CORRECTED_MASTER_CHECKLIST.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/18_CORRECTED_MASTER_CHECKLIST.md)
 - **Final Readiness Report:** [`backend_blueprint/20_FINAL_READINESS_REPORT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/20_FINAL_READINESS_REPORT.md)
 - **Execution Checklist:** [`backend_blueprint/21_FINAL_IMPLEMENTATION_CHECKLIST.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/21_FINAL_IMPLEMENTATION_CHECKLIST.md)
 - **Architecture Risk Register:** [`backend_blueprint/22_ARCHITECTURE_RISKS.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/22_ARCHITECTURE_RISKS.md)
+- **Implementation Evidence Audit:** [`backend_blueprint/23_IMPLEMENTATION_EVIDENCE_AUDIT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/23_IMPLEMENTATION_EVIDENCE_AUDIT.md)
+- **Security Test Forensic Classification:** [`backend_blueprint/24_SECURITY_TEST_CLASSIFICATION.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/24_SECURITY_TEST_CLASSIFICATION.md)
+- **Flutter Client Change Audit:** [`backend_blueprint/25_FLUTTER_CHANGE_AUDIT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/25_FLUTTER_CHANGE_AUDIT.md)
 - **Automated Test Harness:** [`backend_tests/`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_tests) (Pytest & Locust)
+
