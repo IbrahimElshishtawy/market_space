@@ -4,9 +4,7 @@ import { ForbiddenException, BadRequestException } from '@nestjs/common';
 import { ListingStatus } from '@prisma/client';
 import { ListingsService } from './listings.service';
 import { PrismaService } from '../../core/database/prisma.service';
-import {
-  assertValidListingTransition,
-} from './listings-state-machine';
+import { assertValidListingTransition } from './listings-state-machine';
 
 describe('Listings Service & State Machine (Milestone 3)', () => {
   let service: ListingsService;

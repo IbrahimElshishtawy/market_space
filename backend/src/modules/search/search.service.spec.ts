@@ -24,6 +24,7 @@ describe('Search Service & Arabic Normalization (Milestone 4)', () => {
 
     service = module.get<SearchService>(SearchService);
     prisma = module.get<PrismaService>(PrismaService);
+    expect(prisma).toBeDefined();
     jest.clearAllMocks();
   });
 

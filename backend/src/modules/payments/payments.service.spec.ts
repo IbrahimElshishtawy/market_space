@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PaymentStatus, PromoType } from '@prisma/client';
+import { ForbiddenException } from '@nestjs/common';
+import { PaymentStatus } from '@prisma/client';
 import { PaymentsService } from './payments.service';
 import { PrismaService } from '../../core/database/prisma.service';
 
@@ -41,6 +41,7 @@ describe('PaymentsService (Milestone 7)', () => {
 
     service = module.get<PaymentsService>(PaymentsService);
     prisma = module.get<PrismaService>(PrismaService);
+    expect(prisma).toBeDefined();
     jest.clearAllMocks();
   });
 
