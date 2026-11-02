@@ -1,0 +1,535 @@
+openapi: 3.1.0
+info:
+  title: Deal One API Specification (صفقة ون)
+  version: 1.0.0
+  description: >
+    Production-grade OpenAPI 3.1.0 specification for the Deal One Hybrid Multi-Category Platform in Egypt.
+    Serving Real Estate, Automotive, Building Materials, Services, Fashion, and Home Appliances.
+servers:
+  - url: https://api.deal-one.eg/api/v1
+    description: Production API Gateway (Cloudflare WAF Protected)
+  - url: https://staging-api.deal-one.eg/api/v1
+    description: Staging Environment
+  - url: http://localhost:3000/api/v1
+    description: Local Docker / Fastify Development Server
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Reference to full paths from backend_blueprint/openapi/deal_one_openapi.yaml
+  /auth/otp/send:
+    post:
+      tags: [Authentication]
+      summary: Request 6-digit SMS OTP
+      security: []
+      operationId: sendOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, turnstile_token]
+              properties:
+                phone:
+                  type: string
+                  example: "+201012732095"
+                  pattern: '^\+20(10|11|12|15)[0-9]{8}$'
+                turnstile_token:
+                  type: string
+                  example: "0.XXXXX.YYYYY"
+      responses:
+        '200':
+          description: OTP dispatched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseGeneric'
+        '429':
+          description: Rate limit exceeded (Max 3 OTP / 15 min)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /auth/otp/verify:
+    post:
+      tags: [Authentication]
+      summary: Verify SMS OTP & Sign In / Register
+      security: []
+      operationId: verifyOtp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, code]
+              properties:
+                phone:
+                  type: string
+                  example: "+201012732095"
+                code:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+                  example: "583921"
+                device_info:
+                  type: object
+                  properties:
+                    platform:
+                      type: string
+                      enum: [android, ios]
+                    fcm_token:
+                      type: string
+                    app_version:
+                      type: string
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessResponse'
+        '400':
+          description: Invalid or expired OTP code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /auth/token/refresh:
+    post:
+      tags: [Authentication]
+      summary: Silent Refresh Token Rotation
+      security: []
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Token rotated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefreshResponse'
+        '401':
+          description: Invalid, revoked or compromised session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /categories:
+    get:
+      tags: [Categories]
+      summary: Get Categories Taxonomy Tree (6 core sectors)
+      security: []
+      operationId: getCategories
+      responses:
+        '200':
+          description: Hierarchical category tree
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategoryNode'
+
+  /categories/{categoryId}/fields:
+    get:
+      tags: [Categories]
+      summary: Get Dynamic Attribute Schema for Subcategory
+      security: []
+      operationId: getCategoryFields
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Dynamic attribute field definitions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategoryFieldDefinition'
+
+  /listings:
+    post:
+      tags: [Listings]
+      summary: Create Listing Draft
+      operationId: createListing
+      parameters:
+        - $ref: '#/components/parameters/AccountIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListingRequest'
+      responses:
+        '201':
+          description: Listing draft created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingDetailResponse'
+
+  /search:
+    get:
+      tags: [Search]
+      summary: Unified PostGIS & Faceted Search
+      security: []
+      operationId: searchListings
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: category_slug
+          in: query
+          schema:
+            type: string
+        - name: area_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: lat
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: lng
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: radius_km
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [nearest, price_asc, price_desc, latest]
+            default: latest
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 50
+      responses:
+        '200':
+          description: Paginated search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingFeedResponse'
+
+  /quotas/my-usage:
+    get:
+      tags: [Quotas]
+      summary: Get Today's Quota Consumption (Africa/Cairo Midnight Reset)
+      operationId: getDailyQuotaUsage
+      parameters:
+        - $ref: '#/components/parameters/AccountIdHeader'
+      responses:
+        '200':
+          description: Real-time quota balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuotaUsageResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    AccountIdHeader:
+      name: X-Account-ID
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Contextual seller account UUID for multi-tenant isolation
+
+  schemas:
+    ApiResponseGeneric:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+
+    ApiErrorResponse:
+      type: object
+      required: [success, error]
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              example: "VALIDATION_FAILED"
+            message:
+              type: string
+              example: "Validation failed"
+            details:
+              type: array
+              items:
+                type: object
+            trace_id:
+              type: string
+
+    AuthSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+            user:
+              type: object
+            accounts:
+              type: array
+              items:
+                $ref: '#/components/schemas/SellerAccountSummary'
+
+    TokenRefreshResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+
+    SellerAccountSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        account_type:
+          type: string
+          enum: [individual, company, factory, office, store]
+        verification_status:
+          type: string
+          enum: [pending, approved, rejected]
+        role:
+          type: string
+          enum: [owner, manager, lister, responder]
+
+    CategoryNode:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name_ar:
+          type: string
+        name_en:
+          type: string
+        slug:
+          type: string
+        icon_url:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryNode'
+
+    CategoryFieldDefinition:
+      type: object
+      properties:
+        field_key:
+          type: string
+        label_ar:
+          type: string
+        label_en:
+          type: string
+        field_type:
+          type: string
+          enum: [text, number, select, multi_select, boolean]
+        is_required:
+          type: boolean
+        validation_rules:
+          type: object
+
+    CreateListingRequest:
+      type: object
+      required: [category_id, area_id, title, description, price, listing_kind, physical_lat, physical_lng]
+      properties:
+        category_id:
+          type: string
+          format: uuid
+        area_id:
+          type: string
+          format: uuid
+        branch_id:
+          type: string
+          format: uuid
+          nullable: true
+        title:
+          type: string
+          minLength: 5
+          maxLength: 200
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0
+        listing_kind:
+          type: string
+          enum: [sale, rent, buy, service, product]
+        contact_channel:
+          type: string
+          enum: [in_app, external]
+          default: in_app
+        physical_lat:
+          type: number
+          format: float
+        physical_lng:
+          type: number
+          format: float
+        attributes:
+          type: object
+
+    ListingDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            title:
+              type: string
+            description:
+              type: string
+            price:
+              type: number
+            currency:
+              type: string
+              example: "EGP"
+            moderation_status:
+              type: string
+              enum: [draft, pending, approved, rejected]
+            publication_status:
+              type: string
+              enum: [unpublished, published, hidden, archived]
+            availability_status:
+              type: string
+              enum: [available, reserved, sold, rented, out_of_stock, discontinued]
+            display_location:
+              type: object
+              properties:
+                lat:
+                  type: number
+                lng:
+                  type: number
+            images:
+              type: array
+              items:
+                type: object
+            seller:
+              $ref: '#/components/schemas/SellerAccountSummary'
+
+    ListingFeedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListingDetailResponse'
+        meta:
+          type: object
+          properties:
+            next_cursor:
+              type: string
+              nullable: true
+
+    QuotaUsageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            timezone:
+              type: string
+              example: "Africa/Cairo"
+            resets_at:
+              type: string
+              format: date-time
+            quotas:
+              type: object
