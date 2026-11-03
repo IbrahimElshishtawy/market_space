@@ -1,13 +1,19 @@
 import { IsNotEmpty, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { ListingStatus } from '../../../core/enums/domain.enums';
+import { PublicationStatus } from '../../../core/enums/domain.enums';
 
 export class UpdateListingStatusDto {
   @ApiProperty({
-    enum: [ListingStatus.PAUSED, ListingStatus.SOLD, ListingStatus.ARCHIVED],
-    example: ListingStatus.SOLD,
+    enum: [
+      PublicationStatus.HIDDEN,
+      PublicationStatus.PUBLISHED,
+      PublicationStatus.ARCHIVED,
+    ],
+    example: PublicationStatus.HIDDEN,
+    description:
+      'Target publication status for the listing (hidden, published, archived)',
   })
   @IsNotEmpty()
-  @IsEnum(ListingStatus)
-  status!: ListingStatus;
+  @IsEnum(PublicationStatus)
+  status!: PublicationStatus;
 }

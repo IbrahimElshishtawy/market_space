@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { ForbiddenException, BadRequestException } from '@nestjs/common';
-import { ListingStatus } from '../../core/enums/domain.enums';
+import { PublicationStatus } from '../../core/enums/domain.enums';
 import { ListingsService } from './listings.service';
 import { PrismaService } from '../../core/database/prisma.service';
-import { assertValidListingTransition } from './listings-state-machine';
+import { assertValidPublicationTransition } from './listings-state-machine';
 
-describe('Listings Service & State Machine (Milestone 3)', () => {
+describe('Listings Service & Lifecycle (Milestone 3)', () => {
   let service: ListingsService;
   let prisma: PrismaService;
 
@@ -42,19 +42,22 @@ describe('Listings Service & State Machine (Milestone 3)', () => {
     jest.clearAllMocks();
   });
 
-  describe('State Machine Transitions', () => {
-    it('should allow valid transition from PUBLISHED to SOLD', () => {
+  describe('Publication Lifecycle Transitions', () => {
+    it('should allow valid transition from PUBLISHED to HIDDEN', () => {
       expect(() =>
-        assertValidListingTransition(
-          ListingStatus.PUBLISHED,
-          ListingStatus.SOLD,
+        assertValidPublicationTransition(
+          PublicationStatus.PUBLISHED,
+          PublicationStatus.HIDDEN,
         ),
       ).not.toThrow();
     });
 
-    it('should throw BadRequestException when transitioning directly from DRAFT to SOLD', () => {
+    it('should throw BadRequestException when transitioning from ARCHIVED (terminal state)', () => {
       expect(() =>
-        assertValidListingTransition(ListingStatus.DRAFT, ListingStatus.SOLD),
+        assertValidPublicationTransition(
+          PublicationStatus.ARCHIVED,
+          PublicationStatus.PUBLISHED,
+        ),
       ).toThrow(BadRequestException);
     });
   });
@@ -89,14 +92,14 @@ describe('Listings Service & State Machine (Milestone 3)', () => {
       mockPrisma.listing.findUnique.mockResolvedValue({
         id: 'listing-1',
         account: { ownerUserId: 'owner-user-id' },
-        publicationStatus: ListingStatus.PUBLISHED,
+        publicationStatus: PublicationStatus.PUBLISHED,
       });
 
       await expect(
         service.updateListingStatus(
           'listing-1',
           'attacker-user-id',
-          ListingStatus.ARCHIVED,
+          PublicationStatus.ARCHIVED,
           'USER',
         ),
       ).rejects.toThrow(ForbiddenException);

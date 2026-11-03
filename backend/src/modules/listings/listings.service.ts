@@ -5,11 +5,11 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ListingStatus } from '../../core/enums/domain.enums';
+import { PublicationStatus } from '../../core/enums/domain.enums';
 import { PrismaService } from '../../core/database/prisma.service';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { FilterListingsDto } from './dto/filter-listings.dto';
-import { assertValidListingTransition } from './listings-state-machine';
+import { assertValidPublicationTransition } from './listings-state-machine';
 
 @Injectable()
 export class ListingsService {
@@ -300,8 +300,8 @@ export class ListingsService {
   async updateListingStatus(
     id: string,
     userId: string,
-    targetStatus: ListingStatus,
-    userRole: string,
+    targetStatus: PublicationStatus,
+    userRole?: string,
   ) {
     const listing = await this.prisma.listing.findUnique({
       where: { id },
@@ -319,9 +319,9 @@ export class ListingsService {
       );
     }
 
-    // Enforce state machine transitions
-    assertValidListingTransition(
-      listing.publicationStatus as any,
+    // Enforce publication state machine transitions
+    assertValidPublicationTransition(
+      listing.publicationStatus as PublicationStatus,
       targetStatus,
     );
 

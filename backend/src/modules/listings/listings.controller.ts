@@ -67,9 +67,9 @@ export class ListingsController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Update listing lifecycle status (PAUSED, SOLD, ARCHIVED)',
+    summary: 'Update listing publication status (HIDDEN, PUBLISHED, ARCHIVED)',
   })
-  @ApiResponse({ status: 200, description: 'Status updated' })
+  @ApiResponse({ status: 200, description: 'Publication status updated' })
   @ApiResponse({ status: 403, description: 'Forbidden (Not the owner)' })
   async updateStatus(
     @Param('id') id: string,
