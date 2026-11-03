@@ -28,6 +28,7 @@ lerna-debug.log*
 
 # Database & Backups
 *.sql
+!backend/prisma/migrations/**/*.sql
 *.sql.gz
 *.dump
 *.sqlite

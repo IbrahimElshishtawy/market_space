@@ -1,0 +1,39 @@
+-- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('USER', 'MODERATOR', 'SUPER_ADMIN');
+
+-- CreateEnum
+CREATE TYPE "ListingStatus" AS ENUM ('DRAFT', 'PENDING_REVIEW', 'PUBLISHED', 'REJECTED', 'PAUSED', 'EXPIRED', 'SOLD', 'ARCHIVED');
+
+-- CreateEnum
+CREATE TYPE "ListingCondition" AS ENUM ('NEW', 'USED', 'NOT_APPLICABLE');
+
+-- CreateEnum
+CREATE TYPE "MediaType" AS ENUM ('IMAGE', 'VIDEO');
+
+-- CreateEnum
+CREATE TYPE "MediaStatus" AS ENUM ('PENDING', 'READY', 'FAILED');
+
+-- CreateEnum
+CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED');
+
+-- CreateEnum
+CREATE TYPE "PromoType" AS ENUM ('BUMP_UP', 'FEATURED_7_DAYS', 'FEATURED_14_DAYS');
+
+-- CreateEnum
+CREATE TYPE "ReportReason" AS ENUM ('SPAM', 'FRAUD', 'OFFENSIVE', 'PROHIBITED_ITEM', 'DUPLICATE', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "ReportStatus" AS ENUM ('PENDING', 'REVIEWED', 'ACTION_TAKEN', 'DISMISSED');
+
+-- CreateEnum
+CREATE TYPE "FieldType" AS ENUM ('TEXT', 'NUMBER', 'SELECT', 'MULTI_SELECT', 'BOOLEAN');
+
+-- AlterTable
+ALTER TABLE "areas" ALTER COLUMN "centroid" SET DEFAULT ST_SetSRID(ST_MakePoint(31.2357, 30.0444), 4326);
+
+-- AlterTable
+ALTER TABLE "branches" ALTER COLUMN "location" SET DEFAULT ST_SetSRID(ST_MakePoint(31.2357, 30.0444), 4326);
+
+-- AlterTable
+ALTER TABLE "listings" ALTER COLUMN "physical_location" SET DEFAULT ST_SetSRID(ST_MakePoint(31.2357, 30.0444), 4326),
+ALTER COLUMN "display_location" SET DEFAULT ST_SetSRID(ST_MakePoint(31.2357, 30.0444), 4326);
