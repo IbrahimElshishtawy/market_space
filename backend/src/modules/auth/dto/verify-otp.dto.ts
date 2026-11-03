@@ -7,8 +7,8 @@ export class VerifyOtpDto {
     description: 'Egyptian mobile phone number',
   })
   @IsNotEmpty({ message: 'Phone number is required' })
-  @Matches(/^\+20(10|11|12|15)[0-9]{8}$/, {
-    message: 'Phone number must be a valid Egyptian mobile starting with +20',
+  @Matches(/^(?:\+20|0020|0)?(10|11|12|15)[0-9]{8}$/, {
+    message: 'Phone number must be a valid Egyptian mobile number',
   })
   phone!: string;
 

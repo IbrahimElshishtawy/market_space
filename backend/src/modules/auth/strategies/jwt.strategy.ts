@@ -8,6 +8,8 @@ export interface JwtPayload {
   sub: string;
   phone: string;
   role: string;
+  iss?: string;
+  aud?: string;
   iat?: number;
   exp?: number;
 }
@@ -22,10 +24,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('JWT_ACCESS_SECRET'),
+      issuer: 'deal-one.eg',
+      audience: 'deal-one-mobile',
+      algorithms: ['HS256'],
     });
   }
 
   async validate(payload: JwtPayload) {
+    if (!payload.sub || !payload.phone) {
+      throw new UnauthorizedException('JWT token contains invalid claims.');
+    }
+
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
       select: {

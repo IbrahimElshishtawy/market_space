@@ -7,6 +7,7 @@ import { RequestIdMiddleware } from './core/middleware/request-id.middleware';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { AccountsModule } from './modules/accounts/accounts.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { MediaModule } from './modules/media/media.module';
 import { ListingsModule } from './modules/listings/listings.module';
@@ -31,6 +32,7 @@ import { WorkerModule } from './workers/worker.module';
     WorkerModule,
     AuthModule,
     UsersModule,
+    AccountsModule,
     CategoriesModule,
     MediaModule,
     ListingsModule,

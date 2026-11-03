@@ -1,17 +1,12 @@
-import {
-  Injectable,
-  BadRequestException,
-  UnauthorizedException,
-  HttpException,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as crypto from 'crypto';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { PrismaService } from '../../core/database/prisma.service';
+import { PhoneNormalizationService } from '../../core/identity/phone-normalization.service';
+import { SecurityAuditService } from '../../core/security/security-audit.service';
+import { OtpService } from './services/otp.service';
+import { SessionService } from './services/session.service';
 import { SendOtpDto } from './dto/send-otp.dto';
+import { ResendOtpDto } from './dto/resend-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { LoginPasswordDto } from './dto/login-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -19,155 +14,201 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private readonly otpSalt: string;
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
-  ) {
-    this.otpSalt = this.configService.get<string>(
-      'JWT_ACCESS_SECRET',
-      'marketspace_salt',
-    );
-  }
+    private readonly phoneNormalization: PhoneNormalizationService,
+    private readonly otpService: OtpService,
+    private readonly sessionService: SessionService,
+    private readonly securityAudit: SecurityAuditService,
+  ) {}
 
   /**
-   * Dispatches a 6-digit SMS OTP with sliding-window rate limiting.
+   * Dispatches SMS OTP with phone normalization, rate limits, and cooldown.
    */
   async sendOtp(
     dto: SendOtpDto,
-  ): Promise<{ message: string; cooldownSeconds: number }> {
-    const { phone } = dto;
-    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-
-    // Sliding window check: max 3 requests per 15 minutes
-    const recentOtpCount = await this.prisma.otp.count({
-      where: {
-        phone,
-        createdAt: { gte: fifteenMinutesAgo },
-      },
-    });
-
-    if (recentOtpCount >= 3) {
-      throw new HttpException(
-        'Too many OTP requests for this phone number. Please wait 15 minutes before requesting a new code.',
-        HttpStatus.TOO_MANY_REQUESTS,
-      );
-    }
-
-    // Invalidate previous unconsumed OTPs for this phone
-    await this.prisma.otp.updateMany({
-      where: { phone, isConsumed: false },
-      data: { isConsumed: true },
-    });
-
-    // Generate cryptographically secure 6-digit numeric OTP
-    const code = crypto.randomInt(100000, 999999).toString();
-    const otpCodeHash = this.hashOtp(code);
-    const expiresAt = new Date(Date.now() + 180 * 1000); // 180 seconds validity
-
-    await this.prisma.otp.create({
-      data: {
-        phone,
-        codeHash: otpCodeHash,
-        expiresAt,
-      },
-    });
-
-    // Development / Staging simulation logger
-    this.logger.log(
-      `📱 [SMS Gateway Simulation] OTP code for ${phone} is: [ ${code} ] (expires in 180s)`,
+    ipAddress?: string,
+    userAgent?: string,
+    correlationId?: string,
+  ) {
+    return this.otpService.requestOtp(
+      dto.phone,
+      'AUTH',
+      ipAddress,
+      userAgent,
+      correlationId,
     );
-
-    return {
-      message: 'OTP verification code dispatched successfully via SMS',
-      cooldownSeconds: 60,
-    };
   }
 
   /**
-   * Verifies submitted OTP code, activates user account, and returns JWT session pair.
+   * Resends SMS OTP subject to strict cooldown and attempt constraints.
    */
-  async verifyOtp(dto: VerifyOtpDto, userAgent?: string, ipAddress?: string) {
-    const { phone, code } = dto;
+  async resendOtp(
+    dto: ResendOtpDto,
+    ipAddress?: string,
+    userAgent?: string,
+    correlationId?: string,
+  ) {
+    return this.otpService.resendOtp(
+      dto.phone,
+      'AUTH',
+      ipAddress,
+      userAgent,
+      correlationId,
+    );
+  }
 
-    const activeOtp = await this.prisma.otp.findFirst({
-      where: {
-        phone,
-        isConsumed: false,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: { createdAt: 'desc' },
+  /**
+   * Verifies OTP challenge, registers new User and default Individual Account (if new),
+   * or updates verified status (if existing), issuing authoritative JWT token pair.
+   */
+  async verifyOtp(
+    dto: VerifyOtpDto,
+    userAgent?: string,
+    ipAddress?: string,
+    correlationId?: string,
+  ) {
+    // 1. Verify OTP with brute-force lockout and atomic consumption
+    const { normalizedPhone } = await this.otpService.verifyOtp(
+      dto.phone,
+      dto.code,
+      'AUTH',
+      ipAddress,
+      userAgent,
+      correlationId,
+    );
+
+    // 2. Query user identity
+    let user = await this.prisma.user.findUnique({
+      where: { phone: normalizedPhone },
     });
 
-    if (!activeOtp) {
-      throw new BadRequestException(
-        'Invalid or expired OTP code. Please request a new one.',
-      );
-    }
-
-    // Brute-force protection: max 5 attempts per active OTP
-    if (activeOtp.attempts >= 5) {
-      await this.prisma.otp.update({
-        where: { id: activeOtp.id },
-        data: { isConsumed: true },
-      });
-      throw new BadRequestException(
-        'Maximum verification attempts exceeded. Please request a new OTP code.',
-      );
-    }
-
-    const expectedHash = this.hashOtp(code);
-    if (activeOtp.codeHash !== expectedHash) {
-      await this.prisma.otp.update({
-        where: { id: activeOtp.id },
-        data: { attempts: { increment: 1 } },
-      });
-      throw new BadRequestException('Incorrect OTP code.');
-    }
-
-    // Mark OTP as consumed
-    await this.prisma.otp.update({
-      where: { id: activeOtp.id },
-      data: { isConsumed: true },
-    });
-
-    // Upsert user account
-    let user = await this.prisma.user.findUnique({ where: { phone } });
+    let primaryAccount: {
+      id: string;
+      accountType: string;
+      displayName: string;
+      role: string;
+    } | null = null;
 
     if (!user) {
-      user = await this.prisma.user.create({
-        data: {
-          phone,
-          fullName: `User ${phone.slice(-4)}`,
-          isPhoneVerified: true,
-          isActive: true,
+      // 3. User Registration with automatic Individual Account creation in a single transaction
+      const registration = await this.prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            phone: normalizedPhone,
+            fullName: `مستخدم ${normalizedPhone.slice(-4)}`,
+            isPhoneVerified: true,
+            isActive: true,
+          },
+        });
+
+        const slugSeed = `user-${newUser.id.substring(0, 8)}-${Math.random().toString(36).substring(2, 6)}`;
+        const newAccount = await tx.account.create({
+          data: {
+            ownerUserId: newUser.id,
+            accountType: 'individual',
+            displayName: newUser.fullName,
+            slug: slugSeed,
+            verificationStatus: 'approved', // Individual accounts approved upon phone verification
+            isActive: true,
+          },
+        });
+
+        await tx.accountMember.create({
+          data: {
+            accountId: newAccount.id,
+            userId: newUser.id,
+            role: 'owner',
+          },
+        });
+
+        return { user: newUser, account: newAccount };
+      });
+
+      user = registration.user;
+      primaryAccount = {
+        id: registration.account.id,
+        accountType: registration.account.accountType,
+        displayName: registration.account.displayName,
+        role: 'owner',
+      };
+
+      await this.securityAudit.logEvent({
+        action: 'USER_REGISTERED_VIA_OTP',
+        actorType: 'user',
+        actorId: user.id,
+        targetEntity: 'User',
+        targetId: user.id,
+        ipAddress,
+        userAgent,
+        correlationId,
+        metadata: {
+          phone: normalizedPhone,
+          defaultAccountId: primaryAccount.id,
         },
       });
     } else {
+      // Existing User Verification
       if (!user.isActive || user.deletedAt) {
+        await this.securityAudit.logEvent({
+          action: 'LOGIN_REJECTED_INACTIVE_USER',
+          actorType: 'user',
+          actorId: user.id,
+          targetEntity: 'User',
+          targetId: user.id,
+          ipAddress,
+          userAgent,
+          correlationId,
+        });
         throw new UnauthorizedException(
           'Your account has been deactivated or suspended by administration.',
         );
       }
-      user = await this.prisma.user.update({
-        where: { id: user.id },
-        data: {
-          isPhoneVerified: true,
-          isActive: true,
-        },
+
+      if (!user.isPhoneVerified) {
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: { isPhoneVerified: true },
+        });
+      }
+
+      // Fetch user's primary/owned account
+      const ownedMembership = await this.prisma.accountMember.findFirst({
+        where: { userId: user.id, role: 'owner' },
+        include: { account: true },
       });
+
+      if (ownedMembership && ownedMembership.account) {
+        primaryAccount = {
+          id: ownedMembership.accountId,
+          accountType: ownedMembership.account.accountType,
+          displayName: ownedMembership.account.displayName,
+          role: ownedMembership.role,
+        };
+      }
     }
 
-    // Generate tokens & save session
-    const tokens = await this.createSession(
+    // 4. Issue authoritative session tokens
+    const tokens = await this.sessionService.createSession(
       user.id,
       user.phone,
       'USER',
       userAgent,
       ipAddress,
     );
+
+    await this.securityAudit.logEvent({
+      action: 'USER_AUTHENTICATED_OTP',
+      actorType: 'user',
+      actorId: user.id,
+      targetEntity: 'User',
+      targetId: user.id,
+      ipAddress,
+      userAgent,
+      correlationId,
+      metadata: { sessionId: tokens.sessionId },
+    });
 
     return {
       user: {
@@ -176,23 +217,38 @@ export class AuthService {
         fullName: user.fullName,
         role: 'USER',
         avatarUrl: user.avatarUrl,
+        isPhoneVerified: user.isPhoneVerified,
       },
+      activeAccount: primaryAccount,
       tokens,
     };
   }
 
   /**
-   * Authenticates user via Egyptian phone number and password.
+   * Password login fallback for administrative and legacy accounts.
    */
   async loginWithPassword(
     dto: LoginPasswordDto,
     userAgent?: string,
     ipAddress?: string,
+    correlationId?: string,
   ) {
-    const { phone, password } = dto;
+    const normalizedPhone = this.phoneNormalization.normalize(dto.phone);
 
-    const user = await this.prisma.user.findUnique({ where: { phone } });
+    const user = await this.prisma.user.findUnique({
+      where: { phone: normalizedPhone },
+    });
+
     if (!user || !user.passwordHash) {
+      await this.securityAudit.logEvent({
+        action: 'PASSWORD_LOGIN_FAILED',
+        targetEntity: 'Phone',
+        targetId: normalizedPhone,
+        ipAddress,
+        userAgent,
+        correlationId,
+        metadata: { reason: 'USER_NOT_FOUND_OR_NO_PASSWORD' },
+      });
       throw new UnauthorizedException('Invalid phone number or password.');
     }
 
@@ -200,18 +256,46 @@ export class AuthService {
       throw new UnauthorizedException('Account suspended or deactivated.');
     }
 
-    const isMatch = await argon2.verify(user.passwordHash, password);
+    const isMatch = await argon2.verify(user.passwordHash, dto.password);
     if (!isMatch) {
+      await this.securityAudit.logEvent({
+        action: 'PASSWORD_LOGIN_FAILED',
+        actorType: 'user',
+        actorId: user.id,
+        targetEntity: 'User',
+        targetId: user.id,
+        ipAddress,
+        userAgent,
+        correlationId,
+        metadata: { reason: 'PASSWORD_MISMATCH' },
+      });
       throw new UnauthorizedException('Invalid phone number or password.');
     }
 
-    const tokens = await this.createSession(
+    const ownedMembership = await this.prisma.accountMember.findFirst({
+      where: { userId: user.id, role: 'owner' },
+      include: { account: true },
+    });
+
+    const tokens = await this.sessionService.createSession(
       user.id,
       user.phone,
       'USER',
       userAgent,
       ipAddress,
     );
+
+    await this.securityAudit.logEvent({
+      action: 'USER_AUTHENTICATED_PASSWORD',
+      actorType: 'user',
+      actorId: user.id,
+      targetEntity: 'User',
+      targetId: user.id,
+      ipAddress,
+      userAgent,
+      correlationId,
+      metadata: { sessionId: tokens.sessionId },
+    });
 
     return {
       user: {
@@ -220,123 +304,65 @@ export class AuthService {
         fullName: user.fullName,
         role: 'USER',
         avatarUrl: user.avatarUrl,
+        isPhoneVerified: user.isPhoneVerified,
       },
+      activeAccount: ownedMembership?.account
+        ? {
+            id: ownedMembership.accountId,
+            accountType: ownedMembership.account.accountType,
+            displayName: ownedMembership.account.displayName,
+            role: ownedMembership.role,
+          }
+        : null,
       tokens,
     };
   }
 
   /**
-   * Rotates refresh token, invalidating old token and issuing new JWT pair.
+   * Rotates refresh token with reuse detection.
    */
   async refreshToken(
     dto: RefreshTokenDto,
     userAgent?: string,
     ipAddress?: string,
+    correlationId?: string,
   ) {
-    const incomingHash = this.hashRefreshToken(dto.refreshToken);
-
-    const session = await this.prisma.userSession.findFirst({
-      where: {
-        refreshTokenHash: incomingHash,
-        isRevoked: false,
-        expiresAt: { gt: new Date() },
-      },
-      include: { user: true },
-    });
-
-    if (!session || !session.user) {
-      throw new UnauthorizedException('Invalid or expired refresh token.');
-    }
-
-    if (!session.user.isActive || session.user.deletedAt) {
-      throw new UnauthorizedException('Account suspended.');
-    }
-
-    // Invalidate old session (Token Rotation)
-    await this.prisma.userSession.update({
-      where: { id: session.id },
-      data: { isRevoked: true },
-    });
-
-    // Create new session pair
-    const tokens = await this.createSession(
-      session.user.id,
-      session.user.phone,
-      'USER',
+    const token = dto.refreshToken || dto.refresh_token || '';
+    return this.sessionService.rotateRefreshToken(
+      token,
       userAgent,
       ipAddress,
+      correlationId,
     );
-
-    return tokens;
   }
 
   /**
-   * Revokes the active session upon logout.
+   * Revokes active session.
    */
   async logout(
     dto: RefreshTokenDto,
-  ): Promise<{ success: boolean; message: string }> {
-    const hash = this.hashRefreshToken(dto.refreshToken);
-
-    await this.prisma.userSession.updateMany({
-      where: { refreshTokenHash: hash },
-      data: { isRevoked: true },
-    });
-
-    return {
-      success: true,
-      message: 'Logged out successfully; session revoked.',
-    };
-  }
-
-  // -------------------------------------------------------------
-  // HELPER METHODS
-  // -------------------------------------------------------------
-
-  private hashOtp(code: string): string {
-    return crypto
-      .createHash('sha256')
-      .update(code + this.otpSalt)
-      .digest('hex');
-  }
-
-  private hashRefreshToken(token: string): string {
-    return crypto.createHash('sha256').update(token).digest('hex');
-  }
-
-  private async createSession(
-    userId: string,
-    phone: string,
-    role: string,
-    userAgent?: string,
-    ipAddress?: string,
+    authenticatedUserId?: string,
+    correlationId?: string,
   ) {
-    const accessToken = this.jwtService.sign(
-      { sub: userId, phone, role },
-      {
-        secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-        expiresIn: '15m',
-      },
+    const token = dto.refreshToken || dto.refresh_token || '';
+    return this.sessionService.revokeSessionByToken(
+      token,
+      authenticatedUserId,
+      correlationId,
     );
+  }
 
-    const rawRefreshToken = crypto.randomBytes(40).toString('hex');
-    const refreshTokenHash = this.hashRefreshToken(rawRefreshToken);
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+  /**
+   * Revokes all active sessions for authenticated user.
+   */
+  async terminateAllSessions(userId: string, correlationId?: string) {
+    return this.sessionService.revokeAllUserSessions(userId, correlationId);
+  }
 
-    await this.prisma.userSession.create({
-      data: {
-        userId,
-        refreshTokenHash,
-        userAgent: userAgent?.substring(0, 500),
-        ipAddress: (ipAddress || '127.0.0.1').substring(0, 50),
-        expiresAt,
-      },
-    });
-
-    return {
-      accessToken,
-      refreshToken: rawRefreshToken,
-      expiresIn: 900, // 15 minutes in seconds
-    };
+  /**
+   * Lists active sessions for authenticated user.
+   */
+  async getActiveSessions(userId: string) {
+    return this.sessionService.getUserActiveSessions(userId);
   }
 }

@@ -21,7 +21,7 @@
 | **Phase 00** | Architecture Audit & Blueprint Generation | **COMPLETED** | **PASS** | Audited in `17_PRE_IMPLEMENTATION_AUDIT.md` & `20_FINAL_READINESS_REPORT.md`. |
 | **Phase 01** | Project Foundation & Fastify Clean Scaffolding | **COMPLETED** | **PASS** | Implemented & verified in `26_PHASE_01_COMPLETION_REPORT.md`. Build, lint, 46 unit tests, E2E & HTTP live probes passing. |
 | **Phase 02** | Infrastructure, Database Foundation & Design Patterns | **COMPLETED** | **PASS** | Audited in `30_PHASE_02_FINAL_VERIFICATION.md`. Dual Redis, PostGIS 16, 28-table migration tracked in Git (b4939ff), 3-axis state machine implemented (dd6d534), 63 tests passing. |
-| **Phase 03** | Core Identity, Authentication & Phone OTP | **READY** | - | Prerequisite: Phase 02 (COMPLETED). Awaiting user authorization. |
+| **Phase 03** | Core Identity, Authentication & Phone OTP | **PLAN APPROVED — AWAITING FINAL AUTHORIZATION** | - | Prerequisite: Phase 02 (COMPLETED). Hardened plan certified with zero-grace token rotation, atomic OTP verification (row locks, 5-attempt ceiling, single consumption, isolation from invalid attempts), atomic PostgreSQL dispatch rate limiting (independent Phone & IP advisory locks in fixed ascending order enforcing 3/15m Phone, 10/15m IP, and 60s cooldown), and direct PostgreSQL account membership authorization with zero security reliance on Redis (`31_PHASE_03_IMPLEMENTATION_PLAN.md`). Awaiting final user authorization before execution. |
 | **Phase 04** | Multi-Tenant Accounts & Team RBAC | PENDING | - | Prerequisite: Phase 03. |
 | **Phase 05** | Multi-Tenant Authorization & Team RBAC | PENDING | - | Prerequisite: Phase 04. |
 | **Phase 06** | Geographic Locations, Branches & Service Areas | PENDING | - | Prerequisite: Phase 05. |
@@ -81,5 +81,6 @@
 - **Domain Architecture Map:** [`backend_blueprint/28_DOMAIN_ARCHITECTURE_MAP.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/28_DOMAIN_ARCHITECTURE_MAP.md)
 - **Phase 02 Infrastructure & DB Report:** [`backend_blueprint/29_PHASE_02_INFRASTRUCTURE_REPORT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/29_PHASE_02_INFRASTRUCTURE_REPORT.md)
 - **Phase 02 Independent Final Verification:** [`backend_blueprint/30_PHASE_02_FINAL_VERIFICATION.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/30_PHASE_02_FINAL_VERIFICATION.md)
+- **Phase 03 Implementation Plan (Hardened Security Baseline):** [`backend_blueprint/31_PHASE_03_IMPLEMENTATION_PLAN.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/31_PHASE_03_IMPLEMENTATION_PLAN.md)
 - **Automated Test Harness:** [`backend_tests/`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_tests) (Pytest & Locust)
 
