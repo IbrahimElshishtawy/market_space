@@ -70,7 +70,7 @@ export class AuthService {
     await this.prisma.otp.create({
       data: {
         phone,
-        otpCodeHash,
+        codeHash: otpCodeHash,
         expiresAt,
       },
     });
@@ -119,7 +119,7 @@ export class AuthService {
     }
 
     const expectedHash = this.hashOtp(code);
-    if (activeOtp.otpCodeHash !== expectedHash) {
+    if (activeOtp.codeHash !== expectedHash) {
       await this.prisma.otp.update({
         where: { id: activeOtp.id },
         data: { attempts: { increment: 1 } },
@@ -141,24 +141,21 @@ export class AuthService {
         data: {
           phone,
           fullName: `User ${phone.slice(-4)}`,
-          status: 'ACTIVE',
-          phoneVerifiedAt: new Date(),
-          lastLoginAt: new Date(),
+          isPhoneVerified: true,
+          isActive: true,
         },
       });
     } else {
-      if (user.status === 'SUSPENDED') {
+      if (!user.isActive || user.deletedAt) {
         throw new UnauthorizedException(
-          'Your account has been suspended by administration.',
+          'Your account has been deactivated or suspended by administration.',
         );
       }
       user = await this.prisma.user.update({
         where: { id: user.id },
         data: {
-          phoneVerifiedAt: user.phoneVerifiedAt ?? new Date(),
-          lastLoginAt: new Date(),
-          status:
-            user.status === 'PENDING_VERIFICATION' ? 'ACTIVE' : user.status,
+          isPhoneVerified: true,
+          isActive: true,
         },
       });
     }
@@ -167,7 +164,7 @@ export class AuthService {
     const tokens = await this.createSession(
       user.id,
       user.phone,
-      user.role,
+      'USER',
       userAgent,
       ipAddress,
     );
@@ -177,7 +174,7 @@ export class AuthService {
         id: user.id,
         phone: user.phone,
         fullName: user.fullName,
-        role: user.role,
+        role: 'USER',
         avatarUrl: user.avatarUrl,
       },
       tokens,
@@ -199,8 +196,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid phone number or password.');
     }
 
-    if (user.status === 'SUSPENDED') {
-      throw new UnauthorizedException('Account suspended.');
+    if (!user.isActive || user.deletedAt) {
+      throw new UnauthorizedException('Account suspended or deactivated.');
     }
 
     const isMatch = await argon2.verify(user.passwordHash, password);
@@ -208,15 +205,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid phone number or password.');
     }
 
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() },
-    });
-
     const tokens = await this.createSession(
       user.id,
       user.phone,
-      user.role,
+      'USER',
       userAgent,
       ipAddress,
     );
@@ -226,7 +218,7 @@ export class AuthService {
         id: user.id,
         phone: user.phone,
         fullName: user.fullName,
-        role: user.role,
+        role: 'USER',
         avatarUrl: user.avatarUrl,
       },
       tokens,
@@ -256,7 +248,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid or expired refresh token.');
     }
 
-    if (session.user.status === 'SUSPENDED') {
+    if (!session.user.isActive || session.user.deletedAt) {
       throw new UnauthorizedException('Account suspended.');
     }
 
@@ -270,7 +262,7 @@ export class AuthService {
     const tokens = await this.createSession(
       session.user.id,
       session.user.phone,
-      session.user.role,
+      'USER',
       userAgent,
       ipAddress,
     );
@@ -336,7 +328,7 @@ export class AuthService {
         userId,
         refreshTokenHash,
         userAgent: userAgent?.substring(0, 500),
-        ipAddress: ipAddress?.substring(0, 50),
+        ipAddress: (ipAddress || '127.0.0.1').substring(0, 50),
         expiresAt,
       },
     });

@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../core/database/prisma.service';
-import { MediaStatus } from '@prisma/client';
 
 /**
  * MediaCleanupProcessor identifies and purges abandoned or orphaned media
@@ -23,7 +22,7 @@ export class MediaCleanupProcessor {
 
     const result = await this.prisma.listingMedia.deleteMany({
       where: {
-        processingStatus: MediaStatus.PENDING,
+        processingStatus: 'pending',
         createdAt: { lte: twentyFourHoursAgo },
       },
     });

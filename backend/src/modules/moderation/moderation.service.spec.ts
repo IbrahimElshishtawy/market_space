@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReportStatus, ReportReason } from '@prisma/client';
+import { ReportStatus, ReportReason } from '../../core/enums/domain.enums';
 import { ModerationService } from './moderation.service';
 import { PrismaService } from '../../core/database/prisma.service';
 
@@ -38,16 +38,16 @@ describe('ModerationService (Milestone 8)', () => {
   });
 
   describe('fileReport', () => {
-    it('should create an abuse report with PENDING status', async () => {
+    it('should create an abuse report with open status', async () => {
       mockPrisma.report.create.mockResolvedValue({
         id: 'report-1',
-        reason: ReportReason.SPAM,
-        status: ReportStatus.PENDING,
+        reason: ReportReason.SCAM,
+        status: 'open',
       });
 
       const result = await service.fileReport('reporter-1', {
         listingId: 'listing-1',
-        reason: ReportReason.SPAM,
+        reason: ReportReason.SCAM,
         notes: 'إعلان سبام متكرر',
       });
 
@@ -55,9 +55,9 @@ describe('ModerationService (Milestone 8)', () => {
       expect(mockPrisma.report.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            reporterId: 'reporter-1',
+            reporterUserId: 'reporter-1',
             listingId: 'listing-1',
-            status: ReportStatus.PENDING,
+            status: 'open',
           }),
         }),
       );
@@ -68,11 +68,11 @@ describe('ModerationService (Milestone 8)', () => {
     it('should update report status and record an immutable audit log entry', async () => {
       mockPrisma.report.findUnique.mockResolvedValue({
         id: 'report-1',
-        status: ReportStatus.PENDING,
+        status: 'open',
       });
       mockPrisma.report.update.mockResolvedValue({
         id: 'report-1',
-        status: ReportStatus.ACTION_TAKEN,
+        status: 'resolved',
       });
       mockPrisma.auditLog.create.mockResolvedValue({ id: 'log-1' });
 
@@ -80,19 +80,19 @@ describe('ModerationService (Milestone 8)', () => {
         'report-1',
         'moderator-1',
         {
-          status: ReportStatus.ACTION_TAKEN,
+          status: ReportStatus.RESOLVED,
           actionTaken: 'تم حذف الإعلان',
         },
         '127.0.0.1',
       );
 
-      expect(result.status).toBe(ReportStatus.ACTION_TAKEN);
+      expect(result.status).toBe('resolved');
       expect(mockPrisma.auditLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
             actorId: 'moderator-1',
-            actorRole: 'MODERATOR',
-            action: 'ADJUDICATE_REPORT_ACTION_TAKEN',
+            actorType: 'staff',
+            targetEntity: 'report',
             targetId: 'report-1',
           }),
         }),

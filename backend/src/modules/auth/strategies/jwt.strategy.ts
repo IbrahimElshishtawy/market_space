@@ -32,25 +32,23 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         id: true,
         phone: true,
         fullName: true,
-        role: true,
-        status: true,
+        isActive: true,
+        deletedAt: true,
       },
     });
 
-    if (!user) {
-      throw new UnauthorizedException('User account no longer exists');
-    }
-
-    if (user.status === 'SUSPENDED') {
+    if (!user || !user.isActive || user.deletedAt) {
       throw new UnauthorizedException(
-        'Account has been suspended by administration',
+        'User account no longer exists or is inactive',
       );
     }
 
-    if (user.status === 'DELETED') {
-      throw new UnauthorizedException('Account has been deleted');
-    }
-
-    return user;
+    return {
+      id: user.id,
+      phone: user.phone,
+      fullName: user.fullName,
+      role: payload.role || 'USER',
+      status: user.isActive ? 'ACTIVE' : 'SUSPENDED',
+    };
   }
 }

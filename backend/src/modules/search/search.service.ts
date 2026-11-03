@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ListingStatus, MediaType } from '@prisma/client';
 import { PrismaService } from '../../core/database/prisma.service';
 import { SearchQueryDto } from './dto/search-query.dto';
 import { normalizeArabicText } from './arabic-normalizer';
@@ -19,7 +18,6 @@ export class SearchService {
       cityId,
       minPrice,
       maxPrice,
-      condition,
       page = 1,
       limit = 20,
     } = queryDto;
@@ -28,7 +26,7 @@ export class SearchService {
     const skip = (page - 1) * limit;
 
     const where: any = {
-      status: ListingStatus.PUBLISHED,
+      publicationStatus: 'published',
       OR: [
         { title: { contains: normalizedTerm, mode: 'insensitive' } },
         { description: { contains: normalizedTerm, mode: 'insensitive' } },
@@ -38,9 +36,8 @@ export class SearchService {
     };
 
     if (categoryId) where.categoryId = categoryId;
-    if (cityId) where.cityId = cityId;
-    if (governorateId) where.city = { governorateId };
-    if (condition) where.condition = condition;
+    if (cityId) where.area = { cityId };
+    if (governorateId) where.area = { city: { governorateId } };
 
     if (minPrice !== undefined || maxPrice !== undefined) {
       where.price = {};
@@ -54,15 +51,19 @@ export class SearchService {
         where,
         skip,
         take: limit,
-        orderBy: [{ isFeatured: 'desc' }, { refreshedAt: 'desc' }],
+        orderBy: [{ refreshedAt: 'desc' }],
         include: {
           media: {
-            where: { mediaType: MediaType.IMAGE },
+            where: { mediaType: 'image' },
             orderBy: { sortOrder: 'asc' },
             take: 1,
           },
-          city: {
-            include: { governorate: true },
+          area: {
+            include: {
+              city: {
+                include: { governorate: true },
+              },
+            },
           },
         },
       }),
@@ -73,10 +74,8 @@ export class SearchService {
         id: item.id,
         title: item.title,
         price: Number(item.price),
-        condition: item.condition,
-        governorateName: item.city.governorate.nameAr,
-        cityName: item.city.nameAr,
-        isFeatured: item.isFeatured,
+        governorateName: item.area.city.governorate.nameAr,
+        cityName: item.area.city.nameAr,
         primaryImageUrl: item.media[0]?.publicUrl ?? null,
         refreshedAt: item.refreshedAt,
       })),

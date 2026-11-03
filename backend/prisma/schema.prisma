@@ -8,34 +8,585 @@ generator client {
 }
 
 // -------------------------------------------------------------
-// ENUMS
+// MODULE 1: GEOGRAPHY & ADMINISTRATIVE DIVISIONS
+// -------------------------------------------------------------
+
+model Governorate {
+  id        Int      @id @default(autoincrement())
+  nameAr    String   @map("name_ar") @db.VarChar(100)
+  nameEn    String   @map("name_en") @db.VarChar(100)
+  slug      String   @unique @db.VarChar(100)
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0) @map("sort_order")
+  cities    City[]
+
+  @@map("governorates")
+}
+
+model City {
+  id            Int         @id @default(autoincrement())
+  governorateId Int         @map("governorate_id")
+  nameAr        String      @map("name_ar") @db.VarChar(150)
+  nameEn        String      @map("name_en") @db.VarChar(150)
+  slug          String      @db.VarChar(150)
+  isActive      Boolean     @default(true) @map("is_active")
+  governorate   Governorate @relation(fields: [governorateId], references: [id], onDelete: Restrict)
+  areas         Area[]
+
+  @@unique([governorateId, slug], name: "uq_city_gov_slug")
+  @@index([governorateId])
+  @@map("cities")
+}
+
+model Area {
+  id           String                                  @id @default(uuid()) @db.Uuid
+  cityId       Int                                     @map("city_id")
+  nameAr       String                                  @map("name_ar") @db.VarChar(150)
+  nameEn       String                                  @map("name_en") @db.VarChar(150)
+  centroid     Unsupported("geometry(Point, 4326)") @default(dbgenerated("ST_SetSRID(ST_MakePoint(31.2357, 30.0444), 4326)"))
+  isActive     Boolean                                 @default(true) @map("is_active")
+  city         City                                    @relation(fields: [cityId], references: [id], onDelete: Restrict)
+  branches     Branch[]
+  serviceAreas ServiceArea[]
+  projects     Project[]
+  listings     Listing[]
+
+  @@index([cityId])
+  @@index([centroid], type: Gist)
+  @@map("areas")
+}
+
+// -------------------------------------------------------------
+// MODULE 2: IDENTITY, AUTHENTICATION & SESSIONS
+// -------------------------------------------------------------
+
+model User {
+  id                String         @id @default(uuid()) @db.Uuid
+  phone             String         @unique @db.VarChar(20)
+  email             String?        @unique @db.VarChar(255)
+  passwordHash      String?        @map("password_hash") @db.VarChar(255)
+  fullName          String         @map("full_name") @db.VarChar(120)
+  avatarUrl         String?        @map("avatar_url") @db.VarChar(500)
+  isPhoneVerified   Boolean        @default(false) @map("is_phone_verified")
+  isEmailVerified   Boolean        @default(false) @map("is_email_verified")
+  isActive          Boolean        @default(true) @map("is_active")
+  preferredLanguage String         @default("ar") @map("preferred_language") @db.VarChar(5)
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt         DateTime?      @map("deleted_at") @db.Timestamptz
+
+  sessions           UserSession[]
+  devices            UserDevice[]
+  ownedAccounts      Account[]       @relation("AccountOwner")
+  accountMemberships AccountMember[]
+  favorites          Favorite[]
+  reportsFiled       Report[]        @relation("ReporterRelation")
+  buyerConversations Conversation[]  @relation("BuyerConversations")
+  messagesSent       Message[]       @relation("MessageSender")
+  notifications      Notification[]
+
+  @@map("users")
+}
+
+model UserSession {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  refreshTokenHash String   @map("refresh_token_hash") @db.VarChar(255)
+  deviceFingerprint String? @map("device_fingerprint") @db.VarChar(255)
+  userAgent        String?  @map("user_agent") @db.VarChar(500)
+  ipAddress        String   @map("ip_address") @db.VarChar(50)
+  isRevoked        Boolean  @default(false) @map("is_revoked")
+  expiresAt        DateTime @map("expires_at") @db.Timestamptz
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  lastUsedAt       DateTime @default(now()) @map("last_used_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRevoked])
+  @@index([refreshTokenHash])
+  @@map("user_sessions")
+}
+
+model UserDevice {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  fcmToken   String   @map("fcm_token") @db.Text
+  platform   String   @db.VarChar(10) // 'android' | 'ios'
+  appVersion String?  @map("app_version") @db.VarChar(30)
+  lastSeenAt DateTime @default(now()) @map("last_seen_at") @db.Timestamptz
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, fcmToken], name: "uq_user_device_token")
+  @@map("user_devices")
+}
+
+model Otp {
+  id         String   @id @default(uuid()) @db.Uuid
+  phone      String   @db.VarChar(20)
+  codeHash   String   @map("code_hash") @db.VarChar(255)
+  attempts   Int      @default(0) @db.SmallInt
+  isConsumed Boolean  @default(false) @map("is_consumed")
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([phone, expiresAt, isConsumed])
+  @@map("otps")
+}
+
+// -------------------------------------------------------------
+// MODULE 3: MULTI-TENANT ACCOUNTS & RBAC
+// -------------------------------------------------------------
+
+model Account {
+  id                 String    @id @default(uuid()) @db.Uuid
+  ownerUserId        String    @map("owner_user_id") @db.Uuid
+  accountType        String    @map("account_type") @db.VarChar(20) // individual, company, factory, office, store
+  displayName        String    @map("display_name") @db.VarChar(150)
+  slug               String    @unique @db.VarChar(160)
+  bio                String?   @db.Text
+  logoUrl            String?   @map("logo_url") @db.VarChar(500)
+  bannerUrl          String?   @map("banner_url") @db.VarChar(500)
+  verificationStatus String    @default("pending") @map("verification_status") @db.VarChar(20) // pending, approved, rejected
+  isActive           Boolean   @default(true) @map("is_active")
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt          DateTime? @map("deleted_at") @db.Timestamptz
+
+  owner               User                  @relation("AccountOwner", fields: [ownerUserId], references: [id], onDelete: Restrict)
+  members             AccountMember[]
+  verifications       AccountVerification[]
+  branches            Branch[]
+  serviceAreas        ServiceArea[]
+  projects            Project[]
+  listings            Listing[]
+  dailyQuotas         DailyQuota[]
+  sellerConversations Conversation[]        @relation("SellerConversations")
+  reportsAgainst      Report[]              @relation("ReportedAccountRelation")
+
+  @@index([ownerUserId])
+  @@index([verificationStatus, isActive])
+  @@map("accounts")
+}
+
+model AccountMember {
+  id        String   @id @default(uuid()) @db.Uuid
+  accountId String   @map("account_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  role      String   @db.VarChar(20) // owner, manager, lister, responder
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, userId], name: "uq_account_user")
+  @@index([userId])
+  @@map("account_members")
+}
+
+model AccountVerification {
+  id                String    @id @default(uuid()) @db.Uuid
+  accountId         String    @map("account_id") @db.Uuid
+  documentType      String    @map("document_type") @db.VarChar(50)
+  documentNumber    String?   @map("document_number") @db.VarChar(100)
+  fileUrl           String    @map("file_url") @db.VarChar(500)
+  status            String    @default("pending") @db.VarChar(20) // pending, approved, rejected
+  rejectionReason   String?   @map("rejection_reason") @db.Text
+  reviewedByStaffId String?   @map("reviewed_by_staff_id") @db.Uuid
+  reviewedAt        DateTime? @map("reviewed_at") @db.Timestamptz
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  account    Account    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  reviewedBy StaffUser? @relation("ReviewedVerifications", fields: [reviewedByStaffId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("account_verifications")
+}
+
+model Branch {
+  id           String                                  @id @default(uuid()) @db.Uuid
+  accountId    String                                  @map("account_id") @db.Uuid
+  areaId       String                                  @map("area_id") @db.Uuid
+  name         String                                  @db.VarChar(150)
+  address      String                                  @db.Text
+  location     Unsupported("geometry(Point, 4326)") @default(dbgenerated("ST_SetSRID(ST_MakePoint(31.2357, 30.0444), 4326)"))
+  phone        String?                                 @db.VarChar(20)
+  workingHours Json?                                   @default("{}") @map("working_hours")
+  isMain       Boolean                                 @default(false) @map("is_main")
+  createdAt    DateTime                                @default(now()) @map("created_at") @db.Timestamptz
+
+  account  Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  area     Area      @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  listings Listing[]
+
+  @@index([accountId])
+  @@index([location], type: Gist, name: "idx_branches_location")
+  @@map("branches")
+}
+
+model ServiceArea {
+  id        String   @id @default(uuid()) @db.Uuid
+  accountId String   @map("account_id") @db.Uuid
+  areaId    String   @map("area_id") @db.Uuid
+  radiusKm  Int      @default(10) @map("radius_km")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  area    Area    @relation(fields: [areaId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, areaId], name: "uq_service_area")
+  @@map("service_areas")
+}
+
+model Project {
+  id           String    @id @default(uuid()) @db.Uuid
+  accountId    String    @map("account_id") @db.Uuid
+  areaId       String    @map("area_id") @db.Uuid
+  name         String    @db.VarChar(200)
+  status       String    @db.VarChar(30) // under_construction, ready_to_move
+  deliveryDate DateTime? @map("delivery_date") @db.Date
+  description  String?   @db.Text
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  account  Account   @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  area     Area      @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  listings Listing[]
+
+  @@index([accountId])
+  @@map("projects")
+}
+
+// -------------------------------------------------------------
+// MODULE 4: CATEGORIES & DYNAMIC FIELDS TAXONOMY
+// -------------------------------------------------------------
+
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  parentId  String?  @map("parent_id") @db.Uuid
+  nameAr    String   @map("name_ar") @db.VarChar(150)
+  nameEn    String   @map("name_en") @db.VarChar(150)
+  slug      String   @unique @db.VarChar(150)
+  iconUrl   String?  @map("icon_url") @db.VarChar(500)
+  sortOrder Int      @default(0) @map("sort_order")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  parent   Category?       @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children Category[]      @relation("CategoryHierarchy")
+  fields   CategoryField[]
+  listings Listing[]
+
+  @@index([parentId])
+  @@map("categories")
+}
+
+model CategoryField {
+  id              String  @id @default(uuid()) @db.Uuid
+  categoryId      String  @map("category_id") @db.Uuid
+  fieldKey        String  @map("field_key") @db.VarChar(50)
+  labelAr         String  @map("label_ar") @db.VarChar(150)
+  labelEn         String  @map("label_en") @db.VarChar(150)
+  fieldType       String  @map("field_type") @db.VarChar(20) // text, number, select, multi_select, boolean
+  isRequired      Boolean @default(false) @map("is_required")
+  isFilterable    Boolean @default(true) @map("is_filterable")
+  validationRules Json    @default("{}") @map("validation_rules")
+  sortOrder       Int     @default(0) @map("sort_order")
+  isActive        Boolean @default(true) @map("is_active")
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, fieldKey], name: "uq_cat_field_key")
+  @@map("category_fields")
+}
+
+// -------------------------------------------------------------
+// MODULE 5: LISTINGS, MEDIA & ORTHOGONAL LIFECYCLE
+// -------------------------------------------------------------
+
+model Listing {
+  id                  String                                  @id @default(uuid()) @db.Uuid
+  accountId           String                                  @map("account_id") @db.Uuid
+  categoryId          String                                  @map("category_id") @db.Uuid
+  areaId              String                                  @map("area_id") @db.Uuid
+  branchId            String?                                 @map("branch_id") @db.Uuid
+  projectId           String?                                 @map("project_id") @db.Uuid
+  title               String                                  @db.VarChar(200)
+  description         String                                  @db.Text
+  price               Decimal                                 @db.Decimal(14, 2)
+  currency            String                                  @default("EGP") @db.VarChar(3)
+  listingKind         String                                  @map("listing_kind") @db.VarChar(20) // sale, rent, buy, service, product
+  contactChannel      String                                  @default("in_app") @map("contact_channel") @db.VarChar(20) // in_app, external
+  moderationStatus    String                                  @default("draft") @map("moderation_status") @db.VarChar(20) // draft, pending, approved, rejected
+  publicationStatus   String                                  @default("unpublished") @map("publication_status") @db.VarChar(20) // unpublished, published, hidden, archived, expired
+  availabilityStatus  String                                  @default("available") @map("availability_status") @db.VarChar(20) // available, reserved, sold, rented, out_of_stock, discontinued
+  physicalLocation    Unsupported("geometry(Point, 4326)")   @default(dbgenerated("ST_SetSRID(ST_MakePoint(31.2357, 30.0444), 4326)")) @map("physical_location")
+  displayLocation     Unsupported("geometry(Point, 4326)")   @default(dbgenerated("ST_SetSRID(ST_MakePoint(31.2357, 30.0444), 4326)")) @map("display_location")
+  attributes          Json                                    @default("{}")
+  viewsCount          Int                                     @default(0) @map("views_count")
+  contactRevealsCount Int                                     @default(0) @map("contact_reveals_count")
+  approvedAt          DateTime?                               @map("approved_at") @db.Timestamptz
+  refreshedAt         DateTime                                @default(now()) @map("refreshed_at") @db.Timestamptz
+  expiresAt           DateTime                                @map("expires_at") @db.Timestamptz
+  createdAt           DateTime                                @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime                                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt           DateTime?                               @map("deleted_at") @db.Timestamptz
+
+  account       Account        @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  category      Category       @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  area          Area           @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  branch        Branch?        @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  project       Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  media         ListingMedia[]
+  favorites     Favorite[]
+  reports       Report[]
+  conversations Conversation[]
+
+  @@index([moderationStatus, publicationStatus, availabilityStatus, categoryId, refreshedAt(sort: Desc)], name: "idx_listings_search")
+  @@index([accountId])
+  @@index([physicalLocation], type: Gist, name: "idx_listings_physical_loc")
+  @@index([displayLocation], type: Gist, name: "idx_listings_display_loc")
+  @@index([attributes], type: Gin, name: "idx_listings_attributes_gin")
+  @@map("listings")
+}
+
+model ListingMedia {
+  id               String   @id @default(uuid()) @db.Uuid
+  listingId        String   @map("listing_id") @db.Uuid
+  mediaType        String   @map("media_type") @db.VarChar(10) // image, video
+  storageKey       String   @map("storage_key") @db.VarChar(500)
+  publicUrl        String   @map("public_url") @db.VarChar(500)
+  thumbnailUrl     String?  @map("thumbnail_url") @db.VarChar(500)
+  sortOrder        Int      @default(0) @map("sort_order") @db.SmallInt
+  isPrimary        Boolean  @default(false) @map("is_primary")
+  processingStatus String   @default("ready") @map("processing_status") @db.VarChar(20) // pending, ready, failed
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, sortOrder])
+  @@map("listing_media")
+}
+
+// -------------------------------------------------------------
+// MODULE 6: USER ENGAGEMENT, FAVORITES & REPORTS
+// -------------------------------------------------------------
+
+model Favorite {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  listingId String   @map("listing_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId], name: "uq_user_favorite")
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("favorites")
+}
+
+model Report {
+  id                 String    @id @default(uuid()) @db.Uuid
+  reporterUserId     String    @map("reporter_user_id") @db.Uuid
+  listingId          String?   @map("listing_id") @db.Uuid
+  reportedAccountId  String?   @map("reported_account_id") @db.Uuid
+  reason             String    @db.VarChar(30) // scam, inappropriate, false_info, duplicate, prohibited, other
+  details            String?   @db.Text
+  status             String    @default("open") @db.VarChar(20) // open, resolved, dismissed
+  resolvedByStaffId  String?   @map("resolved_by_staff_id") @db.Uuid
+  resolutionNotes    String?   @map("resolution_notes") @db.Text
+  resolvedAt         DateTime? @map("resolved_at") @db.Timestamptz
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  reporter        User       @relation("ReporterRelation", fields: [reporterUserId], references: [id], onDelete: Cascade)
+  listing         Listing?   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  reportedAccount Account?   @relation("ReportedAccountRelation", fields: [reportedAccountId], references: [id], onDelete: Cascade)
+  resolvedBy      StaffUser? @relation("ResolvedReports", fields: [resolvedByStaffId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@map("reports")
+}
+
+// -------------------------------------------------------------
+// MODULE 7: IN-APP CHAT & REAL-TIME MESSAGING
+// -------------------------------------------------------------
+
+model Conversation {
+  id              String   @id @default(uuid()) @db.Uuid
+  listingId       String   @map("listing_id") @db.Uuid
+  buyerUserId     String   @map("buyer_user_id") @db.Uuid
+  sellerAccountId String   @map("seller_account_id") @db.Uuid
+  status          String   @default("open") @db.VarChar(20) // open, closed, archived
+  lastMessageText String?  @map("last_message_text") @db.VarChar(500)
+  lastMessageAt   DateTime @default(now()) @map("last_message_at") @db.Timestamptz
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  listing       Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyer         User      @relation("BuyerConversations", fields: [buyerUserId], references: [id], onDelete: Restrict)
+  sellerAccount Account   @relation("SellerConversations", fields: [sellerAccountId], references: [id], onDelete: Restrict)
+  messages      Message[]
+
+  @@unique([listingId, buyerUserId], name: "uq_conversation_pair")
+  @@index([buyerUserId, lastMessageAt(sort: Desc)])
+  @@index([sellerAccountId, lastMessageAt(sort: Desc)])
+  @@map("conversations")
+}
+
+model Message {
+  id             String    @id @default(uuid()) @db.Uuid
+  conversationId String    @map("conversation_id") @db.Uuid
+  senderUserId   String    @map("sender_user_id") @db.Uuid
+  body           String    @db.Text
+  status         String    @default("sent") @db.VarChar(20) // sent, delivered, read
+  sentAt         DateTime  @default(now()) @map("sent_at") @db.Timestamptz
+  deliveredAt    DateTime? @map("delivered_at") @db.Timestamptz
+  readAt         DateTime? @map("read_at") @db.Timestamptz
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("MessageSender", fields: [senderUserId], references: [id], onDelete: Restrict)
+
+  @@index([conversationId, sentAt])
+  @@map("messages")
+}
+
+// -------------------------------------------------------------
+// MODULE 8: NOTIFICATIONS, QUOTAS & PLATFORM CONTROL
+// -------------------------------------------------------------
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  type      String   @db.VarChar(50)
+  title     String   @db.VarChar(200)
+  body      String   @db.Text
+  payload   Json?    @default("{}")
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+model DailyQuota {
+  id            String   @id @default(uuid()) @db.Uuid
+  accountId     String   @map("account_id") @db.Uuid
+  quotaType     String   @map("quota_type") @db.VarChar(30) // listings, messages, contact_reveal
+  usageDate     DateTime @map("usage_date") @db.Date
+  usedCount     Int      @default(0) @map("used_count")
+  limitSnapshot Int      @map("limit_snapshot")
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, quotaType, usageDate], name: "uq_account_quota_date")
+  @@map("daily_quotas")
+}
+
+model PlatformSetting {
+  key              String    @id @db.VarChar(100)
+  value            Json
+  description      String?   @db.Text
+  updatedByStaffId String?   @map("updated_by_staff_id") @db.Uuid
+  updatedAt        DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+
+  updatedBy StaffUser? @relation("StaffPlatformSettings", fields: [updatedByStaffId], references: [id], onDelete: SetNull)
+
+  @@map("platform_settings")
+}
+
+// -------------------------------------------------------------
+// MODULE 9: STAFF, MODERATION & AUDIT TRAILS
+// -------------------------------------------------------------
+
+model StaffRole {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique @db.VarChar(50)
+  permissions Json        @default("[]")
+  staffUsers  StaffUser[]
+
+  @@map("staff_roles")
+}
+
+model StaffUser {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  fullName     String   @map("full_name") @db.VarChar(120)
+  roleId       Int      @map("role_id")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  role                   StaffRole             @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  reviewedVerifications  AccountVerification[] @relation("ReviewedVerifications")
+  resolvedReports        Report[]              @relation("ResolvedReports")
+  platformSettingsUpdates PlatformSetting[]    @relation("StaffPlatformSettings")
+  moderationActions      ModerationLog[]
+
+  @@map("staff_users")
+}
+
+model ModerationLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  staffId    String?  @map("staff_id") @db.Uuid
+  targetType String   @map("target_type") @db.VarChar(30) // listing, account, report, verification
+  targetId   String   @map("target_id") @db.Uuid
+  action     String   @db.VarChar(30) // approve, reject, suspend, verify, dismiss
+  reasonCode String?  @map("reason_code") @db.VarChar(50)
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  staff StaffUser? @relation(fields: [staffId], references: [id], onDelete: SetNull)
+
+  @@index([targetType, targetId, createdAt(sort: Desc)])
+  @@index([staffId, createdAt(sort: Desc)])
+  @@map("moderation_log")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  actorType    String   @map("actor_type") @db.VarChar(20) // staff, user, system
+  actorId      String?  @map("actor_id") @db.Uuid
+  action       String   @db.VarChar(100)
+  targetEntity String   @map("target_entity") @db.VarChar(50)
+  targetId     String?  @map("target_id") @db.Uuid
+  ipAddress    String?  @map("ip_address") @db.VarChar(50)
+  userAgent    String?  @map("user_agent") @db.VarChar(500)
+  diffPayload  Json?    @map("diff_payload")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([targetEntity, targetId, createdAt(sort: Desc)])
+  @@map("audit_log")
+}
+
+// -------------------------------------------------------------
+// MODULE 10: TRANSACTIONAL OUTBOX (PATTERN F)
+// -------------------------------------------------------------
+
+model OutboxEvent {
+  id            String    @id @default(uuid()) @db.Uuid
+  aggregateType String    @map("aggregate_type") @db.VarChar(50)
+  aggregateId   String    @map("aggregate_id") @db.Uuid
+  eventType     String    @map("event_type") @db.VarChar(100)
+  payload       Json
+  status        String    @default("PENDING") @db.VarChar(20) // PENDING, PROCESSING, PUBLISHED, FAILED
+  error         String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  processedAt   DateTime? @map("processed_at") @db.Timestamptz
+
+  @@index([status, createdAt])
+  @@map("outbox_events")
+}
+
+// -------------------------------------------------------------
+// DOMAIN ENUMS (TYPE DEFINITIONS)
 // -------------------------------------------------------------
 
 enum UserRole {
   USER
   MODERATOR
   SUPER_ADMIN
-}
-
-enum UserStatus {
-  PENDING_VERIFICATION
-  ACTIVE
-  SUSPENDED
-  DELETED
-}
-
-enum FieldType {
-  TEXT
-  NUMBER
-  SELECT
-  MULTI_SELECT
-  BOOLEAN
-}
-
-enum ListingCondition {
-  NEW
-  USED
-  NOT_APPLICABLE
 }
 
 enum ListingStatus {
@@ -47,6 +598,12 @@ enum ListingStatus {
   EXPIRED
   SOLD
   ARCHIVED
+}
+
+enum ListingCondition {
+  NEW
+  USED
+  NOT_APPLICABLE
 }
 
 enum MediaType {
@@ -89,332 +646,11 @@ enum ReportStatus {
   DISMISSED
 }
 
-// -------------------------------------------------------------
-// GEOGRAPHIC DATA (EGYPT)
-// -------------------------------------------------------------
-
-model Governorate {
-  id        Int      @id @default(autoincrement())
-  nameAr    String   @map("name_ar") @db.VarChar(100)
-  nameEn    String   @map("name_en") @db.VarChar(100)
-  slug      String   @unique @db.VarChar(100)
-  isActive  Boolean  @default(true) @map("is_active")
-  cities    City[]
-  users     User[]
-
-  @@map("governorates")
+enum FieldType {
+  TEXT
+  NUMBER
+  SELECT
+  MULTI_SELECT
+  BOOLEAN
 }
 
-model City {
-  id            Int          @id @default(autoincrement())
-  governorateId Int          @map("governorate_id")
-  nameAr        String       @map("name_ar") @db.VarChar(150)
-  nameEn        String       @map("name_en") @db.VarChar(150)
-  slug          String       @db.VarChar(150)
-  isActive      Boolean      @default(true) @map("is_active")
-  governorate   Governorate  @relation(fields: [governorateId], references: [id], onDelete: Restrict)
-  listings      Listing[]
-  users         User[]
-
-  @@unique([governorateId, slug])
-  @@index([governorateId])
-  @@map("cities")
-}
-
-// -------------------------------------------------------------
-// IDENTITY & SESSIONS
-// -------------------------------------------------------------
-
-model User {
-  id                String         @id @default(uuid()) @db.Uuid
-  phone             String         @unique @db.VarChar(20)
-  fullName          String         @map("full_name") @db.VarChar(120)
-  email             String?        @unique @db.VarChar(255)
-  passwordHash      String?        @map("password_hash") @db.VarChar(255)
-  role              UserRole       @default(USER)
-  status            UserStatus     @default(PENDING_VERIFICATION)
-  avatarUrl         String?        @map("avatar_url") @db.VarChar(500)
-  preferredLanguage String         @default("ar") @map("preferred_language") @db.VarChar(5)
-  governorateId     Int?           @map("governorate_id")
-  cityId            Int?           @map("city_id")
-  phoneVerifiedAt   DateTime?      @map("phone_verified_at") @db.Timestamptz
-  lastLoginAt       DateTime?      @map("last_login_at") @db.Timestamptz
-  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt         DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt         DateTime?      @map("deleted_at") @db.Timestamptz
-
-  governorate       Governorate?   @relation(fields: [governorateId], references: [id], onDelete: SetNull)
-  city              City?          @relation(fields: [cityId], references: [id], onDelete: SetNull)
-
-  sessions          UserSession[]
-  listings          Listing[]
-  moderatedListings Listing[]      @relation("ModeratorListings")
-  buyerChats        Conversation[] @relation("BuyerConversations")
-  sellerChats       Conversation[] @relation("SellerConversations")
-  messages          Message[]
-  payments          Payment[]
-  reportsFiled      Report[]       @relation("ReporterRelation")
-  reportsAgainst    Report[]       @relation("ReportedUserRelation")
-  reportsModerated  Report[]       @relation("ModeratorRelation")
-
-  @@map("users")
-}
-
-model UserSession {
-  id               String   @id @default(uuid()) @db.Uuid
-  userId           String   @map("user_id") @db.Uuid
-  refreshTokenHash String   @map("refresh_token_hash") @db.VarChar(255)
-  userAgent        String?  @map("user_agent") @db.VarChar(500)
-  ipAddress        String?  @map("ip_address") @db.VarChar(50)
-  isRevoked        Boolean  @default(false) @map("is_revoked")
-  expiresAt        DateTime @map("expires_at") @db.Timestamptz
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
-
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, isRevoked])
-  @@map("user_sessions")
-}
-
-model Otp {
-  id          String   @id @default(uuid()) @db.Uuid
-  phone       String   @db.VarChar(20)
-  otpCodeHash String   @map("otp_code_hash") @db.VarChar(255)
-  attempts    Int      @default(0)
-  isConsumed  Boolean  @default(false) @map("is_consumed")
-  expiresAt   DateTime @map("expires_at") @db.Timestamptz
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
-
-  @@index([phone, expiresAt, isConsumed])
-  @@map("otps")
-}
-
-// -------------------------------------------------------------
-// CATEGORIES & DYNAMIC FIELDS
-// -------------------------------------------------------------
-
-model Category {
-  id         String          @id @default(uuid()) @db.Uuid
-  parentId   String?         @map("parent_id") @db.Uuid
-  slug       String          @unique @db.VarChar(100)
-  nameAr     String          @map("name_ar") @db.VarChar(150)
-  nameEn     String          @map("name_en") @db.VarChar(150)
-  iconName   String?         @map("icon_name") @db.VarChar(50)
-  sortOrder  Int             @default(0) @map("sort_order")
-  isActive   Boolean         @default(true) @map("is_active")
-  createdAt  DateTime        @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt  DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
-
-  parent     Category?       @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
-  children   Category[]      @relation("CategoryHierarchy")
-  fields     CategoryField[]
-  listings   Listing[]
-
-  @@index([parentId])
-  @@map("categories")
-}
-
-model CategoryField {
-  id              String         @id @default(uuid()) @db.Uuid
-  categoryId      String         @map("category_id") @db.Uuid
-  fieldKey        String         @map("field_key") @db.VarChar(50)
-  fieldType       FieldType      @map("field_type")
-  labelAr         String         @map("label_ar") @db.VarChar(150)
-  labelEn         String         @map("label_en") @db.VarChar(150)
-  isRequired      Boolean        @default(false) @map("is_required")
-  isFilterable    Boolean        @default(true) @map("is_filterable")
-  validationRules Json           @default("{}") @map("validation_rules")
-  sortOrder       Int            @default(0) @map("sort_order")
-  isActive        Boolean        @default(true) @map("is_active")
-
-  category        Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@unique([categoryId, fieldKey])
-  @@index([categoryId, isActive])
-  @@map("category_fields")
-}
-
-// -------------------------------------------------------------
-// LISTINGS & MEDIA
-// -------------------------------------------------------------
-
-model Listing {
-  id              String           @id @default(uuid()) @db.Uuid
-  userId          String           @map("user_id") @db.Uuid
-  categoryId      String           @map("category_id") @db.Uuid
-  cityId          Int              @map("city_id")
-  title           String           @db.VarChar(180)
-  description     String           @db.Text
-  price           Decimal          @db.Decimal(14, 2)
-  condition       ListingCondition @default(USED)
-  status          ListingStatus    @default(PENDING_REVIEW)
-  attributes      Json             @default("{}")
-  contactCount    Int              @default(0) @map("contact_count")
-  viewCount       Int              @default(0) @map("view_count")
-  isFeatured      Boolean          @default(false) @map("is_featured")
-  featuredUntil   DateTime?        @map("featured_until") @db.Timestamptz
-  refreshedAt     DateTime         @default(now()) @map("refreshed_at") @db.Timestamptz
-  expiresAt       DateTime         @map("expires_at") @db.Timestamptz
-  rejectionReason String?          @map("rejection_reason") @db.Text
-  moderatedById   String?          @map("moderated_by") @db.Uuid
-  moderatedAt     DateTime?        @map("moderated_at") @db.Timestamptz
-  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt       DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
-
-  user            User             @relation(fields: [userId], references: [id], onDelete: Restrict)
-  moderator       User?            @relation("ModeratorListings", fields: [moderatedById], references: [id], onDelete: SetNull)
-  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  city            City             @relation(fields: [cityId], references: [id], onDelete: Restrict)
-
-  media           ListingMedia[]
-  conversations   Conversation[]
-  payments        Payment[]
-  reports         Report[]
-
-  @@index([status, refreshedAt(sort: Desc)])
-  @@index([categoryId, price])
-  @@index([cityId, refreshedAt(sort: Desc)])
-  @@map("listings")
-}
-
-model ListingMedia {
-  id               String      @id @default(uuid()) @db.Uuid
-  listingId        String      @map("listing_id") @db.Uuid
-  mediaType        MediaType   @map("media_type")
-  storageKey       String      @map("storage_key") @db.VarChar(500)
-  publicUrl        String      @map("public_url") @db.VarChar(500)
-  thumbnailUrl     String?     @map("thumbnail_url") @db.VarChar(500)
-  streamUid        String?     @map("stream_uid") @db.VarChar(100)
-  durationSeconds  Decimal?    @map("duration_seconds") @db.Decimal(4, 1)
-  sortOrder        Int         @default(0) @map("sort_order")
-  processingStatus MediaStatus @default(READY) @map("processing_status")
-  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz
-
-  listing          Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
-
-  @@index([listingId, sortOrder])
-  @@map("listing_media")
-}
-
-// -------------------------------------------------------------
-// CHAT & CONVERSATIONS
-// -------------------------------------------------------------
-
-model Conversation {
-  id              String    @id @default(uuid()) @db.Uuid
-  listingId       String    @map("listing_id") @db.Uuid
-  buyerId         String    @map("buyer_id") @db.Uuid
-  sellerId        String    @map("seller_id") @db.Uuid
-  lastMessageText String?   @map("last_message_text") @db.VarChar(500)
-  lastMessageAt   DateTime  @default(now()) @map("last_message_at") @db.Timestamptz
-  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
-
-  listing         Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  buyer           User      @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
-  seller          User      @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
-  messages        Message[]
-
-  @@unique([listingId, buyerId])
-  @@index([buyerId, lastMessageAt(sort: Desc)])
-  @@index([sellerId, lastMessageAt(sort: Desc)])
-  @@map("conversations")
-}
-
-model Message {
-  id             String       @id @default(uuid()) @db.Uuid
-  conversationId String       @map("conversation_id") @db.Uuid
-  senderId       String       @map("sender_id") @db.Uuid
-  messageText    String       @map("message_text") @db.Text
-  isRead         Boolean      @default(false) @map("is_read")
-  readAt         DateTime?    @map("read_at") @db.Timestamptz
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
-
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
-
-  @@index([conversationId, createdAt])
-  @@map("messages")
-}
-
-// -------------------------------------------------------------
-// PAYMENTS & MONETIZATION
-// -------------------------------------------------------------
-
-model PromotionPackage {
-  id           String    @id @db.VarChar(50)
-  nameAr       String    @map("name_ar") @db.VarChar(100)
-  nameEn       String    @map("name_en") @db.VarChar(100)
-  type         PromoType
-  priceEgp     Decimal   @map("price_egp") @db.Decimal(10, 2)
-  durationDays Int       @default(0) @map("duration_days")
-  isActive     Boolean   @default(true) @map("is_active")
-
-  payments     Payment[]
-
-  @@map("promotion_packages")
-}
-
-model Payment {
-  id                   String           @id @default(uuid()) @db.Uuid
-  userId               String           @map("user_id") @db.Uuid
-  listingId            String           @map("listing_id") @db.Uuid
-  packageId            String           @map("package_id") @db.VarChar(50)
-  amountEgp            Decimal          @map("amount_egp") @db.Decimal(10, 2)
-  gateway              String           @default("PAYMOB") @db.VarChar(30)
-  gatewayOrderId       String?          @map("gateway_order_id") @db.VarChar(100)
-  gatewayTransactionId String?          @unique @map("gateway_transaction_id") @db.VarChar(100)
-  status               PaymentStatus    @default(PENDING)
-  rawResponse          Json?            @map("raw_response")
-  createdAt            DateTime         @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt            DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
-
-  user                 User             @relation(fields: [userId], references: [id], onDelete: Restrict)
-  listing              Listing          @relation(fields: [listingId], references: [id], onDelete: Restrict)
-  package              PromotionPackage @relation(fields: [packageId], references: [id], onDelete: Restrict)
-
-  @@index([userId])
-  @@index([listingId])
-  @@map("payments")
-}
-
-// -------------------------------------------------------------
-// MODERATION, REPORTS & AUDIT TRAIL
-// -------------------------------------------------------------
-
-model Report {
-  id             String       @id @default(uuid()) @db.Uuid
-  reporterId     String?      @map("reporter_id") @db.Uuid
-  listingId      String?      @map("listing_id") @db.Uuid
-  reportedUserId String?      @map("reported_user_id") @db.Uuid
-  reason         ReportReason
-  notes          String?      @db.Text
-  status         ReportStatus @default(PENDING)
-  moderatorId    String?      @map("moderator_id") @db.Uuid
-  actionTaken    String?      @map("action_taken") @db.Text
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
-  resolvedAt     DateTime?    @map("resolved_at") @db.Timestamptz
-
-  reporter       User?        @relation("ReporterRelation", fields: [reporterId], references: [id], onDelete: SetNull)
-  reportedUser   User?        @relation("ReportedUserRelation", fields: [reportedUserId], references: [id], onDelete: Cascade)
-  moderator      User?        @relation("ModeratorRelation", fields: [moderatorId], references: [id], onDelete: SetNull)
-  listing        Listing?     @relation(fields: [listingId], references: [id], onDelete: Cascade)
-
-  @@index([status, createdAt])
-  @@map("reports")
-}
-
-model AuditLog {
-  id           String   @id @default(uuid()) @db.Uuid
-  actorId      String?  @map("actor_id") @db.Uuid
-  actorRole    String   @map("actor_role") @db.VarChar(50)
-  action       String   @db.VarChar(100)
-  targetEntity String   @map("target_entity") @db.VarChar(50)
-  targetId     String?  @map("target_id") @db.Uuid
-  ipAddress    String?  @map("ip_address") @db.VarChar(50)
-  userAgent    String?  @map("user_agent") @db.VarChar(500)
-  diffPayload  Json?    @map("diff_payload")
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
-
-  @@index([targetEntity, targetId])
-  @@map("audit_logs")
-}

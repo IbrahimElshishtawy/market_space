@@ -29,6 +29,11 @@ export class CreateCategoryDto {
   @IsString()
   iconName?: string;
 
+  @ApiPropertyOptional({ example: 'https://cdn.dealone.com/icons/car.svg' })
+  @IsOptional()
+  @IsString()
+  iconUrl?: string;
+
   @ApiPropertyOptional({ example: 'uuid-parent-category' })
   @IsOptional()
   @IsUUID()

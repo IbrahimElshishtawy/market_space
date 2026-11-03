@@ -18,7 +18,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../core/enums/domain.enums';
 import { ModerationService } from './moderation.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { AdjudicateReportDto } from './dto/adjudicate-report.dto';

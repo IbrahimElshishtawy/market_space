@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { ForbiddenException } from '@nestjs/common';
-import { PaymentStatus } from '@prisma/client';
+import { PaymentStatus } from '../../core/enums/domain.enums';
 import { PaymentsService } from './payments.service';
 import { PrismaService } from '../../core/database/prisma.service';
 

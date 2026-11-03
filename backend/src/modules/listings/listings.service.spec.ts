@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { ForbiddenException, BadRequestException } from '@nestjs/common';
-import { ListingStatus } from '@prisma/client';
+import { ListingStatus } from '../../core/enums/domain.enums';
 import { ListingsService } from './listings.service';
 import { PrismaService } from '../../core/database/prisma.service';
 import { assertValidListingTransition } from './listings-state-machine';
@@ -88,8 +88,8 @@ describe('Listings Service & State Machine (Milestone 3)', () => {
     it('should throw ForbiddenException if non-owner user attempts to alter status', async () => {
       mockPrisma.listing.findUnique.mockResolvedValue({
         id: 'listing-1',
-        userId: 'owner-user-id',
-        status: ListingStatus.PUBLISHED,
+        account: { ownerUserId: 'owner-user-id' },
+        publicationStatus: ListingStatus.PUBLISHED,
       });
 
       await expect(

@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { ListingStatus } from '@prisma/client';
+import { ListingStatus } from '../../../core/enums/domain.enums';
 
 export class UpdateListingStatusDto {
   @ApiProperty({

@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ListingStatus, MediaType } from '@prisma/client';
+import { ListingStatus } from '../../core/enums/domain.enums';
 import { PrismaService } from '../../core/database/prisma.service';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { FilterListingsDto } from './dto/filter-listings.dto';
@@ -80,44 +80,71 @@ export class ListingsService {
 
     // 5. Database Transaction to insert listing and media items
     return this.prisma.$transaction(async (tx) => {
+      // Find or create account for individual user
+      let account = await tx.account.findFirst({
+        where: { ownerUserId: userId },
+      });
+      if (!account) {
+        account = await tx.account.create({
+          data: {
+            ownerUserId: userId,
+            accountType: 'individual',
+            displayName: `User ${userId.substring(0, 6)}`,
+            slug: `user-${userId.substring(0, 8)}`,
+          },
+        });
+      }
+
+      // Find an area in this city or fallback
+      let area = await tx.area.findFirst({
+        where: { cityId: dto.cityId },
+      });
+      if (!area) {
+        area = await tx.area.findFirst();
+      }
+
+      if (!area) {
+        throw new BadRequestException('No geographic area found for this city');
+      }
+
       const listing = await tx.listing.create({
         data: {
-          userId,
+          accountId: account.id,
           categoryId: dto.categoryId,
-          cityId: dto.cityId,
+          areaId: area.id,
           title: dto.title,
           description: dto.description,
           price: dto.price,
-          condition: dto.condition ?? 'USED',
-          status: ListingStatus.PUBLISHED, // Immediate publish for MVP with post-moderation
+          currency: 'EGP',
+          listingKind: 'sale',
+          contactChannel: 'in_app',
+          moderationStatus: 'approved',
+          publicationStatus: 'published',
+          availabilityStatus: 'available',
           attributes: (dynamicAttrs as any) ?? {},
           expiresAt,
         },
       });
 
       // Insert image media records
-      const mediaRecords: Array<{
-        listingId: string;
-        mediaType: MediaType;
-        storageKey: string;
-        publicUrl: string;
-        sortOrder: number;
-      }> = dto.mediaKeys.map((key, index) => ({
+      const mediaRecords = dto.mediaKeys.map((key, index) => ({
         listingId: listing.id,
-        mediaType: MediaType.IMAGE,
+        mediaType: 'image',
         storageKey: key,
         publicUrl: `${this.publicCdnDomain}/${key}`,
         sortOrder: index,
+        processingStatus: 'ready',
       }));
 
       // Insert optional Cloudflare Stream video record if provided
       if (dto.videoStreamUid) {
         mediaRecords.push({
           listingId: listing.id,
-          mediaType: MediaType.VIDEO,
+          mediaType: 'video',
           storageKey: `cloudflare-stream/${dto.videoStreamUid}`,
           publicUrl: `https://videodelivery.net/${dto.videoStreamUid}/manifest/video.m3u8`,
           sortOrder: dto.mediaKeys.length,
+          processingStatus: 'ready',
         });
       }
 
@@ -132,8 +159,12 @@ export class ListingsService {
           category: {
             select: { id: true, nameAr: true, nameEn: true, slug: true },
           },
-          city: {
-            select: { id: true, nameAr: true, nameEn: true, governorate: true },
+          area: {
+            include: {
+              city: {
+                include: { governorate: true },
+              },
+            },
           },
         },
       });
@@ -150,19 +181,17 @@ export class ListingsService {
       cityId,
       minPrice,
       maxPrice,
-      condition,
       cursor,
       limit = 20,
     } = filters;
 
     const where: any = {
-      status: ListingStatus.PUBLISHED,
+      publicationStatus: 'published',
     };
 
     if (categoryId) where.categoryId = categoryId;
-    if (cityId) where.cityId = cityId;
-    if (governorateId) where.city = { governorateId };
-    if (condition) where.condition = condition;
+    if (cityId) where.area = { cityId };
+    if (governorateId) where.area = { city: { governorateId } };
 
     if (minPrice !== undefined || maxPrice !== undefined) {
       where.price = {};
@@ -176,16 +205,20 @@ export class ListingsService {
 
     const items = await this.prisma.listing.findMany({
       where,
-      take: limit + 1, // Fetch +1 to check for next page cursor
-      orderBy: [{ isFeatured: 'desc' }, { refreshedAt: 'desc' }],
+      take: limit + 1,
+      orderBy: [{ refreshedAt: 'desc' }],
       include: {
         media: {
-          where: { mediaType: MediaType.IMAGE },
+          where: { mediaType: 'image' },
           orderBy: { sortOrder: 'asc' },
           take: 1,
         },
-        city: {
-          include: { governorate: true },
+        area: {
+          include: {
+            city: {
+              include: { governorate: true },
+            },
+          },
         },
       },
     });
@@ -204,10 +237,8 @@ export class ListingsService {
         id: item.id,
         title: item.title,
         price: Number(item.price),
-        condition: item.condition,
-        governorateName: item.city.governorate.nameAr,
-        cityName: item.city.nameAr,
-        isFeatured: item.isFeatured,
+        governorateName: item.area.city.governorate.nameAr,
+        cityName: item.area.city.nameAr,
         primaryImageUrl: item.media[0]?.publicUrl ?? null,
         refreshedAt: item.refreshedAt,
       })),
@@ -226,19 +257,29 @@ export class ListingsService {
         category: {
           select: { id: true, nameAr: true, nameEn: true, slug: true },
         },
-        city: { include: { governorate: true } },
-        user: {
-          select: {
-            id: true,
-            fullName: true,
-            avatarUrl: true,
-            createdAt: true,
+        area: {
+          include: {
+            city: {
+              include: { governorate: true },
+            },
+          },
+        },
+        account: {
+          include: {
+            owner: {
+              select: {
+                id: true,
+                fullName: true,
+                avatarUrl: true,
+                createdAt: true,
+              },
+            },
           },
         },
       },
     });
 
-    if (!listing || listing.status === ListingStatus.ARCHIVED) {
+    if (!listing || listing.publicationStatus === 'archived') {
       throw new NotFoundException('Listing not found or has been removed');
     }
 
@@ -246,7 +287,7 @@ export class ListingsService {
     this.prisma.listing
       .update({
         where: { id },
-        data: { viewCount: { increment: 1 } },
+        data: { viewsCount: { increment: 1 } },
       })
       .catch(() => {});
 
@@ -262,25 +303,31 @@ export class ListingsService {
     targetStatus: ListingStatus,
     userRole: string,
   ) {
-    const listing = await this.prisma.listing.findUnique({ where: { id } });
+    const listing = await this.prisma.listing.findUnique({
+      where: { id },
+      include: { account: true },
+    });
 
     if (!listing) {
       throw new NotFoundException('Listing not found');
     }
 
     // Ownership check (IDOR Protection)
-    if (listing.userId !== userId && userRole !== 'SUPER_ADMIN') {
+    if (listing.account.ownerUserId !== userId && userRole !== 'SUPER_ADMIN') {
       throw new ForbiddenException(
         'You do not have permission to modify this listing',
       );
     }
 
     // Enforce state machine transitions
-    assertValidListingTransition(listing.status, targetStatus);
+    assertValidListingTransition(
+      listing.publicationStatus as any,
+      targetStatus,
+    );
 
     return this.prisma.listing.update({
       where: { id },
-      data: { status: targetStatus },
+      data: { publicationStatus: targetStatus },
     });
   }
 
@@ -291,23 +338,27 @@ export class ListingsService {
     const listing = await this.prisma.listing.findUnique({
       where: { id },
       include: {
-        user: { select: { phone: true, fullName: true } },
+        account: {
+          include: {
+            owner: { select: { phone: true, fullName: true } },
+          },
+        },
       },
     });
 
-    if (!listing || listing.status !== ListingStatus.PUBLISHED) {
+    if (!listing || listing.publicationStatus !== 'published') {
       throw new NotFoundException('Listing not available for contact');
     }
 
-    // Atomically increment contact count
+    // Atomically increment contact reveals count
     await this.prisma.listing.update({
       where: { id },
-      data: { contactCount: { increment: 1 } },
+      data: { contactRevealsCount: { increment: 1 } },
     });
 
     return {
-      phone: listing.user.phone,
-      sellerName: listing.user.fullName,
+      phone: listing.account.owner.phone,
+      sellerName: listing.account.owner.fullName,
     };
   }
 }

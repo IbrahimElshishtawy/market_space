@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../core/database/prisma.service';
-import { ListingStatus } from '@prisma/client';
 
 /**
  * ListingExpiryProcessor handles automated expiration of classifieds listings
  * based on platform policy (e.g., standard 30-day listing lifecycle).
  *
- * It transitions listings from PUBLISHED -> EXPIRED, invalidates search caches,
+ * It transitions listings from published -> expired, invalidates search caches,
  * and notifies sellers to renew their listings.
  */
 @Injectable()
@@ -27,11 +26,11 @@ export class ListingExpiryProcessor {
 
     const result = await this.prisma.listing.updateMany({
       where: {
-        status: ListingStatus.PUBLISHED,
+        publicationStatus: 'published',
         expiresAt: { lte: now },
       },
       data: {
-        status: ListingStatus.EXPIRED,
+        publicationStatus: 'expired',
       },
     });
 

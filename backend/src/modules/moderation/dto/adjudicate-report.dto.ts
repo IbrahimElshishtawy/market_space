@@ -1,15 +1,11 @@
 import { IsNotEmpty, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ReportStatus } from '@prisma/client';
+import { ReportStatus } from '../../../core/enums/domain.enums';
 
 export class AdjudicateReportDto {
   @ApiProperty({
-    enum: [
-      ReportStatus.ACTION_TAKEN,
-      ReportStatus.DISMISSED,
-      ReportStatus.REVIEWED,
-    ],
-    example: ReportStatus.ACTION_TAKEN,
+    enum: [ReportStatus.RESOLVED, ReportStatus.DISMISSED, ReportStatus.OPEN],
+    example: ReportStatus.RESOLVED,
   })
   @IsNotEmpty()
   @IsEnum(ReportStatus)

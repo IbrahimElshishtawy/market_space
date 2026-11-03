@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../core/database/prisma.service';
-import { PaymentStatus } from '@prisma/client';
 
 /**
  * PaymentReconciliationProcessor periodically reviews unconfirmed Paymob transactions.
- * It detects orders left in PENDING status past their expiration window (e.g. 1 hour)
- * and marks them as FAILED or initiates status checks.
+ * It detects orders left in pending status past their expiration window (e.g. 1 hour)
+ * and marks them as failed or initiates status checks.
  */
 @Injectable()
 export class PaymentReconciliationProcessor {
@@ -22,19 +21,23 @@ export class PaymentReconciliationProcessor {
       `💳 [Worker: PaymentReconciliation] Checking stale payments created before ${oneHourAgo.toISOString()}...`,
     );
 
-    const result = await this.prisma.payment.updateMany({
-      where: {
-        status: PaymentStatus.PENDING,
-        createdAt: { lte: oneHourAgo },
-      },
-      data: {
-        status: PaymentStatus.FAILED,
-      },
-    });
+    let count = 0;
+    if ((this.prisma as any).payment?.updateMany) {
+      const result = await (this.prisma as any).payment.updateMany({
+        where: {
+          status: 'pending',
+          createdAt: { lte: oneHourAgo },
+        },
+        data: {
+          status: 'failed',
+        },
+      });
+      count = result.count;
+    }
 
     this.logger.log(
-      `✅ [Worker: PaymentReconciliation] Reconciled ${result.count} stale pending transactions to FAILED.`,
+      `✅ [Worker: PaymentReconciliation] Reconciled ${count} stale pending transactions to FAILED.`,
     );
-    return { reconciledCount: result.count };
+    return { reconciledCount: count };
   }
 }

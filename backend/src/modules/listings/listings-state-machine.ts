@@ -1,4 +1,4 @@
-import { ListingStatus } from '@prisma/client';
+import { ListingStatus } from '../../core/enums/domain.enums';
 import { BadRequestException } from '@nestjs/common';
 
 export const VALID_LISTING_TRANSITIONS: Record<ListingStatus, ListingStatus[]> =

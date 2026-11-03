@@ -88,7 +88,7 @@ export class CategoriesService {
         slug: dto.slug,
         nameAr: dto.nameAr,
         nameEn: dto.nameEn,
-        iconName: dto.iconName,
+        iconUrl: dto.iconUrl ?? dto.iconName,
         parentId: dto.parentId,
         sortOrder: dto.sortOrder ?? 0,
         isActive: dto.isActive ?? true,
@@ -102,7 +102,7 @@ export class CategoriesService {
   async upsertCategoryField(categoryId: string, dto: CreateCategoryFieldDto) {
     return this.prisma.categoryField.upsert({
       where: {
-        categoryId_fieldKey: {
+        uq_cat_field_key: {
           categoryId,
           fieldKey: dto.fieldKey,
         },

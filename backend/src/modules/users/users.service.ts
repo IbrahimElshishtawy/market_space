@@ -14,16 +14,13 @@ export class UsersService {
         phone: true,
         fullName: true,
         email: true,
-        role: true,
-        status: true,
         avatarUrl: true,
+        isPhoneVerified: true,
+        isEmailVerified: true,
+        isActive: true,
         preferredLanguage: true,
-        governorateId: true,
-        cityId: true,
-        phoneVerifiedAt: true,
         createdAt: true,
-        governorate: { select: { id: true, nameAr: true, nameEn: true } },
-        city: { select: { id: true, nameAr: true, nameEn: true } },
+        updatedAt: true,
       },
     });
 
@@ -31,7 +28,11 @@ export class UsersService {
       throw new NotFoundException('User profile not found');
     }
 
-    return user;
+    return {
+      ...user,
+      role: 'USER',
+      status: user.isActive ? 'ACTIVE' : 'SUSPENDED',
+    };
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto) {
@@ -41,8 +42,6 @@ export class UsersService {
         fullName: dto.fullName,
         avatarUrl: dto.avatarUrl,
         preferredLanguage: dto.preferredLanguage,
-        governorateId: dto.governorateId,
-        cityId: dto.cityId,
       },
       select: {
         id: true,
@@ -50,8 +49,6 @@ export class UsersService {
         fullName: true,
         avatarUrl: true,
         preferredLanguage: true,
-        governorateId: true,
-        cityId: true,
         updatedAt: true,
       },
     });
@@ -61,14 +58,14 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id: userId },
       data: {
-        status: 'DELETED',
+        isActive: false,
         deletedAt: new Date(),
         fullName: 'Deleted Account',
         avatarUrl: null,
       },
       select: {
         id: true,
-        status: true,
+        isActive: true,
         deletedAt: true,
       },
     });

@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ReportStatus } from '@prisma/client';
 import { PrismaService } from '../../core/database/prisma.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { AdjudicateReportDto } from './dto/adjudicate-report.dto';
@@ -14,12 +13,12 @@ export class ModerationService {
   async fileReport(reporterId: string, dto: CreateReportDto) {
     return this.prisma.report.create({
       data: {
-        reporterId,
+        reporterUserId: reporterId,
         listingId: dto.listingId,
-        reportedUserId: dto.reportedUserId,
+        reportedAccountId: dto.reportedAccountId,
         reason: dto.reason,
-        notes: dto.notes,
-        status: ReportStatus.PENDING,
+        details: dto.details ?? dto.notes,
+        status: 'open',
       },
     });
   }
@@ -31,19 +30,24 @@ export class ModerationService {
     const skip = (page - 1) * limit;
 
     const [total, reports] = await Promise.all([
-      this.prisma.report.count({ where: { status: ReportStatus.PENDING } }),
+      this.prisma.report.count({ where: { status: 'open' } }),
       this.prisma.report.findMany({
-        where: { status: ReportStatus.PENDING },
+        where: { status: 'open' },
         skip,
         take: limit,
         orderBy: { createdAt: 'asc' },
         include: {
           reporter: { select: { id: true, fullName: true, phone: true } },
           listing: {
-            select: { id: true, title: true, price: true, status: true },
+            select: {
+              id: true,
+              title: true,
+              price: true,
+              publicationStatus: true,
+            },
           },
-          reportedUser: {
-            select: { id: true, fullName: true, phone: true, status: true },
+          reportedAccount: {
+            select: { id: true, displayName: true, slug: true },
           },
         },
       }),
@@ -82,9 +86,8 @@ export class ModerationService {
       const updatedReport = await tx.report.update({
         where: { id: reportId },
         data: {
-          status: dto.status,
-          actionTaken: dto.actionTaken,
-          moderatorId,
+          status: 'resolved',
+          resolutionNotes: dto.actionTaken,
           resolvedAt: new Date(),
         },
       });
@@ -92,10 +95,10 @@ export class ModerationService {
       // Immutable audit log
       await tx.auditLog.create({
         data: {
+          actorType: 'staff',
           actorId: moderatorId,
-          actorRole: 'MODERATOR',
           action: `ADJUDICATE_REPORT_${dto.status}`,
-          targetEntity: 'REPORT',
+          targetEntity: 'report',
           targetId: reportId,
           ipAddress: ipAddress?.slice(0, 50),
           userAgent: userAgent?.slice(0, 500),

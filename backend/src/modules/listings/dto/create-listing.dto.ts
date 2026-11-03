@@ -15,7 +15,7 @@ import {
   ArrayMaxSize,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ListingCondition } from '@prisma/client';
+import { ListingCondition } from '../../../core/enums/domain.enums';
 
 export class CreateListingDto {
   @ApiProperty({ example: 'cat-uuid-here' })

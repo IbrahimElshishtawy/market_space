@@ -4,7 +4,6 @@ import {
   ForbiddenException,
   BadRequestException,
 } from '@nestjs/common';
-import { ListingStatus } from '@prisma/client';
 import { PrismaService } from '../../core/database/prisma.service';
 
 @Injectable()
@@ -14,18 +13,19 @@ export class ChatService {
   /**
    * Starts or returns an existing conversation bound to (listing, buyer, seller).
    */
-  async getOrCreateConversation(listingId: string, buyerId: string) {
+  async getOrCreateConversation(listingId: string, buyerUserId: string) {
     const listing = await this.prisma.listing.findUnique({
       where: { id: listingId },
+      include: { account: true },
     });
 
-    if (!listing || listing.status !== ListingStatus.PUBLISHED) {
+    if (!listing || listing.publicationStatus !== 'published') {
       throw new NotFoundException(
         'Listing not found or is no longer published',
       );
     }
 
-    if (listing.userId === buyerId) {
+    if (listing.account.ownerUserId === buyerUserId) {
       throw new BadRequestException(
         'You cannot start a conversation on your own listing',
       );
@@ -33,14 +33,16 @@ export class ChatService {
 
     const existing = await this.prisma.conversation.findUnique({
       where: {
-        listingId_buyerId: {
+        uq_conversation_pair: {
           listingId,
-          buyerId,
+          buyerUserId,
         },
       },
       include: {
         listing: { select: { id: true, title: true, price: true } },
-        seller: { select: { id: true, fullName: true, avatarUrl: true } },
+        sellerAccount: {
+          select: { id: true, displayName: true, logoUrl: true },
+        },
       },
     });
 
@@ -51,12 +53,14 @@ export class ChatService {
     return this.prisma.conversation.create({
       data: {
         listingId,
-        buyerId,
-        sellerId: listing.userId,
+        buyerUserId,
+        sellerAccountId: listing.accountId,
       },
       include: {
         listing: { select: { id: true, title: true, price: true } },
-        seller: { select: { id: true, fullName: true, avatarUrl: true } },
+        sellerAccount: {
+          select: { id: true, displayName: true, logoUrl: true },
+        },
       },
     });
   }
@@ -67,7 +71,10 @@ export class ChatService {
   async getUserConversations(userId: string) {
     return this.prisma.conversation.findMany({
       where: {
-        OR: [{ buyerId: userId }, { sellerId: userId }],
+        OR: [
+          { buyerUserId: userId },
+          { sellerAccount: { ownerUserId: userId } },
+        ],
       },
       orderBy: { lastMessageAt: 'desc' },
       include: {
@@ -84,7 +91,9 @@ export class ChatService {
           },
         },
         buyer: { select: { id: true, fullName: true, avatarUrl: true } },
-        seller: { select: { id: true, fullName: true, avatarUrl: true } },
+        sellerAccount: {
+          select: { id: true, displayName: true, logoUrl: true },
+        },
       },
     });
   }
@@ -100,13 +109,17 @@ export class ChatService {
   ) {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
+      include: { sellerAccount: true },
     });
 
     if (!conversation) {
       throw new NotFoundException('Conversation not found');
     }
 
-    if (conversation.buyerId !== userId && conversation.sellerId !== userId) {
+    if (
+      conversation.buyerUserId !== userId &&
+      conversation.sellerAccount.ownerUserId !== userId
+    ) {
       throw new ForbiddenException(
         'You are not a participant in this conversation',
       );
@@ -116,11 +129,11 @@ export class ChatService {
     await this.prisma.message.updateMany({
       where: {
         conversationId,
-        senderId: { not: userId },
-        isRead: false,
+        senderUserId: { not: userId },
+        status: { not: 'read' },
       },
       data: {
-        isRead: true,
+        status: 'read',
         readAt: new Date(),
       },
     });
@@ -133,7 +146,7 @@ export class ChatService {
         where: { conversationId },
         skip,
         take: limit,
-        orderBy: { createdAt: 'asc' },
+        orderBy: { sentAt: 'asc' },
         include: {
           sender: { select: { id: true, fullName: true, avatarUrl: true } },
         },
@@ -157,6 +170,7 @@ export class ChatService {
   async sendMessage(conversationId: string, senderId: string, text: string) {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
+      include: { sellerAccount: true },
     });
 
     if (!conversation) {
@@ -164,8 +178,8 @@ export class ChatService {
     }
 
     if (
-      conversation.buyerId !== senderId &&
-      conversation.sellerId !== senderId
+      conversation.buyerUserId !== senderId &&
+      conversation.sellerAccount.ownerUserId !== senderId
     ) {
       throw new ForbiddenException(
         'You are not a participant in this conversation',
@@ -176,8 +190,8 @@ export class ChatService {
       const message = await tx.message.create({
         data: {
           conversationId,
-          senderId,
-          messageText: text,
+          senderUserId: senderId,
+          body: text,
         },
         include: {
           sender: { select: { id: true, fullName: true, avatarUrl: true } },

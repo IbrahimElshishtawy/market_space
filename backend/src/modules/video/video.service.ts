@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ListingStatus, MediaType, MediaStatus } from '@prisma/client';
 import * as crypto from 'crypto';
 import { PrismaService } from '../../core/database/prisma.service';
 
@@ -55,14 +54,9 @@ export class VideoService {
 
     if (uid) {
       await this.prisma.listingMedia.updateMany({
-        where: { streamUid: uid },
+        where: { storageKey: { contains: uid } },
         data: {
-          processingStatus: readyToStream
-            ? MediaStatus.READY
-            : MediaStatus.FAILED,
-          durationSeconds: payload?.duration
-            ? Number(payload.duration)
-            : undefined,
+          processingStatus: readyToStream ? 'ready' : 'failed',
         },
       });
     }
@@ -75,11 +69,11 @@ export class VideoService {
    */
   async getVideoFeed(cursor?: string, limit = 10) {
     const where: any = {
-      status: ListingStatus.PUBLISHED,
+      publicationStatus: 'published',
       media: {
         some: {
-          mediaType: MediaType.VIDEO,
-          processingStatus: MediaStatus.READY,
+          mediaType: 'video',
+          processingStatus: 'ready',
         },
       },
     };
@@ -94,11 +88,21 @@ export class VideoService {
       orderBy: { refreshedAt: 'desc' },
       include: {
         media: {
-          where: { mediaType: MediaType.VIDEO },
+          where: { mediaType: 'video' },
           take: 1,
         },
-        city: { include: { governorate: true } },
-        user: { select: { id: true, fullName: true, avatarUrl: true } },
+        area: {
+          include: {
+            city: {
+              include: { governorate: true },
+            },
+          },
+        },
+        account: {
+          include: {
+            owner: { select: { id: true, fullName: true, avatarUrl: true } },
+          },
+        },
       },
     });
 
@@ -115,11 +119,11 @@ export class VideoService {
         listingId: item.id,
         title: item.title,
         price: Number(item.price),
-        cityName: item.city.nameAr,
-        governorateName: item.city.governorate.nameAr,
+        cityName: item.area.city.nameAr,
+        governorateName: item.area.city.governorate.nameAr,
         videoHlsUrl: item.media[0]?.publicUrl ?? null,
-        videoStreamUid: item.media[0]?.streamUid ?? null,
-        seller: item.user,
+        videoStreamUid: item.media[0]?.storageKey ?? null,
+        seller: item.account.owner,
         refreshedAt: item.refreshedAt,
       })),
       nextCursor,

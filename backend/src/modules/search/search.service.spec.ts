@@ -57,9 +57,11 @@ describe('Search Service & Arabic Normalization (Milestone 4)', () => {
           isFeatured: true,
           refreshedAt: new Date(),
           media: [{ publicUrl: 'https://cdn.marketspace.eg/img.jpg' }],
-          city: {
-            nameAr: 'مدينة نصر',
-            governorate: { nameAr: 'القاهرة' },
+          area: {
+            city: {
+              nameAr: 'مدينة نصر',
+              governorate: { nameAr: 'القاهرة' },
+            },
           },
         },
       ]);

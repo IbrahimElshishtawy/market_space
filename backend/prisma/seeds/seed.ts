@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole, UserStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -55,7 +55,7 @@ async function main() {
       for (const city of cairoCities) {
         await prisma.city.upsert({
           where: {
-            governorateId_slug: {
+            uq_city_gov_slug: {
               governorateId: createdGov.id,
               slug: city.slug,
             },
@@ -75,7 +75,7 @@ async function main() {
       for (const city of gizaCities) {
         await prisma.city.upsert({
           where: {
-            governorateId_slug: {
+            uq_city_gov_slug: {
               governorateId: createdGov.id,
               slug: city.slug,
             },
@@ -93,7 +93,7 @@ async function main() {
       slug: 'vehicles',
       nameAr: 'سيارات ومركبات',
       nameEn: 'Vehicles',
-      iconName: 'car',
+      iconUrl: 'car',
       subcategories: [
         { slug: 'cars-for-sale', nameAr: 'سيارات للبيع', nameEn: 'Cars for Sale' },
         { slug: 'motorcycles', nameAr: 'دراجات نارية', nameEn: 'Motorcycles' },
@@ -104,7 +104,7 @@ async function main() {
       slug: 'properties-sale',
       nameAr: 'عقارات للبيع',
       nameEn: 'Properties for Sale',
-      iconName: 'home',
+      iconUrl: 'home',
       subcategories: [
         { slug: 'apartments-sale', nameAr: 'شقق للبيع', nameEn: 'Apartments for Sale' },
         { slug: 'villas-sale', nameAr: 'فلل للبيع', nameEn: 'Villas for Sale' },
@@ -115,7 +115,7 @@ async function main() {
       slug: 'properties-rent',
       nameAr: 'عقارات للإيجار',
       nameEn: 'Properties for Rent',
-      iconName: 'key',
+      iconUrl: 'key',
       subcategories: [
         { slug: 'apartments-rent', nameAr: 'شقق للإيجار', nameEn: 'Apartments for Rent' },
         { slug: 'villas-rent', nameAr: 'فلل للإيجار', nameEn: 'Villas for Rent' },
@@ -125,7 +125,7 @@ async function main() {
       slug: 'mobile-phones',
       nameAr: 'موبايلات وتوابعها',
       nameEn: 'Mobile Phones & Tablets',
-      iconName: 'smartphone',
+      iconUrl: 'smartphone',
       subcategories: [
         { slug: 'phones-tablets', nameAr: 'هواتف وأجهزة لوحية', nameEn: 'Phones & Tablets' },
         { slug: 'phone-accessories', nameAr: 'إكسسوارات هواتف', nameEn: 'Accessories' },
@@ -141,7 +141,7 @@ async function main() {
         slug: cat.slug,
         nameAr: cat.nameAr,
         nameEn: cat.nameEn,
-        iconName: cat.iconName,
+        iconUrl: cat.iconUrl,
       },
     });
 
@@ -157,42 +157,6 @@ async function main() {
         },
       });
     }
-  }
-
-  // 3. Seed Promotion Packages
-  const packages = [
-    {
-      id: 'BUMP_UP',
-      nameAr: 'رفع الإعلان إلى المقدمة',
-      nameEn: 'Bump to Top',
-      type: 'BUMP_UP' as const,
-      priceEgp: 35.0,
-      durationDays: 0,
-    },
-    {
-      id: 'FEATURED_7_DAYS',
-      nameAr: 'إعلان مميز لمدة 7 أيام',
-      nameEn: 'Featured Ad (7 Days)',
-      type: 'FEATURED_7_DAYS' as const,
-      priceEgp: 120.0,
-      durationDays: 7,
-    },
-    {
-      id: 'FEATURED_14_DAYS',
-      nameAr: 'إعلان مميز لمدة 14 يوماً',
-      nameEn: 'Featured Ad (14 Days)',
-      type: 'FEATURED_14_DAYS' as const,
-      priceEgp: 200.0,
-      durationDays: 14,
-    },
-  ];
-
-  for (const pkg of packages) {
-    await prisma.promotionPackage.upsert({
-      where: { id: pkg.id },
-      update: {},
-      create: pkg,
-    });
   }
 
   console.log('✅ Database seed completed successfully!');

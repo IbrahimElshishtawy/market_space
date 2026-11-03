@@ -70,7 +70,7 @@ describe('AuthService (Milestone 1)', () => {
         expect.objectContaining({
           data: expect.objectContaining({
             phone: '+201012345678',
-            otpCodeHash: expect.any(String),
+            codeHash: expect.any(String),
           }),
         }),
       );
@@ -94,7 +94,7 @@ describe('AuthService (Milestone 1)', () => {
       mockPrisma.otp.findFirst.mockResolvedValue({
         id: 'otp-1',
         phone: '+201012345678',
-        otpCodeHash: validHash,
+        codeHash: validHash,
         attempts: 0,
       });
       mockPrisma.otp.update.mockResolvedValue({});
@@ -122,7 +122,7 @@ describe('AuthService (Milestone 1)', () => {
       mockPrisma.otp.findFirst.mockResolvedValue({
         id: 'otp-1',
         phone: '+201012345678',
-        otpCodeHash: 'different_hash',
+        codeHash: 'different_hash',
         attempts: 0,
       });
       mockPrisma.otp.update.mockResolvedValue({});

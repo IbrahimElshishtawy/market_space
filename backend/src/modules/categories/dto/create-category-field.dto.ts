@@ -8,7 +8,7 @@ import {
   IsInt,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { FieldType } from '@prisma/client';
+import { FieldType } from '../../../core/enums/domain.enums';
 
 export class CreateCategoryFieldDto {
   @ApiProperty({ example: 'year' })

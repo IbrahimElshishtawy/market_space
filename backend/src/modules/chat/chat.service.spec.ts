@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
-import { ListingStatus } from '@prisma/client';
 import { ChatService } from './chat.service';
 import { PrismaService } from '../../core/database/prisma.service';
 
@@ -43,8 +42,8 @@ describe('ChatService (Milestone 5)', () => {
     it('should prevent buyer from initiating conversation on their own listing', async () => {
       mockPrisma.listing.findUnique.mockResolvedValue({
         id: 'listing-1',
-        userId: 'user-self',
-        status: ListingStatus.PUBLISHED,
+        account: { ownerUserId: 'user-self' },
+        publicationStatus: 'published',
       });
 
       await expect(
@@ -57,8 +56,8 @@ describe('ChatService (Milestone 5)', () => {
     it('should throw ForbiddenException if user is not a participant in the conversation', async () => {
       mockPrisma.conversation.findUnique.mockResolvedValue({
         id: 'conv-1',
-        buyerId: 'user-buyer',
-        sellerId: 'user-seller',
+        buyerUserId: 'user-buyer',
+        sellerAccount: { ownerUserId: 'user-seller' },
       });
 
       await expect(

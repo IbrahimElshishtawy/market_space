@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { ListingCondition } from '@prisma/client';
+import { ListingCondition } from '../../../core/enums/domain.enums';
 
 export class FilterListingsDto {
   @ApiPropertyOptional()

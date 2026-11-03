@@ -5,23 +5,27 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
+import Redis, { RedisOptions } from 'ioredis';
 
 /**
- * RedisService provides a high-performance, fault-tolerant Redis client
- * for caching, distributed locking, atomic counters, and rate-limiting.
+ * RedisService manages the Dual-Redis topology for Deal One:
+ * 1. Redis Cache (Port 6379): Fast LRU cache, session tracking, rate limiting (allkeys-lru).
+ * 2. Redis Queue (Port 6380): Dedicated message broker for BullMQ async jobs & Outbox (noeviction, AOF).
  *
- * Architecture Highlights:
- * - Resilient connection handling with auto-reconnect and backoff.
- * - In-memory fallback if Redis is disabled or temporarily offline in dev/test.
- * - Atomic operations for high-throughput counters (listing views, phone reveals).
+ * Conforms to ADR-013 and Phase 02 Dual Topology requirements.
  */
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RedisService.name);
-  private client: Redis | null = null;
-  private isConnected = false;
-  private inMemoryFallback = new Map<
+
+  // Dual Clients
+  private cacheClient: Redis | null = null;
+  private queueClient: Redis | null = null;
+
+  private isCacheHealthy = false;
+  private isQueueHealthy = false;
+
+  private readonly inMemoryFallback = new Map<
     string,
     { value: string; expiresAt?: number }
   >();
@@ -29,12 +33,22 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly configService: ConfigService) {}
 
   async onModuleInit() {
-    const host = this.configService.get<string>('REDIS_HOST', 'localhost');
-    const port = this.configService.get<number>('REDIS_PORT', 6379);
-    const password = this.configService.get<string>('REDIS_PASSWORD', '');
+    await Promise.all([this.initCacheClient(), this.initQueueClient()]);
+  }
+
+  private async initCacheClient(): Promise<void> {
+    const host =
+      this.configService.get<string>('REDIS_CACHE_HOST') ||
+      this.configService.get<string>('REDIS_HOST', 'localhost');
+    const port =
+      this.configService.get<number>('REDIS_CACHE_PORT') ||
+      this.configService.get<number>('REDIS_PORT', 6379);
+    const password =
+      this.configService.get<string>('REDIS_CACHE_PASSWORD') ||
+      this.configService.get<string>('REDIS_PASSWORD', '');
 
     try {
-      this.client = new Redis({
+      this.cacheClient = new Redis({
         host,
         port,
         password: password || undefined,
@@ -43,68 +57,191 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         retryStrategy: (times) => {
           if (times > 5) {
             this.logger.warn(
-              `⚠️ Redis retry limit reached (${times}). Falling back to memory cache.`,
+              `⚠️ Redis Cache retry limit reached (${times}) at ${host}:${port}`,
             );
-            return null; // Stop retrying immediately, switch to fallback
+            return null;
           }
           return Math.min(times * 200, 2000);
         },
       });
 
-      this.client.on('connect', () => {
-        this.isConnected = true;
-        this.logger.log(`⚡ Connected to Redis at ${host}:${port}`);
+      this.cacheClient.on('connect', () => {
+        this.isCacheHealthy = true;
+        this.logger.log(`⚡ Connected to Redis Cache at ${host}:${port}`);
       });
 
-      this.client.on('error', (err) => {
-        this.isConnected = false;
-        this.logger.debug(`Redis connection notice: ${err.message}`);
+      this.cacheClient.on('error', (err) => {
+        this.isCacheHealthy = false;
+        this.logger.warn(`Redis Cache connection notice: ${err.message}`);
       });
 
-      this.client.on('close', () => {
-        this.isConnected = false;
+      this.cacheClient.on('close', () => {
+        this.isCacheHealthy = false;
       });
 
-      // Attempt initial connection without blocking app startup if offline
-      await this.client.connect().catch((err) => {
+      await this.cacheClient.connect().catch((err) => {
+        this.isCacheHealthy = false;
         this.logger.warn(
-          `Redis not accessible at startup (${err.message}). Using resilient in-memory fallback.`,
+          `Redis Cache not accessible at startup (${err.message}) at ${host}:${port}.`,
         );
       });
     } catch (err: any) {
-      this.logger.warn(
-        `Redis initialization failed (${err.message}). Operating in in-memory mode.`,
-      );
+      this.isCacheHealthy = false;
+      this.logger.error(`Redis Cache initialization failed: ${err.message}`);
+    }
+  }
+
+  private async initQueueClient(): Promise<void> {
+    const host = this.configService.get<string>(
+      'REDIS_QUEUE_HOST',
+      'localhost',
+    );
+    const port = this.configService.get<number>('REDIS_QUEUE_PORT', 6380);
+    const password = this.configService.get<string>('REDIS_QUEUE_PASSWORD', '');
+
+    try {
+      this.queueClient = new Redis({
+        host,
+        port,
+        password: password || undefined,
+        lazyConnect: true,
+        maxRetriesPerRequest: null, // BullMQ requirement
+        retryStrategy: (times) => {
+          if (times > 5) {
+            this.logger.warn(
+              `⚠️ Redis Queue retry limit reached (${times}) at ${host}:${port}`,
+            );
+            return null;
+          }
+          return Math.min(times * 200, 2000);
+        },
+      });
+
+      this.queueClient.on('connect', () => {
+        this.isQueueHealthy = true;
+        this.logger.log(`📦 Connected to Redis Queue at ${host}:${port}`);
+      });
+
+      this.queueClient.on('error', (err) => {
+        this.isQueueHealthy = false;
+        this.logger.warn(`Redis Queue connection notice: ${err.message}`);
+      });
+
+      this.queueClient.on('close', () => {
+        this.isQueueHealthy = false;
+      });
+
+      await this.queueClient.connect().catch((err) => {
+        this.isQueueHealthy = false;
+        this.logger.warn(
+          `Redis Queue not accessible at startup (${err.message}) at ${host}:${port}.`,
+        );
+      });
+    } catch (err: any) {
+      this.isQueueHealthy = false;
+      this.logger.error(`Redis Queue initialization failed: ${err.message}`);
     }
   }
 
   async onModuleDestroy() {
-    if (this.client) {
-      try {
-        await this.client.quit();
-      } catch {
-        this.client.disconnect();
-      }
+    const disconnects: Promise<any>[] = [];
+
+    if (this.cacheClient) {
+      disconnects.push(
+        this.cacheClient.quit().catch(() => this.cacheClient?.disconnect()),
+      );
+    }
+    if (this.queueClient) {
+      disconnects.push(
+        this.queueClient.quit().catch(() => this.queueClient?.disconnect()),
+      );
+    }
+
+    await Promise.allSettled(disconnects);
+    this.isCacheHealthy = false;
+    this.isQueueHealthy = false;
+  }
+
+  /**
+   * Returns dedicated ioredis client for Redis Cache.
+   */
+  getCacheClient(): Redis | null {
+    return this.cacheClient;
+  }
+
+  /**
+   * Returns dedicated ioredis client for Redis Queue (BullMQ broker).
+   */
+  getQueueClient(): Redis | null {
+    return this.queueClient;
+  }
+
+  /**
+   * Returns connection options formatted for BullMQ Queue and Worker constructors.
+   */
+  getQueueConnectionOptions(): RedisOptions {
+    const host = this.configService.get<string>(
+      'REDIS_QUEUE_HOST',
+      'localhost',
+    );
+    const port = this.configService.get<number>('REDIS_QUEUE_PORT', 6380);
+    const password = this.configService.get<string>('REDIS_QUEUE_PASSWORD', '');
+
+    return {
+      host,
+      port,
+      password: password || undefined,
+      maxRetriesPerRequest: null, // Required by BullMQ
+    };
+  }
+
+  /**
+   * Real ping on Redis Cache (Port 6379).
+   */
+  async pingCache(): Promise<boolean> {
+    if (!this.cacheClient || !this.isCacheHealthy) return false;
+    try {
+      const pong = await this.cacheClient.ping();
+      return pong === 'PONG';
+    } catch {
+      return false;
     }
   }
 
   /**
-   * Retrieves a parsed JSON value by key.
+   * Real ping on Redis Queue (Port 6380).
+   */
+  async pingQueue(): Promise<boolean> {
+    if (!this.queueClient || !this.isQueueHealthy) return false;
+    try {
+      const pong = await this.queueClient.ping();
+      return pong === 'PONG';
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Legacy and standard cache helper methods.
    */
   async get<T = any>(key: string): Promise<T | null> {
-    if (this.isConnected && this.client) {
+    if (this.isCacheHealthy && this.cacheClient) {
       try {
-        const raw = await this.client.get(key);
+        const raw = await this.cacheClient.get(key);
         if (!raw) return null;
         return JSON.parse(raw) as T;
       } catch (err) {
         this.logger.error(
-          `Error reading from Redis key [${key}]: ${(err as Error).message}`,
+          `Error reading from Redis Cache [${key}]: ${(err as Error).message}`,
         );
       }
     }
 
-    // In-memory fallback
+    // Controlled fallback for test mode only
+    if (this.configService.get('NODE_ENV') === 'production') {
+      return null;
+    }
+
     const entry = this.inMemoryFallback.get(key);
     if (!entry) return null;
     if (entry.expiresAt && Date.now() > entry.expiresAt) {
@@ -114,59 +251,53 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return JSON.parse(entry.value) as T;
   }
 
-  /**
-   * Stores a JSON-serializable value with an optional TTL in seconds.
-   */
   async set(key: string, value: any, ttlSeconds?: number): Promise<void> {
     const serialized = JSON.stringify(value);
 
-    if (this.isConnected && this.client) {
+    if (this.isCacheHealthy && this.cacheClient) {
       try {
         if (ttlSeconds && ttlSeconds > 0) {
-          await this.client.set(key, serialized, 'EX', ttlSeconds);
+          await this.cacheClient.set(key, serialized, 'EX', ttlSeconds);
         } else {
-          await this.client.set(key, serialized);
+          await this.cacheClient.set(key, serialized);
         }
         return;
       } catch (err) {
         this.logger.error(
-          `Error writing to Redis key [${key}]: ${(err as Error).message}`,
+          `Error writing to Redis Cache [${key}]: ${(err as Error).message}`,
         );
       }
     }
 
-    // In-memory fallback
+    if (this.configService.get('NODE_ENV') === 'production') {
+      return;
+    }
+
     const expiresAt =
       ttlSeconds && ttlSeconds > 0 ? Date.now() + ttlSeconds * 1000 : undefined;
     this.inMemoryFallback.set(key, { value: serialized, expiresAt });
   }
 
-  /**
-   * Deletes a key from cache.
-   */
   async del(key: string): Promise<void> {
-    if (this.isConnected && this.client) {
+    if (this.isCacheHealthy && this.cacheClient) {
       try {
-        await this.client.del(key);
+        await this.cacheClient.del(key);
       } catch (err) {
         this.logger.error(
-          `Error deleting Redis key [${key}]: ${(err as Error).message}`,
+          `Error deleting from Redis Cache [${key}]: ${(err as Error).message}`,
         );
       }
     }
     this.inMemoryFallback.delete(key);
   }
 
-  /**
-   * Atomically increments an integer key (useful for counters like views/reveals).
-   */
   async incr(key: string): Promise<number> {
-    if (this.isConnected && this.client) {
+    if (this.isCacheHealthy && this.cacheClient) {
       try {
-        return await this.client.incr(key);
+        return await this.cacheClient.incr(key);
       } catch (err) {
         this.logger.error(
-          `Error incrementing Redis key [${key}]: ${(err as Error).message}`,
+          `Error incrementing Redis Cache [${key}]: ${(err as Error).message}`,
         );
       }
     }
@@ -177,10 +308,6 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return next;
   }
 
-  /**
-   * Sliding window rate limiter helper using Redis.
-   * Returns true if allowed, false if limit exceeded.
-   */
   async checkRateLimit(
     key: string,
     maxRequests: number,
@@ -188,8 +315,8 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   ): Promise<{ allowed: boolean; remaining: number }> {
     const current = await this.incr(key);
     if (current === 1) {
-      if (this.isConnected && this.client) {
-        await this.client.expire(key, windowSeconds);
+      if (this.isCacheHealthy && this.cacheClient) {
+        await this.cacheClient.expire(key, windowSeconds);
       }
     }
 
@@ -198,10 +325,15 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return { allowed, remaining };
   }
 
-  /**
-   * Checks whether the live Redis client is connected.
-   */
   isRedisConnected(): boolean {
-    return this.isConnected;
+    return this.isCacheHealthy;
+  }
+
+  isCacheClientConnected(): boolean {
+    return this.isCacheHealthy;
+  }
+
+  isQueueClientConnected(): boolean {
+    return this.isQueueHealthy;
   }
 }
