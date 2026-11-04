@@ -1,168 +1,275 @@
-# 04 – Navigation & User Flows
+# 04 – Navigation Architecture & User Journeys
 
-## 1. Navigation Architecture Overview
+## 1. Navigation Subsystem Overview
 
-Navigation in Deal One is driven by `GoRouter` (v14.6.2) defined in [lib/app/app_router.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_router.dart). The application uses a hybrid navigation strategy combining a root-level persistent **Tab Shell** (`GlobalNavigationScaffold`) and imperative/declarative **Sub-Route Pushes** for detail screens, wizards, and specialized flows.
-
-```
-Root App Entry Point: '/' -> GlobalNavigationScaffold (IndexedStack)
-├── Tab 0: Home ('/')
-├── Tab 1: Explore ('/explore')
-├── Tab 2: Activity ('/activity')
-├── Tab 3: Favorites ('/favorites')
-└── Tab 4: Profile ('/profile')
-```
-
-Sub-routes are pushed on top of the root navigator (`rootNavigatorKey`), hiding the global bottom navigation bar when navigating into full-screen experiences like detail pages, checkout funnels, and maps.
+The Deal One mobile application implements a declarative routing architecture using `go_router` (v18.0.2). Navigation is orchestrated through a root `GoRouter` instance configured in [lib/app/app_router.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_router.dart) and anchored by a persistent multi-tab shell, `GlobalNavigationScaffold` ([lib/features/navigation/presentation/pages/global_navigation_scaffold.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/features/navigation/presentation/pages/global_navigation_scaffold.dart)).
 
 ---
 
-## 2. Complete Application Route Inventory
+## 2. Navigation Architecture Specifications
 
-The following table documents all declared routes in `app_router.dart`:
-
-| Route Path | Route Name Constant | Target Screen Widget | Navigation Type | Access Level |
-|---|---|---|---|---|
-| `/` | `RouteNames.root` | `GlobalNavigationScaffold` | Shell Root | Public |
-| `/real-estate` | `RouteNames.realEstate` | `RealEstatePage` | Push / Nav | Public |
-| `/real-estate/detail` | `RouteNames.realEstateDetail` | `RealEstateDetailPage` | Push | Public |
-| `/real-estate/map` | `RouteNames.realEstateMap` | `RealEstateMapPage` | Push | Public |
-| `/real-estate/reels` | `RouteNames.realEstateReels` | `RealEstateReelsPage` | Push | Public |
-| `/real-estate/favorites` | `RouteNames.realEstateFavorites` | `RealEstateFavoritesPage` | Push | Public |
-| `/real-estate/saved-searches`| `RouteNames.realEstateSavedSearches`| `RealEstateSavedSearchesPage` | Push | Public |
-| `/building-materials` | `RouteNames.buildingMaterials` | `BuildingMaterialsPage` | Push / Nav | Public |
-| `/building-materials/category` | `RouteNames.buildingMaterialsCategoryDetail` | `BuildingMaterialsCategoryDetailPage` | Push | Public |
-| `/building-materials/cart` | `RouteNames.buildingMaterialsCart` | `BuildingMaterialsCartPage` | Push | Public |
-| `/building-materials/checkout` | `RouteNames.buildingMaterialsCheckout` | `BuildingMaterialsCheckoutPage` | Push | Public |
-| `/building-materials/rfq/create` | `RouteNames.buildingMaterialsRfqCreate` | `RfqCreatePage` | Push | Public |
-| `/home-services` | `RouteNames.homeServices` | `HomeServicesCatalogPage` | Push / Nav | Public |
-| `/home-services/ac-service` | `RouteNames.acServiceDetail` | `AcServiceDetailPage` | Push | Public |
-| `/home-services/booking-wizard` | `RouteNames.homeServicesBookingWizard` | `HomeServicesBookingWizardPage` | Push | Public |
-| `/home-services/technician-tracking` | `RouteNames.homeServicesTechnicianTracking` | `TechnicianTrackingPage` | Push | Public |
-| `/home-appliances` | `RouteNames.homeAppliances` | `HomeAppliancesCatalogPage` | Push / Nav | Public |
-| `/home-appliances/cart` | `RouteNames.homeAppliancesCart` | `HomeAppliancesCartPage` | Push | Public |
-| `/home-appliances/checkout` | `RouteNames.homeAppliancesCheckout` | `HomeAppliancesCheckoutPage` | Push | Public |
-| `/cars` | `RouteNames.cars` | `CarsPage` | Push / Nav | Public |
-| `/cars/detail` | `RouteNames.carDetail` | `CarDetailPage` | Push | Public |
-| `/fashion` | `RouteNames.fashion` | `FashionCatalogPage` | Push / Nav | Public |
-| `/fashion/cart` | `RouteNames.fashionCart` | `FashionCartPage` | Push | Public |
-| `/notifications` | `RouteNames.notifications` | `NotificationsPage` | Push | Public |
+| Dimension | Architectural Implementation | Code Evidence | Status |
+|---|---|---|---|
+| **Entry Point** | Direct boot into `RouteNames.root` (`/`) | [app_router.dart#L78](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_router.dart#L78) | **IMPLEMENTED** |
+| **Splash Screen** | **None**. Application boots directly into `GlobalNavigationScaffold` | `main.dart` -> `bootstrap()` -> `MarketSpaceApp` | **NOT IMPLEMENTED** |
+| **Onboarding Flow** | Storage key `StorageKeys.onboardingCompleted` exists, but no UI screens exist | [storage_keys.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/storage/storage_keys.dart#L4) | **NOT IMPLEMENTED** |
+| **Authentication Flow** | No `/login`, `/register`, or `/otp` routes configured | [route_names.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/routing/route_names.dart) | **NOT IMPLEMENTED** |
+| **Route Protection** | `SessionRouteGuard` implements `RouteGuard`, but unconditionally returns `null` | [route_guards.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/routing/route_guards.dart#L18) | **PLACEHOLDER** |
+| **Guest Access** | 100% of routes are publicly accessible without authentication | Entire `AppRouter` configuration | **IMPLEMENTED (Permissive)** |
+| **Bottom Navigation** | 5-tab persistent `IndexedStack` inside `GlobalNavigationScaffold` | `global_navigation_scaffold.dart` | **IMPLEMENTED** |
+| **Back Navigation** | `PopScope` intercepts system back: non-zero tabs redirect to tab 0 before exiting | `global_navigation_scaffold.dart#L42-L52` | **IMPLEMENTED** |
+| **Deep Links** | Declarative URL routes are configured, but native intent schemes are missing | `AndroidManifest.xml` & `Info.plist` | **PARTIALLY IMPLEMENTED** |
 
 ---
 
-## 3. Route Protection, Splash & Authentication Flow Reality
+## 3. Global Navigation Shell & Tab Indexing
 
-- **Splash Screen**: **NOT IMPLEMENTED**. The application boots synchronously from `main.dart` through `bootstrap.dart` into `AppRouter` without an animated splash or branded launch delay.
-- **Onboarding Flow**: **NOT IMPLEMENTED**. There is no onboarding tutorial or welcome carousel for new users.
-- **Authentication Screens**: **NOT IMPLEMENTED**. Although auth endpoints exist in `ApiEndpoints`, there are no UI screens for Login, Phone Verification, OTP input, or Registration.
-- **Route Protection**: **PLACEHOLDER**. `SessionRouteGuard` ([route_guards.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/routing/route_guards.dart)) implements the `RouteGuard` contract, but its `evaluateRedirect()` method unconditionally returns `null`:
-  ```dart
-  class SessionRouteGuard implements RouteGuard {
-    @override
-    String? evaluateRedirect(BuildContext context, GoRouterState state) {
-      // Unconditionally permits navigation to any route without session checks
-      return null;
+The root route (`/`) mounts `GlobalNavigationScaffold`, maintaining five persistent screens inside an `IndexedStack` to preserve state, scroll positions, and user inputs across tab switches:
+
+```mermaid
+graph TD
+    Root["RouteNames.root ('/')<br/>GlobalNavigationScaffold"]
+    Root --> Tab0["Index 0: HomePage<br/>(Discovery Hub)"]
+    Root --> Tab1["Index 1: ExplorePage<br/>(Cross-Sector Search)"]
+    Root --> Tab2["Index 2: MyActivityPage<br/>(Orders & Bookings)"]
+    Root --> Tab3["Index 3: GlobalFavoritesPage<br/>(Saved Items)"]
+    Root --> Tab4["Index 4: ProfilePage<br/>(Account & Settings)"]
+
+    Tab0 -.->|Category Tap| SubRealEstate["/real-estate"]
+    Tab0 -.->|Category Tap| SubMaterials["/building-materials"]
+    Tab0 -.->|Category Tap| SubServices["/home-services"]
+    Tab0 -.->|Category Tap| SubAppliances["/home-appliances"]
+    Tab0 -.->|Category Tap| SubCars["/cars"]
+    Tab0 -.->|Category Tap| SubFashion["/fashion"]
+```
+
+### Back-Navigation Guard (`PopScope`)
+In `GlobalNavigationScaffold`:
+```dart
+PopScope(
+  canPop: _currentIndex == 0,
+  onPopInvokedWithResult: (didPop, _) {
+    if (!didPop && _currentIndex != 0) {
+      setState(() => _currentIndex = 0);
     }
-  }
-  ```
-  Consequently, all screens in the application operate with full guest access.
+  },
+  child: Scaffold(...),
+)
+```
+- When a user presses the hardware or gesture back button on **Explore**, **Activity**, **Favorites**, or **Profile**, the app redirects to the **Home** tab (Index 0).
+- Only when the user is on the **Home** tab does pressing back trigger application dismissal (`canPop: true`).
 
 ---
 
-## 4. Reverse-Engineered User Journey Diagrams
+## 4. Complete Application Route Inventory
 
-### 4.1 Application Launch & Global Shell Journey
+Extracted directly from [lib/core/routing/route_names.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/routing/route_names.dart) and [lib/app/app_router.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_router.dart):
+
+| Route Path | Route Name | Target Page Widget | Navigation Type |
+|---|---|---|---|
+| `/` | `root` | `GlobalNavigationScaffold(initialIndex: tab ?? 0)` | Root Shell |
+| `/explore` | `explore` | `GlobalNavigationScaffold(initialIndex: 1)` | Root Shell Tab 1 |
+| `/my-activity` | `my_activity` | `GlobalNavigationScaffold(initialIndex: 2)` | Root Shell Tab 2 |
+| `/favorites` | `favorites` | `GlobalNavigationScaffold(initialIndex: 3)` | Root Shell Tab 3 |
+| `/profile` | `profile` | `GlobalNavigationScaffold(initialIndex: 4)` | Root Shell Tab 4 |
+| `/notifications` | `global_notifications` | `GlobalNotificationsPage` | Push Route |
+| `/real-estate` | `real_estate` | `RealEstatePage` | Push Route |
+| `/real-estate/detail` | `real_estate_detail` | `RealEstateDetailPage(listingId)` | Push Route (query: `id`) |
+| `/real-estate/map` | `real_estate_map` | `RealEstateMapPage` | Push Route |
+| `/real-estate/favorites` | `real_estate_favorites` | `RealEstateFavoritesPage` | Push Route |
+| `/real-estate/notifications` | `real_estate_notifications` | `RealEstateNotificationsPage` | Push Route |
+| `/real-estate/reels` | `real_estate_reels` | `ReelsPage` | Push Route |
+| `/real-estate/reels/analytics`| `real_estate_reels_analytics`| `ReelAnalyticsPage(ownerId)` | Push Route (query: `ownerId`) |
+| `/real-estate/reels/publish` | `real_estate_reels_publish` | `ReelPublishPage` | Push Route |
+| `/building-materials` | `building_materials` | `BuildingMaterialsPage` | Push Route |
+| `/building-materials/steel-rebar` | `steel_rebar_listing` | `SteelRebarListingPage` | Push Route |
+| `/building-materials/category-detail` | `building_material_category_detail` | `BuildingMaterialCategoryDetailPage` | Push Route |
+| `/building-materials/categories` | `building_materials_categories` | `BuildingMaterialsCategoriesPage` | Push Route |
+| `/building-materials/cart` | `building_materials_cart` | `BuildingMaterialsCartPage` | Push Route |
+| `/building-materials/checkout` | `building_materials_checkout` | `BuildingMaterialsCheckoutPage` | Push Route |
+| `/building-materials/orders` | `building_materials_orders` | `BuildingMaterialsOrdersPage` | Push Route |
+| `/building-materials/orders/detail` | `building_materials_order_detail` | `BuildingMaterialsOrderDetailPage` | Push Route |
+| `/building-materials/notifications` | `building_materials_notifications` | `BuildingMaterialsNotificationsPage` | Push Route |
+| `/building-materials/product-detail` | `building_materials_product_detail` | `BuildingMaterialProductDetailPage` | Push Route |
+| `/building-materials/rfq` | `building_materials_rfq` | `RfqCreatePage` | Push Route |
+| `/home-services` | `home_services` | `HomeServicesPage` | Push Route |
+| `/home-services/catalog` | `home_services_catalog` | `HomeServicesPage(initialTabIndex: 1)` | Push Route |
+| `/home-services/bookings` | `home_services_bookings` | `HomeServicesPage(initialTabIndex: 2)` | Push Route |
+| `/home-services/favorites`| `home_services_favorites`| `HomeServicesPage(initialTabIndex: 3)` | Push Route |
+| `/home-services/notifications` | `home_services_notifications` | `HomeServicesPage(initialTabIndex: 4)` | Push Route |
+| `/home-services/service-detail`| `home_service_detail` | `HomeServiceDetailPage(serviceId)` | Push Route (query: `id`) |
+| `/home-services/ac-service-detail` | `ac_service_detail` | `AcServiceDetailPage` | Push Route |
+| `/home-services/provider-detail` | `home_service_provider_detail` | `ServiceProviderDetailPage(providerId)` | Push Route (query: `id`) |
+| `/home-services/book` | `home_services_booking_wizard` | `HomeServicesBookingWizardPage` | Push Route |
+| `/home-services/booking-detail` | `home_services_booking_detail` | `HomeServiceBookingDetailPage(bookingId)` | Push Route (query: `id`) |
+| `/home-services/tracking` | `home_services_technician_tracking` | `TechnicianTrackingPage(bookingId)` | Push Route (query: `id`) |
+| `/home-appliances` | `home_appliances` | `HomeAppliancesPage` | Push Route |
+| `/home-appliances/category` | `appliance_category_listing` | `ApplianceCategoryListingPage` | Push Route |
+| `/home-appliances/categories` | `home_appliances_categories` | `HomeAppliancesCategoriesPage` | Push Route |
+| `/home-appliances/cart` | `home_appliances_cart` | `HomeAppliancesCartPage` | Push Route |
+| `/home-appliances/checkout` | `home_appliances_checkout` | `HomeAppliancesCheckoutPage` | Push Route |
+| `/home-appliances/orders` | `home_appliances_orders` | `HomeAppliancesOrdersPage` | Push Route |
+| `/home-appliances/notifications` | `home_appliances_notifications` | `HomeAppliancesNotificationsPage` | Push Route |
+| `/cars` | `cars` | `CarsPage` | Push Route |
+| `/cars/browse` | `cars_browse` | `CarsPage` | Push Route |
+| `/cars/detail` | `cars_detail` | `CarDetailPage(carId)` | Push Route (query: `id`) |
+| `/fashion` | `fashion` | `FashionPage` | Push Route |
+| `/fashion/detail` | `fashion_detail` | `FashionProductDetailPage(product)` | Push Route (query: `id`) |
+| `/fashion/cart` | `fashion_cart` | `FashionCartPage` | Push Route |
+| `/fashion/categories` | `fashion_categories` | `FashionCategoriesPage` | Push Route |
+
+---
+
+## 5. Mermaid User Journey Diagrams
+
+### 5.1 Journey 1: Application Launch & Multi-Sector Navigation
+
 ```mermaid
 sequenceDiagram
     autonumber
     actor User
-    participant Main as main.dart
-    participant Bootstrap as bootstrap.dart
-    participant AppRouter as AppRouter (GoRouter)
+    participant Main as main.dart / bootstrap()
+    participant Router as AppRouter (GoRouter)
     participant Shell as GlobalNavigationScaffold
     participant Home as HomePage
+    participant Sector as RealEstatePage
 
-    User->>Main: Launch Mobile App
-    Main->>Bootstrap: bootstrap()
-    Bootstrap->>Bootstrap: Init Storage & AppDependencies
-    Bootstrap->>AppRouter: Create GoRouter (initialLocation: '/')
-    AppRouter->>Shell: Build Shell Scaffold (IndexedStack)
-    Shell->>Home: Render Tab 0 (HomePage)
-    Home-->>User: Display Banners, Sector Grid & Popular Services
+    User->>Main: Tap App Icon
+    Main->>Main: initializeDependencies()
+    Main->>Router: Launch GoRouter(initialLocation: '/')
+    Router->>Shell: Render IndexedStack(index: 0)
+    Shell->>Home: Mount HomePage
+    Home-->>User: Display Banners, Categories & Services
+    User->>Home: Tap "العقارات" (Real Estate Tile)
+    Home->>Router: context.push('/real-estate')
+    Router->>Sector: Mount RealEstatePage
+    Sector-->>User: Display Property Listings & Filter Bar
 ```
 
-### 4.2 Real Estate Discovery & Interactive Map Journey
+---
+
+### 5.2 Journey 2: Searching, Filtering & Viewing Listings (Cars Module)
+
 ```mermaid
-flowchart TD
-    Start([User on HomePage]) --> ClickRE[Click Real Estate Sector Card]
-    ClickRE --> NavRE[Navigate to '/real-estate']
-    NavRE --> REPage[RealEstatePage: View Property Cards]
-    
-    REPage --> FilterTab{User Action}
-    FilterTab -->|Select Category| SwitchTab[Filter by Villas / Apartments / Commercial]
-    FilterTab -->|Click Map Icon| NavMap[Navigate to '/real-estate/map']
-    FilterTab -->|Click Reels Tab| NavReels[Navigate to '/real-estate/reels']
-    FilterTab -->|Click Property Card| NavDetail[Navigate to '/real-estate/detail']
+sequenceDiagram
+    autonumber
+    actor User
+    participant Page as CarsPage
+    participant Ctrl as CarsController
+    participant Repo as MockCarsRepository
+    participant Detail as CarDetailPage
 
-    NavMap --> RenderOSM[Render OSM Tiles + Map Markers]
-    RenderOSM --> TapMarker[Tap Price Marker -> Show Property Bottom Card]
-    TapMarker --> NavDetail
-
-    NavDetail --> ViewMedia[View Photo Gallery Carousel]
-    ViewMedia --> CalcMortgage[Adjust Loan Calculator Sliders]
-    CalcMortgage --> ContactBroker[Click Call or WhatsApp Button]
-    ContactBroker --> End([External App Triggered / Interaction Logged])
+    User->>Page: Type "مرسيدس" in search bar
+    Page->>Ctrl: setFilter(searchQuery: "مرسيدس")
+    Ctrl->>Repo: getCars(filter)
+    Repo-->>Ctrl: Return filtered CarListingModel list
+    Ctrl-->>Page: ValueListenableBuilder updates list view
+    User->>Page: Tap Brand Chip "Mercedes-Benz"
+    Page->>Ctrl: setFilter(brand: "Mercedes-Benz")
+    Ctrl->>Repo: getCars(filter)
+    Repo-->>Ctrl: Return filtered list
+    User->>Page: Tap Car Listing Card ("مرسيدس C180")
+    Page->>Detail: context.push('/cars/detail?id=car-01')
+    Detail-->>User: Render specs, gallery, and contact buttons
 ```
 
-### 4.3 Home Services: 6-Step Booking Wizard Journey
+---
+
+### 5.3 Journey 3: Home Services 6-Step Booking Wizard & Tracking
+
 ```mermaid
-stateDiagram-v2
-    [*] --> Catalog: User navigates to '/home-services'
-    Catalog --> ServiceDetail: Select 'AC Service' ('/home-services/ac-service')
-    ServiceDetail --> BookingWizard: Click 'احجز الآن' ('/home-services/booking-wizard')
-    
-    state BookingWizard {
-        [*] --> Step1: Step 1 - Choose Sub-Services & Problem Type
-        Step1 --> Step2: Next -> Step 2 - Select Appointment Date & Time Slot
-        Step2 --> Step3: Next -> Step 3 - Enter Address, City & Apt Number
-        Step3 --> Step4: Next -> Step 4 - Select Technician Tier (Engineer / Specialist)
-        Step4 --> Step5: Next -> Step 5 - Review Order & Apply Promo Code
-        Step5 --> Step6: Confirm Booking -> Step 6 - Order Receipt & Tracking Prompt
-    }
+sequenceDiagram
+    autonumber
+    actor User
+    participant Catalog as HomeServicesPage
+    participant Detail as AcServiceDetailPage
+    participant Wizard as HomeServicesBookingWizardPage
+    participant Tracking as TechnicianTrackingPage
 
-    BookingWizard --> TrackingPage: Tap 'تتبع الفني' ('/home-services/technician-tracking')
-    TrackingPage --> [*]: Real-time status: Confirmed -> Assigned -> En Route -> Arrived
+    User->>Catalog: Select "صيانة وتكييف" (AC Services)
+    Catalog->>Detail: context.push('/home-services/ac-service-detail')
+    Detail-->>User: Display checklist (cleaning, freon)
+    User->>Detail: Tap "احجز موعد الصيانة"
+    Detail->>Wizard: context.push('/home-services/book')
+    
+    rect rgb(240, 240, 240)
+        Note over User,Wizard: 6-Step Booking Wizard
+        User->>Wizard: Step 1: Select Sub-Service (غسيل وشحن فريون)
+        User->>Wizard: Step 2: Pick Date & Time Slot
+        User->>Wizard: Step 3: Enter Address & Governorate
+        User->>Wizard: Step 4: Choose Technician Tier (مهندس معتمد)
+        User->>Wizard: Step 5: Review Summary & Apply Coupon
+        User->>Wizard: Step 6: Confirm Booking
+    end
+
+    Wizard->>Tracking: context.push('/home-services/tracking?id=srv-book-01')
+    Tracking-->>User: Visual Live Status (Technician on the way)
 ```
 
-### 4.4 Building Materials: Daily Factory Prices & RFQ Submission
+---
+
+### 5.4 Journey 4: Building Materials RFQ & Staged Checkout
+
 ```mermaid
 sequenceDiagram
     autonumber
     actor Contractor as Contractor / Engineer
-    participant BMPage as BuildingMaterialsPage
-    participant DailyTicker as DailyPriceBanner
-    participant RFQPage as RfqCreatePage
-    participant ActivityRepo as UnifiedActivityRepository
+    participant Hub as BuildingMaterialsPage
+    participant RFQ as RfqCreatePage
+    participant Cart as BuildingMaterialsCartPage
+    participant Calc as ShippingCalculator
+    participant Orders as BuildingMaterialsOrdersPage
 
-    Contractor->>BMPage: Open '/building-materials'
-    BMPage->>DailyTicker: Fetch Daily Quotes (Ezz Steel, Suez Cement)
-    DailyTicker-->>Contractor: Display Live Prices per Metric Ton (EGP)
-    Contractor->>BMPage: Click 'طلب تسعير مشروع (RFQ)'
-    BMPage->>RFQPage: Open '/building-materials/rfq/create'
-    Contractor->>RFQPage: Fill Project Details (Name, Governorate, Tonnage)
-    Contractor->>RFQPage: Attach Required Delivery Schedule & Terms
-    Contractor->>RFQPage: Submit RFQ Form
-    RFQPage->>ActivityRepo: Append RFQ to User Activity Timeline
-    RFQPage-->>Contractor: Display Success Dialog & Order Reference
+    Contractor->>Hub: Tap "طلب تسعيرة خاصة (RFQ)"
+    Hub->>RFQ: context.push('/building-materials/rfq')
+    Contractor->>RFQ: Fill Project Name, Material (حديد تسليح), Tonnage (40 Ton), Location
+    Contractor->>RFQ: Submit RFQ Form
+    RFQ-->>Contractor: SnackBar ("تم تقديم طلب التسعيرة بنجاح")
+    
+    Contractor->>Hub: Add 20 Tons Cement to Cart
+    Hub->>Cart: context.push('/building-materials/cart')
+    Cart->>Calc: calculateFreight(weight: 20 ton, governorate: 'الجيزة')
+    Calc-->>Cart: Return Truck Requirement (Trailer) & Freight Cost
+    Cart->>Orders: Submit Staged Order (Delivery 1 & Delivery 2)
+    Orders-->>Contractor: Order Placed (Track in My Activity)
 ```
 
-### 4.5 Global Cross-Sector Search Journey
+---
+
+### 5.5 Journey 5: User Profile Management & Settings
+
 ```mermaid
-flowchart LR
-    ExploreTab[Tap Explore Tab] --> RenderSearch[ExplorePage: Search Bar + Tags]
-    RenderSearch --> TypeQuery[Type 'فيلا' or 'حديد 12 مم' or 'صيانة تكييف']
-    TypeQuery --> FilterSector[Filter by Sector Chips or 'All']
-    FilterSector --> Results[Unified Results List]
-    Results --> ClickResult[Click Result Item]
-    ClickResult --> RouteTarget[Navigate Directly to Item Detail Screen]
+sequenceDiagram
+    autonumber
+    actor User
+    participant Shell as GlobalNavigationScaffold
+    participant Profile as ProfilePage
+    participant Ctrl as ProfileController
+    participant Dialog as EditProfileDialog
+    participant Theme as ThemeController
+
+    User->>Shell: Tap "حسابي" Tab (Index 4)
+    Shell->>Profile: Display User Profile Screen
+    User->>Profile: Tap Edit Profile ("تعديل البيانات")
+    Profile->>Dialog: showDialog(EditProfileDialog)
+    User->>Dialog: Update Name & Phone Number -> Tap "حفظ"
+    Dialog->>Ctrl: updateProfile(fullName, phone, ...)
+    Ctrl-->>Profile: Re-render with updated info
+    User->>Profile: Toggle Theme Mode Switch
+    Profile->>Theme: toggleTheme()
+    Theme-->>User: Switch instantly between Light and Dark Monochrome
 ```
+
+---
+
+## 6. Analysis of Missing User Journeys
+
+1. **User Registration & Login Journey**:
+   - Status: **NOT IMPLEMENTED**.
+   - The user cannot log in or authenticate; the app operates in persistent guest mode.
+2. **General Classified Ad Creation & Editing Journey**:
+   - Status: **NOT IMPLEMENTED**.
+   - No generic "Post Ad" flow exists for cars, properties, appliances, or clothes. (Only RFQ submission for materials and Reel publishing simulation exist).
+3. **Messaging & In-App Chat Journey**:
+   - Status: **NOT IMPLEMENTED**.
+   - Tapping "Chat" buttons triggers a local `SnackBar` notice (`ScaffoldMessenger`), with no chat screens or messaging controllers implemented.

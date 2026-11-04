@@ -2,28 +2,60 @@
 
 ## 1. Directory Tree Overview
 
-The Deal One codebase is organized under a modular, feature-oriented structure with strict boundaries separating core framework utilities, shared primitives, and feature-specific business modules.
+The Deal One mobile codebase (`market_space`) is organized using a **Hybrid Feature-First with Layered MVVM** structure. The repository isolates core infrastructure, shared UI widgets, and thirteen business features into clear boundaries:
 
 ```
 market_space/
-├── android/                           # Android native runner & build scripts
-├── ios/                               # iOS native runner & configuration
+├── android/                           # Native Android project configuration
+│   └── app/src/main/AndroidManifest.xml
+├── ios/                               # Native iOS project configuration
+│   └── Runner/Info.plist
 ├── assets/                            # Static media and mock assets
-│   ├── icons/                         # SVG and PNG UI icons
-│   ├── images/                        # Static local illustrations & placeholders
 │   └── mock_data/                     # Raw JSON mock responses
 ├── lib/
-│   ├── app/                           # Top-level application shell & DI
-│   ├── bootstrap/                     # Pre-run initialization & error observers
+│   ├── app/                           # Root application setup & DI container
+│   ├── bootstrap/                     # Bootstrap entry, environment observer
 │   ├── core/                          # Cross-cutting infrastructure & design system
-│   ├── features/                      # Isolated business feature modules (13 modules)
-│   ├── l10n/                          # Localization ARB source files
-│   ├── shared/                        # Shared UI components & legacy bridge
-│   └── main.dart                      # Application binary entry point
-├── test/                              # Automated test suites (unit & widget)
-├── analysis_options.yaml              # Static analysis and linting rules
-├── l10n.yaml                          # Flutter localization configuration
-└── pubspec.yaml                       # Package manifest and asset declarations
+│   │   ├── config/                    # Environment & configuration models
+│   │   ├── constants/                 # Core system constants
+│   │   ├── errors/                    # Exceptions, failures & error mapping
+│   │   ├── localization/              # Locale controller & language management
+│   │   ├── logging/                   # Logger implementation & sanitization
+│   │   ├── mock_data/                 # Mock configuration & data provider
+│   │   ├── navigation/                # Dynamic section navigation configuration
+│   │   ├── network/                   # DioApiClient & interceptors pipeline
+│   │   ├── notifications/             # Core notification models & repositories
+│   │   ├── platform/                  # Device & OS platform detection
+│   │   ├── routing/                   # Route names & route guard placeholders
+│   │   ├── security/                  # Session states & token providers
+│   │   ├── storage/                   # SharedPreferences & FlutterSecureStorage
+│   │   ├── theme/                     # Colors, typography, spacing, radii, theme data
+│   │   └── utils/                     # Formatting, input normalization, responsiveness
+│   ├── features/                      # Thirteen (13) business feature modules
+│   │   ├── activity/                  # Unified orders, bookings & inquiries timeline
+│   │   ├── building_materials/        # Heavy materials, RFQs, shipping & staged delivery
+│   │   ├── cars/                      # Automotive listings, brand filters & specs
+│   │   ├── explore/                   # Cross-sector unified search engine
+│   │   ├── fashion/                   # Apparel, departments, variants & cart
+│   │   ├── favorites/                 # Cross-sector bookmark aggregator
+│   │   ├── home/                      # Multi-sector discovery hub & dynamic carousels
+│   │   ├── home_appliances/           # Electronics & decoration e-commerce
+│   │   ├── home_services/             # Maintenance services, booking wizard & tracking
+│   │   ├── navigation/                # Global scaffold with IndexedStack & bottom nav
+│   │   ├── notifications/             # Sector-segmented alert feeds
+│   │   ├── profile/                   # User profile, addresses, settings & preferences
+│   │   └── real_estate/               # Property classifieds, map & multimedia reels
+│   ├── l10n/                          # ARB translation sources & generated delegates
+│   ├── shared/                        # Shared UI components, models, and legacy bridges
+│   └── main.dart                      # Application binary entrypoint
+├── test/                              # Automated test suites (38 test files)
+│   ├── core/                          # Infrastructure & navigation tests
+│   ├── features/                      # Feature controller and widget tests
+│   └── unit/                          # Utility & configuration validator tests
+├── analysis_options.yaml              # Static analysis and lint rules
+├── devtools_options.yaml              # DevTools configuration
+├── l10n.yaml                          # Flutter localization tool config
+└── pubspec.yaml                       # Package manifest & asset declarations
 ```
 
 ---
@@ -31,111 +63,122 @@ market_space/
 ## 2. Directory Responsibilities and Key File Breakdown
 
 ### 2.1 `lib/main.dart` & `lib/bootstrap/`
-- **Responsibility**: Binary entry point, environment parameter extraction, global error traps, and async service pre-flight initialization.
+- **Responsibility**: Application startup, environment parameter injection, global uncaught error trapping, and asynchronous dependency initialization.
 - **Key Files**:
-  - [lib/main.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/main.dart): Invokes `bootstrap(...)` passing initial configuration.
-  - [lib/bootstrap/bootstrap.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/bootstrap/bootstrap.dart): Initializes `WidgetsFlutterBinding`, configures `PlatformDispatcher.onError` and `FlutterError.onError`, instantiates `AppConfig`, initializes `SharedPreferences` and `FlutterSecureStorage`, registers `AppDependencies`, and launches `runApp()`.
-  - [lib/bootstrap/bootstrap_observer.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/bootstrap/bootstrap_observer.dart): Implements `WidgetsBindingObserver` to monitor app lifecycle events (`resumed`, `inactive`, `paused`, `detached`).
+  - [lib/main.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/main.dart): The root entrypoint. Invokes `bootstrap(AppConfig.development())`.
+  - [lib/bootstrap/bootstrap.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/bootstrap/bootstrap.dart): Calls `WidgetsFlutterBinding.ensureInitialized()`, triggers `initializeDependencies(config)`, sets up fallback UI on fatal initialization crashes, and mounts `runApp(MarketSpaceApp(dependencies: dependencies))`.
+  - [lib/bootstrap/bootstrap_observer.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/bootstrap/bootstrap_observer.dart): Binds to `WidgetsBindingObserver`, capturing Flutter lifecycle transitions (`resumed`, `inactive`, `paused`, `detached`) and installs `PlatformDispatcher.instance.onError` and `FlutterError.onError` global traps.
 
 ### 2.2 `lib/app/`
-- **Responsibility**: Application root assembly, dependency propagation via Flutter's element tree, and top-level router binding.
+- **Responsibility**: Root application assembly, ambient dependency propagation via Flutter's element tree, theme control, and declarative router binding.
 - **Key Files**:
-  - [lib/app/app.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app.dart): Root `StatefulWidget` (`App`) creating `MaterialApp.router`. Binds `ThemeNotifier`, `LocaleNotifier`, `AppThemeData`, and routes.
-  - [lib/app/app_dependencies.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_dependencies.dart): Houses `AppDependencies` container and `AppDependenciesScope` (`InheritedWidget`). Exposes static helper `AppDependenciesScope.of(context)`.
-  - [lib/app/app_router.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_router.dart): Configures `GoRouter` instance, root navigation key, sub-routes, route builders, and error pages.
+  - [lib/app/app.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app.dart): Defines `MarketSpaceApp`, building `MaterialApp.router` with dynamic theme and locale observers.
+  - [lib/app/app_dependencies.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_dependencies.dart): Houses the `AppDependencies` container class and the `AppDependenciesScope` (`InheritedWidget`). Exposes `AppDependencies.of(context)` for ambient lookup.
+  - [lib/app/app_router.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_router.dart): Configures `GoRouter` with all declarative routes, parameter parsing, error builders (`AppErrorView`), and route guard integration.
+  - [lib/app/app_theme.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_theme.dart): Houses `ThemeController` (`ValueNotifier<ThemeMode>`) which loads and persists `ThemeMode.light`, `ThemeMode.dark`, or `ThemeMode.system`.
+  - [lib/app/app_localization.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_localization.dart): Convenience accessor for `AppLocalizations.of(context)`.
+
+---
 
 ### 2.3 `lib/core/` (Cross-Cutting Infrastructure)
 
 | Subdirectory | Core Responsibility | Key Implementation Files |
 |---|---|---|
-| `core/config/` | Environment & runtime configuration | [app_config.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/config/app_config.dart), [config_validator.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/config/config_validator.dart) |
-| `core/constants/` | Global keys & design constants | [app_constants.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/constants/app_constants.dart) |
-| `core/errors/` | Custom exceptions & failure models | [failures.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/errors/failures.dart), [error_handler.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/errors/error_handler.dart) |
-| `core/navigation/` | Sector navigation configurations | [section_navigation_registry.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/navigation/config/section_navigation_registry.dart), [navigation_config.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/navigation/config/navigation_config.dart) |
-| `core/network/` | HTTP client, endpoints & interceptors | [api_client.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/network/api_client.dart), [api_endpoints.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/network/api_endpoints.dart), `interceptors/` |
-| `core/routing/` | Route name definitions & route guards | [route_names.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/routing/route_names.dart), [route_guards.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/routing/route_guards.dart) |
-| `core/security/` | Session management & token provider | [secure_token_provider.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/security/secure_token_provider.dart), [session_state.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/security/session_state.dart) |
-| `core/storage/` | SharedPreferences & secure storage | [preferences_service.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/storage/preferences_service.dart), [secure_storage_service.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/storage/secure_storage_service.dart), [storage_keys.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/storage/storage_keys.dart) |
-| `core/theme/` | Design system tokens & Material theme | [app_colors.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_colors.dart), [app_theme_data.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_theme_data.dart), [app_spacing.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_spacing.dart), [app_radii.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_radii.dart), [app_text_styles.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_text_styles.dart) |
-| `core/utils/` | Formatting and formatting helpers | [formatters.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/utils/formatters.dart) |
-
-### 2.4 `lib/features/` (Application Verticals and Core Flows)
-
-The 13 business and navigational modules located under `lib/features/` follow an internal sub-structure consisting of:
-- `data/`: Repositories, mock datasets, models, and JSON serialization.
-- `presentation/`: Pages, sub-widgets, bottom sheets, and presentation controllers.
-- `domain/` (present in selected features like `home_services`): Abstract entities and repository contracts.
-
-```
-lib/features/
-├── activity/                          # Aggregated timeline of user actions (orders, bookings, requests)
-├── building_materials/                # Heavy construction commodities (Steel, Cement, Bricks, RFQs)
-├── cars/                              # Automotive marketplace (listings, filter sheets, brands)
-├── explore/                           # Multi-sector search discovery with recent searches
-├── fashion/                           # Apparel & accessories catalog, department navigation & cart
-├── favorites/                         # Cross-vertical unified bookmark repository & UI
-├── home/                              # Central multi-sector launchpad & banner hub
-├── home_appliances/                   # Consumer electronics, white goods & decoration
-├── home_services/                     # Maintenance catalog, technician tracking & 6-step booking wizard
-├── navigation/                        # Global scaffold, bottom nav bar & sector switcher
-├── notifications/                     # Sector-filtered push & transactional notifications
-├── profile/                           # User settings, addresses, language/theme toggles
-└── real_estate/                       # Properties, map view (OSM), and short video/photo reels
-```
-
-### 2.5 `lib/shared/` (Cross-Module Widgets & Legacy Artifacts)
-- **Shared Production Widgets**:
-  - [safe_network_image.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/safe_network_image.dart): Defensive wrapper for `Image.network` handling empty URLs, protocol validation, loading shimmers, and error fallbacks.
-  - [app_error_view.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/app_error_view.dart): Standardized error state widget with retry callbacks.
-  - [app_loading_indicator.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/app_loading_indicator.dart): Adaptive progress indicator styled with theme tokens.
-- **Orphaned / Legacy Artifact**:
-  - [market_home_screen.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/market_home_screen.dart) and [market_repository.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/data/market_repository.dart): An early GCC-currency (AED/SAR) prototype screen. It is unreferenced by `AppRouter` and completely unreachable from the live UI.
-
-### 2.6 Native Configurations
-- **Android (`android/app/src/main/`)**:
-  - [AndroidManifest.xml](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/android/app/src/main/AndroidManifest.xml): Configures Flutter activity, launch theme, and window sizing.
-  - **Critical Defect**: Missing `<uses-permission android:name="android.permission.INTERNET"/>` in the main release manifest (only present in `debug` and `profile` manifests).
-- **iOS (`ios/Runner/`)**:
-  - [Info.plist](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/ios/Runner/Info.plist): Standard Flutter runner configuration. No custom camera, location, or photo library permission strings (`NSCameraUsageDescription`, `NSLocationWhenInUseUsageDescription`) are declared.
+| `config/` | Environment flavors, timeouts, base URLs, and runtime validation | `app_config.dart`, `environment.dart`, `config_validator.dart` |
+| `constants/` | System-wide static constants | `app_constants.dart` |
+| `errors/` | Exceptions, failure representations, and error mapping | `app_exception.dart`, `app_failure.dart`, `error_mapper.dart` |
+| `localization/` | Language switching, locale controller, and supported locales | `locale_controller.dart`, `supported_locales.dart` |
+| `logging/` | Logger abstraction and PII/sensitive data redaction | `app_logger.dart`, `log_sanitizer.dart` |
+| `mock_data/` | Global mock data provider and toggle flags | `mock_data_provider.dart`, `mock_data_config.dart` |
+| `navigation/` | Dynamic bottom navigation bar configurations per sector | `section_navigation_registry.dart`, `section_navigation_config.dart`, `navigation_item_config.dart` |
+| `network/` | Dio HTTP client wrapper, headers, and interceptor pipeline | `api_client.dart`, `api_endpoints.dart`, `api_headers.dart`, `network_info.dart`, `interceptors/` |
+| `notifications/` | Core notification models and in-memory repository | `app_notification.dart`, `notification_repository.dart`, `notification_controller.dart` |
+| `platform/` | Native platform capabilities and OS identification | `platform_info.dart` |
+| `routing/` | Route constants and session guard interfaces | `route_names.dart`, `route_guards.dart` |
+| `security/` | Token management abstractions and session states | `token_provider.dart`, `secure_token_provider.dart`, `session_state.dart` |
+| `storage/` | Key-value and encrypted keychain storage wrappers | `preferences_service.dart`, `secure_storage_service.dart`, `storage_keys.dart` |
+| `theme/` | High-contrast monochrome design tokens and theme data | `app_colors.dart`, `app_radii.dart`, `app_spacing.dart`, `app_text_styles.dart`, `app_theme_data.dart`, `theme_context_extensions.dart` |
+| `utils/` | Formatting utilities, input sanitization, and responsive helpers | `date_time_utils.dart`, `input_normalizers.dart`, `responsive_utils.dart` |
 
 ---
 
-## 3. Architectural Boundary Integrity
+### 2.4 `lib/features/` (Business Modules Breakdown)
 
-```mermaid
-graph TD
-    subgraph Core_Boundary ["Core Infrastructure (lib/core)"]
-        Theme["Theme Tokens"]
-        Storage["Storage Services"]
-        Network["Network Client & Endpoints"]
-        Errors["Failure Models"]
-    end
+Each feature adheres to a structured separation:
+- `data/`: Mock datasets, serialization models, and repository implementations.
+- `presentation/`: UI screens (`pages/`), UI sub-components (`widgets/`), and controllers (`controllers/`).
+- `domain/`: (Present in select modules like `home_services`) Entity models and abstract repository contracts.
 
-    subgraph Feature_Boundary ["Feature Modules (lib/features)"]
-        Feature_UI["Presentation (Pages / Widgets)"]
-        Feature_Ctrl["Controllers (ValueNotifier)"]
-        Feature_Repo["Repositories (Mock Implementations)"]
-        Feature_Models["Domain Models"]
-    end
-
-    subgraph App_Boundary ["App Root (lib/app & lib/bootstrap)"]
-        AppShell["App Root Widget"]
-        AppDepsContainer["AppDependencies (DI)"]
-        RouterConfig["GoRouter Table"]
-    end
-
-    AppShell --> AppDepsContainer
-    AppShell --> RouterConfig
-    RouterConfig --> Feature_UI
-    Feature_UI --> Feature_Ctrl
-    Feature_Ctrl --> Feature_Repo
-    Feature_Repo --> Feature_Models
-    
-    Feature_UI -.->|Imports Theme & Formatting| Core_Boundary
-    Feature_Ctrl -.->|Imports Storage| Storage
-    Feature_Repo -.->|Targeted for Network| Network
+```
+lib/features/
+├── activity/
+│   ├── data/ (models/unified_activity_model.dart, repositories/unified_activity_repository.dart)
+│   └── presentation/ (controllers/unified_activity_controller.dart, pages/my_activity_page.dart)
+├── building_materials/
+│   ├── data/ (mock/, models/, repositories/)
+│   └── presentation/ (controllers/, pages/, services/shipping_calculator.dart, unit_converter.dart)
+├── cars/
+│   ├── data/ (mock/mock_cars_data.dart, models/, repositories/cars_repository.dart)
+│   └── presentation/ (controllers/cars_controller.dart, pages/, widgets/)
+├── explore/
+│   ├── data/ (repositories/explore_repository.dart)
+│   └── presentation/ (controllers/explore_controller.dart, pages/explore_page.dart, widgets/)
+├── fashion/
+│   ├── data/ (mock/mock_fashion_data.dart, models/, repositories/fashion_repository.dart)
+│   └── presentation/ (controllers/fashion_controller.dart, fashion_cart_controller.dart, pages/, widgets/)
+├── favorites/
+│   ├── data/ (models/, repositories/unified_favorites_repository.dart)
+│   └── presentation/ (controllers/unified_favorites_controller.dart, pages/global_favorites_page.dart)
+├── home/
+│   ├── data/ (mock/mock_home_data.dart, models/)
+│   └── presentation/ (pages/home_page.dart, widgets/hero_carousel/, home_header/, home_nav_bar/, main_categories/)
+├── home_appliances/
+│   ├── cart/ (data/, presentation/pages/home_appliances_cart_page.dart)
+│   ├── categories/ (presentation/pages/home_appliances_categories_page.dart)
+│   ├── checkout/ (presentation/pages/home_appliances_checkout_page.dart)
+│   ├── notifications/ (data/, presentation/pages/home_appliances_notifications_page.dart)
+│   ├── orders/ (data/, presentation/pages/home_appliances_orders_page.dart)
+│   └── presentation/ (pages/home_appliances_page.dart, appliance_category_listing_page.dart)
+├── home_services/
+│   ├── data/ (mock/, models/, repositories/)
+│   └── presentation/ (controllers/, pages/booking_wizard/, technician_tracking_page.dart)
+├── navigation/
+│   └── presentation/ (pages/global_navigation_scaffold.dart)
+├── notifications/
+│   └── presentation/ (pages/global_notifications_page.dart)
+├── profile/
+│   ├── data/ (models/user_profile_model.dart, repositories/profile_repository.dart)
+│   └── presentation/ (controllers/profile_controller.dart, pages/profile_page.dart)
+└── real_estate/
+    ├── data/ (mock/mock_real_estate_data.dart, models/, repositories/real_estate_repository.dart)
+    ├── favorites/ (presentation/pages/real_estate_favorites_page.dart)
+    ├── map/ (presentation/pages/real_estate_map_page.dart)
+    ├── notifications/ (presentation/pages/real_estate_notifications_page.dart)
+    ├── reels/ (data/, presentation/pages/reels_page.dart, reel_publish_page.dart, reel_analytics_page.dart)
+    └── presentation/ (controllers/real_estate_controller.dart, pages/, widgets/)
 ```
 
-### Boundary Assessment
-- **Clean Feature Independence**: Features generally do not import other features directly, except via unified aggregators (`UnifiedFavoritesRepository` in `features/favorites` and `UnifiedActivityRepository` in `features/activity` which import domain models from other features).
-- **Core Leakage**: None observed. Feature-specific logic does not leak into `lib/core/`.
+---
+
+### 2.5 `lib/shared/` (Cross-Feature Shared Assets)
+- **Responsibility**: Holds shared UI components, shared sector state controllers, and backward-compatibility prototype widgets.
+- **Key Files**:
+  - [lib/shared/models/market_sector.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/models/market_sector.dart): The core `MarketSector` enum (`all`, `realEstate`, `buildingMaterials`, `services`, `homeAppliances`, `cars`, `fashion`, `investments`).
+  - [lib/shared/state/sector_controller.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/state/sector_controller.dart): Manages the currently selected market sector and persists it via `PreferencesService`.
+  - [lib/shared/widgets/](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/): Reusable UI primitives: `AppLoadingIndicator`, `AppEmptyState`, `AppErrorView`, `SafeNetworkImage`, `MaterialProductCard`, `RealEstateCard`, `ServiceProviderCard`, `TrustGuaranteeCard`, `ContractorPromoBanner`.
+  - [lib/shared/widgets/market_home_screen.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/market_home_screen.dart): Unrouted legacy prototype screen (contains deprecated UAE currency formatting and older color styling).
+
+---
+
+### 2.6 Assets, Native Platforms & Tests
+
+- **Assets (`assets/`)**:
+  - Declared in `pubspec.yaml`: `- assets/mock_data/`.
+  - Contains JSON response fixtures.
+- **Android (`android/`)**:
+  - Standard Flutter Android embedding.
+  - Manifest (`android/app/src/main/AndroidManifest.xml`) currently omits the `<uses-permission android:name="android.permission.INTERNET"/>` tag in main.
+- **iOS (`ios/`)**:
+  - Standard Xcode project. `Info.plist` lacks camera, location, and photo library usage descriptions.
+- **Tests (`test/`)**:
+  - Contains 38 automated test files covering unit normalizers, config validation, repository logic, and widget trees across all 13 features.

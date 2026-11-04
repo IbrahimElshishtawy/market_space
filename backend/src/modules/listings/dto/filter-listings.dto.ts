@@ -18,6 +18,26 @@ export class FilterListingsDto {
   @IsUUID()
   categoryId?: string;
 
+  @ApiPropertyOptional({ description: 'Category slug (e.g. real-estate, cars)' })
+  @IsOptional()
+  @IsString()
+  categorySlug?: string;
+
+  @ApiPropertyOptional({ description: 'Category slug snake_case alias' })
+  @IsOptional()
+  @IsString()
+  category_slug?: string;
+
+  @ApiPropertyOptional({ description: 'Search term for title/description' })
+  @IsOptional()
+  @IsString()
+  q?: string;
+
+  @ApiPropertyOptional({ enum: ['newest', 'price_asc', 'price_desc'], default: 'newest' })
+  @IsOptional()
+  @IsString()
+  sort?: string;
+
   @ApiPropertyOptional()
   @IsOptional()
   @Type(() => Number)

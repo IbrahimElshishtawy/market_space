@@ -16,15 +16,24 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ListingCondition } from '../../../core/enums/domain.enums';
 
 export class SearchQueryDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'تويوتا كورولا',
     description: 'Arabic or English search term',
   })
-  @IsNotEmpty({ message: 'Search term (q) is required' })
+  @IsOptional()
   @IsString()
-  @MinLength(2, { message: 'Search term must be at least 2 characters' })
   @MaxLength(100, { message: 'Search term cannot exceed 100 characters' })
-  q!: string;
+  q?: string;
+
+  @ApiPropertyOptional({ description: 'Category slug (e.g. real-estate, cars)' })
+  @IsOptional()
+  @IsString()
+  categorySlug?: string;
+
+  @ApiPropertyOptional({ description: 'Category slug snake_case alias' })
+  @IsOptional()
+  @IsString()
+  category_slug?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

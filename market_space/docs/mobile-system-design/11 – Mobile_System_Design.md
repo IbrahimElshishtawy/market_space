@@ -1,206 +1,159 @@
-# 11 – Consolidated Mobile System Design Document: Deal One MVP
+# 11 – Deal One Mobile System Design: Consolidated Master Specification
 
-## 1. Document Overview & Executive Synthesis
+## 1. Document Purpose & Master Index
 
-This consolidated document synthesizes the architectural reverse-engineering of the **Deal One Mobile Application** (`market_space` MVP). It connects the detailed analyses performed across documents `01` through `10`, presenting a unified technical reference for mobile architects, engineering leads, and backend integration teams.
+This document serves as the **Consolidated Master System Design Specification** for the **Deal One Mobile MVP** (Flutter package: `market_space`). It synthesizes the reverse-engineered architectural records into an authoritative, evidence-backed technical manual.
 
-### Core Documentation Suite Cross-References
-- [01 – Mobile System Overview](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/01%20%E2%80%93%20Mobile_System_Overview.md): High-level system overview, technology stack, and architectural style.
-- [02 – Flutter Project Structure](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/02%20%E2%80%93%20Flutter_Project_Structure.md): File hierarchy, layer boundaries, and directory responsibilities.
-- [03 – Application Modules](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/03%20%E2%80%93%20Application_Modules.md): Comprehensive inventory of all 13 business and utility modules.
-- [04 – Navigation and User Flows](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/04%20%E2%80%93%20Navigation_and_User_Flows.md): Route table, GoRouter configuration, and Mermaid journey flows.
-- [05 – State Management and Data Flow](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/05%20%E2%80%93%20State_Management_and_Data_Flow.md): `ValueNotifier` reactive lifecycles and sequence diagrams.
-- [06 – API Integration Design](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/06%20%E2%80%93%20API_Integration_Design.md): Network infrastructure, Dio client, interceptors, and endpoint inventory.
-- [07 – Local Data and Caching](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/07%20%E2%80%93%20Local_Data_and_Caching.md): SharedPreferences, FlutterSecureStorage, and caching analysis.
-- [08 – UI/UX Design System](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/08%20%E2%80%93%20UI_UX_Design_System.md): Visual design tokens, themes, typography, and reusable widgets.
-- [09 – Authentication and Security](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/09%20%E2%80%93%20Authentication_and_Security.md): Auth status, session guards, and native OS permissions.
-- [10 – Mobile Architecture Audit](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/docs/mobile-system-design/10%20%E2%80%93%20Mobile_Architecture_Audit.md): Technical debt findings, risk matrix, and test failure audit.
+### Master Documentation Index
+
+| Part | Document Title | Primary Focus |
+|---|---|---|
+| **01** | [01 – Mobile System Overview](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/01%20–%20Mobile_System_Overview.md) | High-level system architecture, technology stack, and execution summary |
+| **02** | [02 – Flutter Project Structure](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/02%20–%20Flutter_Project_Structure.md) | Directory hierarchy, layer responsibilities, and file locations |
+| **03** | [03 – Application Modules](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/03%20–%20Application_Modules.md) | Detailed breakdown of all 13 feature modules and the 6 core business verticals |
+| **04** | [04 – Navigation and User Flows](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/04%20–%20Navigation_and_User_Flows.md) | GoRouter routes, tab shell, deep links, and Mermaid user journeys |
+| **05** | [05 – State Management and Data Flow](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/05%20–%20State_Management_and_Data_Flow.md) | ValueNotifier architecture, lifecycle, and end-to-end data sequence diagrams |
+| **06** | [06 – API Integration Design](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/06%20–%20API_Integration_Design.md) | DioApiClient, interceptor pipeline, error mapping, and API inventory table |
+| **07** | [07 – Local Data and Caching](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/07%20–%20Local_Data_and_Caching.md) | SharedPreferences, FlutterSecureStorage, and memory image cache analysis |
+| **08** | [08 – UI/UX Design System](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/08%20–%20UI_UX_Design_System.md) | Monochrome palette, WCAG 2.2 AA semantic states, typography, and widgets |
+| **09** | [09 – Authentication and Security](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/09%20–%20Authentication_and_Security.md) | Auth matrix, token encryption, session persistence, and OS permissions |
+| **10** | [10 – Mobile Architecture Audit](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/docs/mobile-system-design/10%20–%20Mobile_Architecture_Audit.md) | Critical defects, test failure analysis, technical debt, and recommendations |
 
 ---
 
-## 2. Actual System Architecture Summary
-
-The Deal One mobile application is implemented using a **Hybrid Feature-First Layered MVVM** architecture. Rather than introducing external state management frameworks, the application relies on native Flutter mechanisms to maintain a lean, responsive runtime footprint:
+## 2. System Architecture Synthesis
 
 ```mermaid
 graph TD
-    subgraph Presentation_Layer ["Presentation Layer (Flutter 3.x / Material 3)"]
-        UI_Screens["Feature Screens (Slivers, Lists, Carousels)"]
-        SubWidgets["Reusable Widgets (Cards, Shimmers, Sheets)"]
-        UI_Screens --> SubWidgets
+    subgraph Client_Bootstrap [Application Bootstrap - lib/bootstrap]
+        Main[main.dart] --> Boot[bootstrap.dart]
+        Boot --> Obs[BootstrapObserver<br/>Global Error Traps & Lifecycle]
+        Boot --> InitDeps[initializeDependencies]
     end
 
-    subgraph State_Management_Layer ["State Management Layer (Native Reactive)"]
-        Controllers["Feature Controllers (RealEstateController, etc.)"]
-        Notifiers["Reactive Primitives (ValueNotifier<T>, ListenableBuilder)"]
-        Controllers --> Notifiers
+    subgraph Ambient_Container [Ambient Service Locator - lib/app]
+        InitDeps --> AppDeps[AppDependencies]
+        AppDeps --> Scope[AppDependenciesScope<br/>InheritedWidget]
+        Scope --> RootApp[MarketSpaceApp<br/>MaterialApp.router]
     end
 
-    subgraph Dependency_Injection ["Dependency Injection (Ambient Tree)"]
-        AppDepsScope["AppDependenciesScope (InheritedWidget)"]
-        AppDeps["AppDependencies Container"]
-        AppDepsScope --> AppDeps
+    subgraph Presentation_Layer [Presentation Layer - lib/features]
+        RootApp --> Router[AppRouter: GoRouter]
+        Router --> Shell[GlobalNavigationScaffold<br/>IndexedStack: 5 Persistent Tabs]
+        
+        Shell --> Tab0[Tab 0: HomePage]
+        Shell --> Tab1[Tab 1: ExplorePage]
+        Shell --> Tab2[Tab 2: MyActivityPage]
+        Shell --> Tab3[Tab 3: GlobalFavoritesPage]
+        Shell --> Tab4[Tab 4: ProfilePage]
+
+        Tab0 --> Verticals[6 Core Business Verticals]
+        Verticals --> V1[Real Estate: /real-estate]
+        Verticals --> V2[Building Materials: /building-materials]
+        Verticals --> V3[Home Services: /home-services]
+        Verticals --> V4[Home Appliances: /home-appliances]
+        Verticals --> V5[Cars: /cars]
+        Verticals --> V6[Fashion: /fashion]
     end
 
-    subgraph Data_Layer ["Data Layer (Repositories & Contracts)"]
-        Repos["Feature Repositories (Mock Implementations)"]
-        DomainModels["Domain Entities & Serialization"]
-        Repos --> DomainModels
+    subgraph Reactive_State [State Management Layer - lib/features/*/controllers]
+        V1 & V2 & V3 & V4 & V5 & V6 --> Notifiers[ValueNotifier Controllers<br/>RealEstate, Cars, Fashion, Materials, Services]
+        Tab0 & Tab4 --> CoreNotifiers[SectorController | ThemeController | LocaleController]
     end
 
-    subgraph Infrastructure_Layer ["Infrastructure Layer (Core Services)"]
-        PrefService["PreferencesService (SharedPreferences)"]
-        SecStorage["SecureStorageService (FlutterSecureStorage)"]
-        NetClient["ApiClient (DioApiClient) - Disconnected"]
+    subgraph Data_Layer [Data & Persistence Layer]
+        Notifiers --> Repos[Repository Contract Interfaces]
+        Repos -.->|Active Runtime| MockData[In-Memory Mock Repositories<br/>MockRealEstateData, MockCarsData, etc.]
+        
+        CoreNotifiers --> Prefs[PreferencesService<br/>SharedPreferences: Theme, Locale, Sector]
+        AppDeps --> SecStore[SecureStorageService<br/>FlutterSecureStorage: Keystore / Keychain]
+        
+        Repos -.->|Designed but Unwired| NetClient[DioApiClient<br/>lib/core/network]
+        NetClient --> NetInterceptors[Interceptor Pipeline<br/>RequestId, Auth, Retry, Logging]
     end
-
-    Presentation_Layer --> Controllers
-    Controllers --> Repos
-    Presentation_Layer -.->|Reads Singletons| AppDepsScope
-    Repos -.-> PrefService
-    Repos -.-> SecStorage
-    AppDeps --> NetClient
 ```
 
 ---
 
 ## 3. Technology Stack Inventory
 
-| Component | Selected Technology | Version | Operational Status |
+| Component / Layer | Selected Technology | Version in Lockfile | Implementation Reality |
 |---|---|---|---|
-| **Language & SDK** | Dart / Flutter | `^3.13.3` | **IMPLEMENTED** |
-| **Routing** | `go_router` | `^14.6.2` | **IMPLEMENTED** |
-| **Dependency Injection** | `InheritedWidget` (`AppDependenciesScope`) | Native | **IMPLEMENTED** |
-| **State Management** | `ValueNotifier<T>`, `ListenableBuilder` | Native | **IMPLEMENTED** |
-| **HTTP Networking** | `dio` + 4 Custom Interceptors | `^5.7.0` | **SCAFFOLDED / UNWIRED** |
-| **Encrypted Storage** | `flutter_secure_storage` | `^9.2.2` | **IMPLEMENTED** |
-| **Preferences Storage** | `shared_preferences` | `^2.3.5` | **IMPLEMENTED** |
-| **Map Rendering** | `flutter_map` + `latlong2` | `^7.0.2` / `^0.9.1` | **IMPLEMENTED** (OSM Tiles) |
-| **Image Disk Caching** | None (`cached_network_image` absent) | N/A | **NOT IMPLEMENTED** |
-| **Relational Database** | None (SQLite/Drift/Hive absent) | N/A | **NOT IMPLEMENTED** |
-| **Firebase / Push** | None | N/A | **NOT IMPLEMENTED** |
+| **Core Framework** | Flutter SDK (Material 3) | `>=3.47.0` | Root widget tree, theme, animations |
+| **Language** | Dart SDK | `>=3.13.3 <4.0.0` | Null-safe Dart with pattern matching |
+| **Declarative Router** | `go_router` | `18.0.2` | Route hierarchy, sub-routes, error views |
+| **HTTP Client** | `dio` | `5.11.1` | Complete interceptor pipeline; unwired to repositories |
+| **Plaintext Storage** | `shared_preferences` | `2.5.6` | Theme, locale, and active sector persistence |
+| **Encrypted Storage** | `flutter_secure_storage` | `11.2.0` | Android Keystore / iOS Keychain token storage |
+| **Network Monitor** | `connectivity_plus` | `7.3.2` | Connectivity checks before HTTP requests |
+| **Formatting / i18n** | `intl` + `flutter_localizations` | `0.20.3` | Arabic (RTL) default, English fallback |
+| **Interactive Maps** | `flutter_map` + `latlong2` | `7.0.2` / `0.9.1` | OpenStreetMap tile viewer in Real Estate |
 
 ---
 
-## 4. End-to-End Navigation Architecture
+## 4. Architectural Strengths
 
-The root navigation shell uses a multi-tab `IndexedStack` inside `GlobalNavigationScaffold`:
+1. **Clean Separation of Features**: The feature-first folder structure cleanly isolates business logic into 13 distinct directories, preventing cross-module spaghetti code.
+2. **Lightweight Reactive State Management**: By utilizing native `ValueNotifier` and `ValueListenableBuilder` instead of heavyweight third-party libraries, the app achieves optimal render performance with minimal memory overhead.
+3. **Robust Theme & Accessibility Tokens**: The design system strictly follows WCAG 2.2 AA contrast guidelines, providing seamless, flicker-free switching between light and dark monochrome themes.
+4. **Pre-engineered Network Infrastructure**: The `DioApiClient` includes production-grade interceptors (exponential backoff retry, request tracing IDs, auth token headers, error mapping), ready to connect to real endpoints with zero architectural rewriting.
+5. **Comprehensive UI Feature Coverage**: All six primary commercial sectors possess fully implemented, responsive screens, carousels, specification tables, and interactive calculators.
 
-```mermaid
-graph TD
-    AppLaunch([App Launch]) --> Shell[GlobalNavigationScaffold]
-    
-    subgraph Tab_Bar ["5 Persistent Tabs (HomeNavBar)"]
-        Shell --> Tab0[Tab 0: Home Page]
-        Shell --> Tab1[Tab 1: Explore Page]
-        Shell --> Tab2[Tab 2: Activity Page]
-        Shell --> Tab3[Tab 3: Favorites Page]
-        Shell --> Tab4[Tab 4: Profile Page]
-    end
+---
 
-    subgraph Vertical_Routes ["Pushed Full-Screen Sub-Routes"]
-        Tab0 --> RE["/real-estate"]
-        RE --> REDetail["/real-estate/detail"]
-        RE --> REMap["/real-estate/map"]
-        RE --> REReels["/real-estate/reels"]
-        
-        Tab0 --> BM["/building-materials"]
-        BM --> BMCategory["/building-materials/category"]
-        BM --> BMRfq["/building-materials/rfq/create"]
-        BM --> BMCart["/building-materials/cart"]
-        
-        Tab0 --> HS["/home-services"]
-        HS --> HSDetail["/home-services/ac-service"]
-        HS --> HSWizard["/home-services/booking-wizard"]
-        HS --> HSTrack["/home-services/technician-tracking"]
-        
-        Tab0 --> HA["/home-appliances"]
-        Tab0 --> Cars["/cars"]
-        Cars --> CarDetail["/cars/detail"]
-        Tab0 --> Fashion["/fashion"]
-        
-        Tab4 --> Notifs["/notifications"]
-    end
+## 5. Critical Technical Debt & Architectural Weaknesses
+
+1. **The Network / Repository Disconnect**: 100% of feature repositories query static Dart mock datasets. No feature makes live HTTP calls.
+2. **Missing Android `INTERNET` Permission**: `AndroidManifest.xml` lacks the internet permission in main, blocking release builds from network access.
+3. **Broken Automated Test Suite**: 6 unit/widget tests are failing due to out-of-sync navigation configs and mutable mock datasets.
+4. **Absence of Authentication UI**: No login, registration, or OTP verification screens exist; the app operates in persistent guest mode.
+5. **No Persistent Disk Image Caching**: Images are cached only in volatile RAM; cold app launches repeatedly re-download multi-megabyte photo galleries.
+6. **Dead Prototype Code**: Legacy files (`market_home_screen.dart`, `market_repository.dart`) contain obsolete UAE currency codes (`AED`) and deprecated styling.
+
+---
+
+## 6. Gap Analysis: Current Prototype vs Scalable Production Architecture
+
+```
+Current Deal One Prototype                         Scalable Production Target
+┌─────────────────────────────────┐               ┌─────────────────────────────────┐
+│ Feature Repositories            │               │ Feature Remote Repositories     │
+│ (Mock datasets in RAM)          │  ──Refactor─► │ (Injected with DioApiClient)    │
+└─────────────────────────────────┘               └─────────────────────────────────┘
+┌─────────────────────────────────┐               ┌─────────────────────────────────┐
+│ Public Guest-Only Navigation    │               │ Protected Route Navigation      │
+│ (SessionRouteGuard: null)       │  ──Activate─► │ (Enforced by TokenProvider)     │
+└─────────────────────────────────┘               └─────────────────────────────────┘
+┌─────────────────────────────────┐               ┌─────────────────────────────────┐
+│ Missing Auth & Ad Post Screens  │               │ Full Auth & Multi-Step Wizards  │
+│ (No login or listing creation)  │  ──Implement─►│ (OTP auth + Category Ad Forms)  │
+└─────────────────────────────────┘               └─────────────────────────────────┘
+┌─────────────────────────────────┐               ┌─────────────────────────────────┐
+│ RAM-Only Image Loading          │               │ Persistent Disk Image Caching   │
+│ (Image.network memory cache)    │  ──Upgrade──► │ (cached_network_image on disk)  │
+└─────────────────────────────────┘               └─────────────────────────────────┘
+┌─────────────────────────────────┐               ┌─────────────────────────────────┐
+│ Missing Native Manifest Tags    │               │ Hardened OS Permissions         │
+│ (No INTERNET, CAMERA, LOCATION) │  ──Configure─►│ (Android Manifest & Info.plist) │
+└─────────────────────────────────┘               └─────────────────────────────────┘
 ```
 
 ---
 
-## 5. Main Data Flow Sequence: UI to In-Memory Repositories
+## 7. Actionable Production Readiness Roadmap
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User
-    participant View as FeatureScreen (e.g. RealEstatePage)
-    participant Ctrl as FeatureController (ValueNotifier)
-    participant Scope as AppDependenciesScope (DI)
-    participant Repo as MockRepository (MockRealEstateRepository)
-    participant Mock as In-Memory Dataset (MockRealEstateData)
+### Phase 1: Immediate Mandatory Fixes (Hotfixes)
+- [ ] **Fix 1.1**: Add `<uses-permission android:name="android.permission.INTERNET"/>` to `android/app/src/main/AndroidManifest.xml`.
+- [ ] **Fix 1.2**: Update test expectations in `test/core/navigation/app_bottom_navigation_test.dart`, `real_estate_page_test.dart`, and `real_estate_detail_page_test.dart` to restore a 100% green test suite.
+- [ ] **Fix 1.3**: Wire the logout button in `ProfilePage` to `await tokenProvider.clearTokens()` and update `SessionState`.
 
-    User->>View: Interacts with UI (Search, Filter, Tab Switch)
-    View->>Ctrl: Call controller method (e.g. setCategory('villas'))
-    Ctrl->>Ctrl: Mutate state -> notifyListeners(isLoading: true)
-    Ctrl->>Scope: Lookup repository instance
-    Scope-->>Ctrl: Return MockRealEstateRepository
-    Ctrl->>Repo: fetchListings(filterCriteria)
-    Repo->>Mock: Query in-memory list with simulated delay
-    Mock-->>Repo: Return List<DomainModel>
-    Repo-->>Ctrl: Return filtered entities
-    Ctrl->>Ctrl: Mutate state -> notifyListeners(isLoading: false, data: items)
-    Ctrl-->>View: ListenableBuilder triggers localized subtree rebuild
-    View-->>User: Displays updated cards & specs
-```
+### Phase 2: Security & Permissions Configuration
+- [ ] **Fix 2.1**: Add camera, photo library, and location permissions to `AndroidManifest.xml` and `ios/Runner/Info.plist`.
+- [ ] **Fix 2.2**: Implement `/login`, `/register`, and `/otp-verify` screens.
+- [ ] **Fix 2.3**: Activate `SessionRouteGuard` to protect checkout, activity, and profile management routes.
 
----
-
-## 6. Architecture Strengths vs. Weaknesses
-
-### 6.1 Architectural Strengths
-1. **Zero External State Bloat**: Utilizing `ValueNotifier` and `ListenableBuilder` keeps the compiled binary small, avoids framework lock-in, and eliminates the boilerplate commonly associated with BLoC or Redux.
-2. **Deep Local Market Domain Modeling**: The models and mock datasets accurately mirror real commercial practices in Egypt (Ezz Steel factory rates, EGP pricing, Cairo/Giza/Delta geographic distribution, AC maintenance check procedures).
-3. **Dynamic Section Navigation**: The `SectionNavigationRegistry` enables flexible navigation styling, allowing different commercial sectors to introduce custom floating actions and bottom bars while retaining a single global shell.
-4. **Structured Networking Scaffolding**: `DioApiClient` provides a clean foundation with request tracing (`x-request-id`), retry policies with exponential backoff, and 401 token refresh queueing.
-
-### 6.2 Architectural Weaknesses
-1. **Network Layer Disconnection**: Repositories do not consume `ApiClient`. The app is an isolated in-memory prototype that cannot communicate with a live backend.
-2. **Missing Android Internet Permission**: `android.permission.INTERNET` is omitted from `android/app/src/main/AndroidManifest.xml`, causing release builds to fail all network socket operations.
-3. **No Persistent Disk Image Cache**: Absence of `cached_network_image` causes heavy image bandwidth consumption and visual UI flickering across screen navigations.
-4. **Lack of Authentication UI & Inactive Route Guards**: `SessionRouteGuard` returns `null` unconditionally, meaning all screens run in unrestricted guest mode with no way for a user to log in or register.
-5. **Automated Test Regressions**: 6 out of 182 unit and widget tests fail due to out-of-sync mock datasets and navigation expectations.
-
----
-
-## 7. Gap Analysis & Transition Roadmap to Production Readiness
-
-```mermaid
-gantt
-    title Deal One Production Readiness Roadmap
-    dateFormat  YYYY-MM-DD
-    section Phase 1: Critical Fixes
-    Fix Android Release Manifest Internet Permission :p1_1, 2026-11-03, 1d
-    Resolve 6 Automated Test Failures                :p1_2, 2026-11-04, 2d
-    Remove Dead GCC Legacy Code (market_home_screen) :p1_3, 2026-11-05, 1d
-    section Phase 2: Security & Auth
-    Implement Real OTP & Login UI Screens           :p2_1, 2026-11-06, 5d
-    Activate SessionRouteGuard Redirects             :p2_2, 2026-11-11, 2d
-    Add Native Camera & Location Permissions         :p2_3, 2026-11-12, 2d
-    section Phase 3: Network Integration
-    Refactor Feature Repos to Consume ApiClient      :p3_1, 2026-11-13, 8d
-    Connect Real Estate & Materials to Backend APIs  :p3_2, 2026-11-20, 6d
-    Connect Services & Automotive to Backend APIs    :p3_3, 2026-11-25, 6d
-    section Phase 4: Performance & Caching
-    Integrate cached_network_image                   :p4_1, 2026-11-28, 2d
-    Add Local Offline Database (Drift / Hive)        :p4_2, 2026-11-30, 5d
-```
-
-### 7.1 Mandatory Fixes (Must be completed before Staging Release)
-1. **Add `INTERNET` permission** to `android/app/src/main/AndroidManifest.xml`.
-2. **Synchronize automated tests** in `app_bottom_navigation_test.dart` and `real_estate_page_test.dart` to restore 100% CI pass rate.
-3. **Inject `ApiClient` into repositories** and wire real HTTP endpoints.
-4. **Add `cached_network_image`** to prevent recurring network image re-fetches.
-5. **Implement genuine OTP verification and Login UI** and enforce route protection via `SessionRouteGuard`.
-
-### 7.2 Optional Enhancements (Future Releases)
-1. **Local Offline Persistence**: Introduce `drift` (SQLite) or `hive` to enable offline viewing of property listings, saved RFQs, and order receipts.
-2. **Push Notifications**: Integrate Firebase Cloud Messaging (`firebase_messaging`) to support real-time technician dispatch updates and daily price alerts.
-3. **Biometric Authentication**: Integrate `local_auth` for quick fingerprint/FaceID re-authentication.
+### Phase 3: Data Layer Wiring & Performance Optimization
+- [ ] **Fix 3.1**: Create `Remote` implementations for all 13 repositories, wiring them to `DioApiClient` and backend REST endpoints.
+- [ ] **Fix 3.2**: Add `cached_network_image` to `pubspec.yaml` and integrate it into `AppNetworkImage` for persistent disk caching.
+- [ ] **Fix 3.3**: Delete dead legacy prototype files (`market_home_screen.dart`, `market_repository.dart`).
+- [ ] **Fix 3.4**: Implement unified classified ad creation and editing wizards for cars, real estate, and merchandise.

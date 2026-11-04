@@ -1,131 +1,127 @@
 # 08 – UI/UX & Design System Architecture
 
-## 1. Design System Foundations
+## 1. Design System Philosophy
 
-The visual language of Deal One is defined under `lib/core/theme/`. It employs a **Monochromatic Modern Luxury** aesthetic utilizing deep charcoal slates, crisp whites, and subtle neutral zinc borders, creating an uncluttered presentation suited for high-value commerce (real estate, automotive, building materials).
-
-```
-Theme Token Hierarchy (lib/core/theme/)
-├── AppColors (Color Palette & Semantic Tokens)
-├── AppSpacing (8-Point Grid Spacing Tokens)
-├── AppRadii (Border Radius Curves)
-├── AppTextStyles (Type Scale & Font Weights)
-└── AppThemeData (Light & Dark Material 3 ThemeData)
-```
+The Deal One mobile application features a centralized, accessible **High-Contrast Monochrome Design System**. The visual identity relies on pure black, white, and balanced grayscale shades for core chrome and layout components, combined with standard semantic colors (Success, Warning, Error, Info) that conform to **WCAG 2.2 AA** minimum contrast ratios.
 
 ---
 
-## 2. Design Tokens Breakdown
+## 2. Color System (`AppColors`)
 
-### 2.1 Color Palette (`AppColors`)
-- **Source File**: [lib/core/theme/app_colors.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_colors.dart)
+Implemented centrally in [lib/core/theme/app_colors.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_colors.dart):
 
-| Token Name | Hex Value | Semantic Role in Deal One |
-|---|---|---|
-| `primary` | `0xFF0F172A` (Slate 900) | Primary branding, action buttons, active tab indicators |
-| `primaryDark` | `0xFFF8FAFC` (Slate 50) | Primary foreground in Dark Mode |
-| `backgroundLight` | `0xFFFFFFFF` | Scaffold canvas in Light Mode |
-| `backgroundDark` | `0xFF090D16` | Scaffold canvas in Dark Mode |
-| `surfaceLight` | `0xFFF8FAFC` (Slate 50) | Card backgrounds, search fields, chips |
-| `surfaceDark` | `0xFF111827` (Slate 800) | Card backgrounds in Dark Mode |
-| `borderLight` | `0xFFE2E8F0` (Slate 200) | Dividers, card outline borders, input borders |
-| `borderDark` | `0xFF1F2937` (Slate 700) | Dividers and borders in Dark Mode |
-| `textPrimaryLight` | `0xFF0F172A` | Primary typography (headings, titles, prices) |
-| `textSecondaryLight`| `0xFF64748B` (Slate 500) | Secondary typography (captions, specs, dates) |
-| `success` | `0xFF10B981` (Emerald 500) | Completed orders, available units, price discounts |
-| `warning` | `0xFFF59E0B` (Amber 500) | Pending bookings, quotation reviews |
-| `error` | `0xFFEF4444` (Red 500) | Form validation errors, network failures |
+### 2.1 Monochrome Tokens
 
-### 2.2 Spacing System (`AppSpacing`)
-- **Source File**: [lib/core/theme/app_spacing.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_spacing.dart)
-- Follows an 8-point base grid:
-  - `xxs`: `2.0 dp`
-  - `xs`: `4.0 dp`
-  - `sm`: `8.0 dp`
-  - `md`: `12.0 dp`
-  - `lg`: `16.0 dp` (Standard screen padding)
-  - `xl`: `20.0 dp`
-  - `xxl`: `24.0 dp`
-  - `xxxl`: `32.0 dp`
+| Token Name | Light Mode Value | Dark Mode Value | Semantic Role |
+|---|---|---|---|
+| `primary` | `#111111` | `#FFFFFF` | Primary actions, key headers, prominent badges |
+| `onPrimary` | `#FFFFFF` | `#111111` | Text and icons placed on primary background |
+| `background` | `#FFFFFF` | `#121212` | Main screen background |
+| `surface` | `#FFFFFF` | `#1C1C1C` | Cards, app bars, sheets, floating modals |
+| `surfaceSecondary` | `#F5F5F5` | `#262626` | Input fields, filter chip backgrounds, search bars |
+| `surfaceTertiary` | `#EEEEEE` | `#303030` | Skeleton shimmer gradients, subtle dividers |
+| `textPrimary` | `#111111` | `#FFFFFF` | High-emphasis body text and page titles |
+| `textSecondary` | `#404040` | `#D0D0D0` | Medium-emphasis labels and secondary metadata |
+| `textMuted` | `#666666` | `#A0A0A0` | Low-emphasis captions, timestamps, placeholders |
+| `border` | `#E0E0E0` | `#383838` | Card outlines, input boundaries |
+| `divider` | `#E5E5E5` | `#303030` | Horizontal and vertical structural rules |
+| `iconPrimary` | `#222222` | `#FFFFFF` | Interactive icon buttons, tab bar icons |
+| `disabled` | `#BDBDBD` | `#707070` | Inactive buttons, disabled switches |
 
-### 2.3 Corner Radii (`AppRadii`)
-- **Source File**: [lib/core/theme/app_radii.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_radii.dart)
-  - `none`: `0.0`
-  - `xs`: `4.0 dp` (Tags, small indicators)
-  - `sm`: `8.0 dp` (Form inputs, action buttons)
-  - `md`: `12.0 dp` (Standard product and listing cards)
-  - `lg`: `16.0 dp` (Modals, bottom sheets)
-  - `xl`: `24.0 dp` (Hero banners, floating containers)
-  - `full`: `999.0 dp` (Pill badges, category chips, avatar circles)
+### 2.2 Accessible Semantic Status Tokens (WCAG 2.2 AA Compliant)
 
-### 2.4 Typography & Text Styles (`AppTextStyles`)
-- **Source File**: [lib/core/theme/app_text_styles.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_text_styles.dart)
-- Configured with localized font weights and line heights optimized for both Arabic and Latin scripts:
-  - `displayLarge`: `28.0 sp` / Bold (w700)
-  - `headlineMedium`: `20.0 sp` / SemiBold (w600) (Screen titles, sector headers)
-  - `titleMedium`: `16.0 sp` / Medium (w500) (Card titles, price figures)
-  - `bodyMedium`: `14.0 sp` / Regular (w400) (Listing descriptions, body copy)
-  - `bodySmall`: `12.0 sp` / Regular (w400) (Specifications, tags, timestamps)
-  - `labelSmall`: `10.0 sp` / Medium (w500) (Badges, pill counters)
+| Semantic Role | Light Mode Color | Light Tint Background | Dark Mode Color | Dark Tint Background |
+|---|---|---|---|---|
+| **Success** | `#16A34A` | `#F0FDF4` | `#22C55E` | `#052E16` |
+| **Warning** | `#D97706` | `#FFFBEB` | `#FBBF24` | `#451A03` |
+| **Error** | `#DC2626` | `#FEF2F2` | `#EF4444` | `#450A0A` |
+| **Information** | `#2563EB` | `#EFF6FF` | `#3B82F6` | `#172554` |
 
----
-
-## 3. Light & Dark Theme Configuration
-
-The application implements full Material 3 dynamic styling through [lib/core/theme/app_theme_data.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_theme_data.dart):
-
+### 2.3 Dynamic Theme Resolvers
+The class exposes contextual methods ensuring zero hardcoded light/dark conditionals in widgets:
 ```dart
-class AppThemeData {
-  static ThemeData get light => ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.light,
-    scaffoldBackgroundColor: AppColors.backgroundLight,
-    colorScheme: const ColorScheme.light(
-      primary: AppColors.primary,
-      surface: AppColors.surfaceLight,
-      error: AppColors.error,
-    ),
-    cardTheme: CardTheme(
-      color: AppColors.surfaceLight,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadii.md),
-        side: const BorderSide(color: AppColors.borderLight),
-      ),
-    ),
-    // ... complete button and input styling
-  );
-  
-  static ThemeData get dark => ThemeData(
-    useMaterial3: true,
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: AppColors.backgroundDark,
-    // ... matching dark tokens
-  );
-}
+AppColors.backgroundOf(context);
+AppColors.surfaceOf(context);
+AppColors.textPrimaryOf(context);
+AppColors.isDark(context);
 ```
 
-Theme switching is controlled reactively by `ThemeNotifier` ([lib/core/theme/theme_notifier.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/theme_notifier.dart)), which persists the selection to `SharedPreferences` via `PreferencesService`.
+---
+
+## 3. Typography Hierarchy (`AppTextStyles`)
+
+Implemented in [lib/core/theme/app_text_styles.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_text_styles.dart), designed for optimal legibility in Arabic (RTL) and English (LTR):
+
+| Style Identifier | Size / Weight | Line Height | Intended Usage |
+|---|---|---|---|
+| `display` | 32px / Bold (w700) | 1.25 | Hero marketing titles |
+| `h1` | 26px / Bold (w700) | 1.30 | Primary page titles (e.g. "العقارات في مصر") |
+| `h2` | 22px / SemiBold (w600)| 1.35 | Major section headings |
+| `h3` | 18px / SemiBold (w600)| 1.40 | Card titles and modal dialog headers |
+| `bodyLarge` | 16px / Regular (w400) | 1.50 | Product descriptions, terms text |
+| `body` | 14px / Regular (w400) | 1.50 | Standard body copy |
+| `label` | 14px / Medium (w500) | 1.35 | Form field labels, tab bar indicators |
+| `caption` | 13px / Regular (w400) | 1.40 | Supporting metadata, timestamps |
+| `button` | 15px / SemiBold (w600)| 1.20 | Primary and secondary button text |
 
 ---
 
-## 4. Reusable Shared UI Components
+## 4. Spacing & Corner Radii Scales
 
-| Component Widget | File Path | Functional Description |
+### 4.1 Spacing Scale (`AppSpacing`)
+Implemented in [lib/core/theme/app_spacing.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_spacing.dart):
+- `xxs`: `2.0 dp`
+- `xs`: `4.0 dp`
+- `sm`: `8.0 dp`
+- `md`: `12.0 dp`
+- `lg`: `16.0 dp` (standard screen gutter)
+- `xl`: `20.0 dp`
+- `xxl`: `24.0 dp`
+- `xxxl`: `32.0 dp`
+- `huge`: `48.0 dp`
+
+### 4.2 Corner Radii Scale (`AppRadii`)
+Implemented in [lib/core/theme/app_radii.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_radii.dart):
+- `xs`: `4.0 dp` (badges, tags)
+- `sm`: `8.0 dp` (chips, compact buttons)
+- `md`: `12.0 dp` (standard cards, text inputs)
+- `lg`: `16.0 dp` (modals, dialogs, image thumbnails)
+- `xl`: `24.0 dp` (bottom sheets, hero banners)
+- `full`: `999.0 dp` (circular avatars, pill buttons)
+
+---
+
+## 5. Theme Architecture (`AppThemeData` & `ThemeController`)
+
+- **Material 3 Integration**: Configured with `useMaterial3: true` in [app_theme_data.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/core/theme/app_theme_data.dart).
+- **Theme State Management**: `ThemeController` ([lib/app/app_theme.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/app/app_theme.dart)) loads `ThemeMode` from `PreferencesService` on startup and enables seamless one-tap switching via `toggleTheme()`.
+- **Card Styling**: Strict 0-elevation design with `1.0 dp` hairline border (`AppColors.border`).
+- **Input Field Styling**: Filled background (`AppColors.surfaceSecondary`), no harsh default borders, rounded corners (`AppRadii.md`).
+
+---
+
+## 6. Shared Component Inventory
+
+| Component Name | Source File | Functionality & Features |
 |---|---|---|
-| `SafeNetworkImage` | [safe_network_image.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/safe_network_image.dart) | Defensive image loader that validates URL protocol, provides a placeholder shimmer, and handles image decode failures with a fallback icon. |
-| `AppErrorView` | [app_error_view.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/app_error_view.dart) | Standardized full-screen or embedded error view displaying localized failure text and a primary "إعادة المحاولة" (Retry) action button. |
-| `AppLoadingIndicator` | [app_loading_indicator.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/app_loading_indicator.dart) | Circular progress indicator centered and sized to match design system tokens. |
-| `GlobalNavigationScaffold`| [global_navigation_scaffold.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/features/navigation/presentation/pages/global_navigation_scaffold.dart)| Primary responsive shell containing bottom tab bar and section-aware floating action triggers. |
-| `HomeNavBar` | [home_nav_bar.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/features/navigation/presentation/widgets/home_nav_bar.dart) | Bottom navigation bar with animated indicator pills, unread badge counters, and SVG icons. |
+| `AppLoadingIndicator` | [lib/shared/widgets/app_loading_indicator.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/app_loading_indicator.dart) | Monochrome circular indicator or full-screen loading overlay |
+| `AppEmptyState` | [lib/shared/widgets/app_empty_state.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/app_empty_state.dart) | Visual placeholder with custom icon, title, description, and action button |
+| `AppErrorView` | [lib/shared/widgets/app_error_view.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/app_error_view.dart) | User-friendly error card with retry button |
+| `AppNetworkImage` | [lib/shared/widgets/app_network_image.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/app_network_image.dart) | Safe image loader with RAM-bounded decoding and shimmer placeholder |
+| `RealEstateCard` | [lib/shared/widgets/market_widgets/real_estate_card.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/market_widgets/real_estate_card.dart) | Property card showing price badge, room chips, area, and broker info |
+| `MaterialProductCard` | [lib/shared/widgets/market_widgets/material_product_card.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/market_widgets/material_product_card.dart) | Construction material card with ton/pallet price, call/chat triggers |
+| `ServiceProviderCard` | [lib/shared/widgets/market_widgets/service_provider_card.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/market_widgets/service_provider_card.dart) | Technician profile card with rating stars, completed jobs count |
+| `HomeNavBar` | [lib/features/home/widgets/home_nav_bar/home_nav_bar.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/features/home/widgets/home_nav_bar/home_nav_bar.dart) | Floating bottom navigation bar with active sector indicators |
 
 ---
 
-## 5. Design Inconsistencies & Legacy Code Audit
+## 7. Component Inconsistencies & Legacy Artifacts
 
-1. **Legacy Screen Style Fracture**:
-   - The orphaned file [lib/shared/widgets/market_home_screen.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/market_home_screen.dart) uses hardcoded legacy colors (`Color(0xFF0D9488)` teal and `Color(0xFFF97316)` orange) and UAE Dirhams (`AED`), which clashes with the official monochrome black/slate palette used throughout the rest of the application.
-2. **Missing Image Placeholder Shimmer**:
-   - While `SafeNetworkImage` implements a basic container placeholder, it lacks an animated shimmer shader effect, causing jarring pop-ins when lists of properties or products load over the network.
-3. **Hardcoded Inline Dimensions in Feature Widgets**:
-   - Multiple feature widgets (e.g. `RealEstateCard`, `CarCard`) occasionally hardcode fixed heights (`height: 220`) rather than relying on flexible aspect-ratio constraints, which can lead to layout overflows on smaller screen widths (e.g. iPhone SE / 360dp Android devices).
+1. **Legacy Screen `market_home_screen.dart`**:
+   - Located at [lib/shared/widgets/market_home_screen.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/market_home_screen.dart).
+   - Contains unrouted code using hardcoded UAE currencies (`AED`), hardcoded colors (`Color(0xFF0F766E)`, `Color(0xFFEA580C)`), conflicting with the Egyptian Pound (`ج.م` / `EGP`) and Monochrome system used by the rest of the app.
+2. **Duplicated Search Bars**:
+   - `HomeSearchBar` ([lib/features/home/widgets/home_search_bar/](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/features/home/widgets/home_search_bar/))
+   - `MarketSearchBar` ([lib/shared/widgets/market_widgets/market_search_bar.dart](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/shared/widgets/market_widgets/market_search_bar.dart))
+   - `RealEstateSearchBar` ([lib/features/real_estate/widgets/real_estate_search_bar/](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/market_space/lib/features/real_estate/widgets/real_estate_search_bar/))
+   - *Recommendation*: Unify these search bars into a single reusable core component.

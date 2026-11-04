@@ -17,6 +17,8 @@ import { VideoModule } from './modules/video/video.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ModerationModule } from './modules/moderation/moderation.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { LocationsModule } from './modules/locations/locations.module';
+import { FavoritesModule } from './modules/favorites/favorites.module';
 
 import { RedisModule } from './core/redis/redis.module';
 import { WorkerModule } from './workers/worker.module';
@@ -42,6 +44,8 @@ import { WorkerModule } from './workers/worker.module';
     PaymentsModule,
     ModerationModule,
     NotificationsModule,
+    LocationsModule,
+    FavoritesModule,
   ],
   controllers: [HealthController],
 })

@@ -71,6 +71,7 @@ model User {
   isEmailVerified   Boolean        @default(false) @map("is_email_verified")
   isActive          Boolean        @default(true) @map("is_active")
   preferredLanguage String         @default("ar") @map("preferred_language") @db.VarChar(5)
+  isDemo            Boolean        @default(false) @map("is_demo")
   createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt         DateTime?      @map("deleted_at") @db.Timestamptz
@@ -85,6 +86,7 @@ model User {
   messagesSent       Message[]       @relation("MessageSender")
   notifications      Notification[]
 
+  @@index([isDemo])
   @@map("users")
 }
 
@@ -154,6 +156,7 @@ model Account {
   bannerUrl          String?   @map("banner_url") @db.VarChar(500)
   verificationStatus String    @default("pending") @map("verification_status") @db.VarChar(20) // pending, approved, rejected
   isActive           Boolean   @default(true) @map("is_active")
+  isDemo             Boolean   @default(false) @map("is_demo")
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt          DateTime? @map("deleted_at") @db.Timestamptz
@@ -169,6 +172,7 @@ model Account {
   sellerConversations Conversation[]        @relation("SellerConversations")
   reportsAgainst      Report[]              @relation("ReportedAccountRelation")
 
+  @@index([isDemo])
   @@index([ownerUserId])
   @@index([verificationStatus, isActive])
   @@map("accounts")
@@ -329,6 +333,7 @@ model Listing {
   attributes          Json                                    @default("{}")
   viewsCount          Int                                     @default(0) @map("views_count")
   contactRevealsCount Int                                     @default(0) @map("contact_reveals_count")
+  isDemo              Boolean                                 @default(false) @map("is_demo")
   approvedAt          DateTime?                               @map("approved_at") @db.Timestamptz
   refreshedAt         DateTime                                @default(now()) @map("refreshed_at") @db.Timestamptz
   expiresAt           DateTime                                @map("expires_at") @db.Timestamptz
@@ -348,6 +353,9 @@ model Listing {
 
   @@index([moderationStatus, publicationStatus, availabilityStatus, categoryId, refreshedAt(sort: Desc)], name: "idx_listings_search")
   @@index([accountId])
+  @@index([branchId])
+  @@index([projectId])
+  @@index([isDemo])
   @@index([physicalLocation], type: Gist, name: "idx_listings_physical_loc")
   @@index([displayLocation], type: Gist, name: "idx_listings_display_loc")
   @@index([attributes], type: Gin, name: "idx_listings_attributes_gin")
