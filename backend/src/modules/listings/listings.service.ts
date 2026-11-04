@@ -177,6 +177,10 @@ export class ListingsService {
   async getListingsFeed(filters: FilterListingsDto) {
     const {
       categoryId,
+      categorySlug,
+      category_slug,
+      q,
+      sort,
       governorateId,
       cityId,
       minPrice,
@@ -187,9 +191,42 @@ export class ListingsService {
 
     const where: any = {
       publicationStatus: 'published',
+      deletedAt: null,
     };
 
-    if (categoryId) where.categoryId = categoryId;
+    // Category resolution with hierarchical subcategory inclusion
+    const targetSlug = categorySlug || category_slug;
+    if (targetSlug && !categoryId) {
+      const hyphenSlug = targetSlug.toLowerCase().replace(/_/g, '-');
+      const underscoreSlug = targetSlug.toLowerCase().replace(/-/g, '_');
+      const category = await this.prisma.category.findFirst({
+        where: {
+          OR: [
+            { slug: hyphenSlug },
+            { slug: underscoreSlug },
+            { slug: targetSlug },
+          ],
+        },
+        include: { children: { select: { id: true } } },
+      });
+
+      if (category) {
+        const categoryIds = [category.id, ...category.children.map((c) => c.id)];
+        where.categoryId = { in: categoryIds };
+      }
+    } else if (categoryId) {
+      const category = await this.prisma.category.findUnique({
+        where: { id: categoryId },
+        include: { children: { select: { id: true } } },
+      });
+      if (category) {
+        const categoryIds = [category.id, ...category.children.map((c) => c.id)];
+        where.categoryId = { in: categoryIds };
+      } else {
+        where.categoryId = categoryId;
+      }
+    }
+
     if (cityId) where.area = { cityId };
     if (governorateId) where.area = { city: { governorateId } };
 
@@ -203,21 +240,50 @@ export class ListingsService {
       where.refreshedAt = { lt: new Date(cursor) };
     }
 
+    if (q && q.trim().length > 0) {
+      const term = q.trim();
+      where.OR = [
+        { title: { contains: term, mode: 'insensitive' } },
+        { description: { contains: term, mode: 'insensitive' } },
+      ];
+    }
+
+    let orderBy: any = [{ refreshedAt: 'desc' }];
+    if (sort === 'price_asc') {
+      orderBy = [{ price: 'asc' }, { refreshedAt: 'desc' }];
+    } else if (sort === 'price_desc') {
+      orderBy = [{ price: 'desc' }, { refreshedAt: 'desc' }];
+    }
+
     const items = await this.prisma.listing.findMany({
       where,
       take: limit + 1,
-      orderBy: [{ refreshedAt: 'desc' }],
+      orderBy,
       include: {
+        category: {
+          select: { id: true, slug: true, nameAr: true, nameEn: true, parentId: true },
+        },
         media: {
           where: { mediaType: 'image' },
           orderBy: { sortOrder: 'asc' },
-          take: 1,
+          take: 5,
         },
         area: {
           include: {
             city: {
               include: { governorate: true },
             },
+          },
+        },
+        account: {
+          select: {
+            id: true,
+            displayName: true,
+            slug: true,
+            accountType: true,
+            logoUrl: true,
+            verificationStatus: true,
+            owner: { select: { phone: true, fullName: true } },
           },
         },
       },
@@ -232,16 +298,55 @@ export class ListingsService {
       results = items.slice(0, limit);
     }
 
+    const mappedData = results.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      price: Number(item.price),
+      currency: item.currency || 'EGP',
+      listingKind: item.listingKind,
+      contactChannel: item.contactChannel,
+      moderationStatus: item.moderationStatus,
+      publicationStatus: item.publicationStatus,
+      availabilityStatus: item.availabilityStatus,
+      isDemo: item.isDemo,
+      categoryId: item.categoryId,
+      category: item.category,
+      governorateName: item.area.city.governorate.nameAr,
+      cityName: item.area.city.nameAr,
+      areaName: item.area.nameAr,
+      location: `${item.area.city.nameAr}، ${item.area.city.governorate.nameAr}`,
+      primaryImageUrl: item.media[0]?.publicUrl ?? null,
+      imageUrl: item.media[0]?.publicUrl ?? null,
+      media: item.media,
+      attributes: (item.attributes as any) || {},
+      viewsCount: item.viewsCount,
+      contactRevealsCount: item.contactRevealsCount,
+      account: {
+        id: item.account.id,
+        displayName: item.account.displayName,
+        slug: item.account.slug,
+        accountType: item.account.accountType,
+        logoUrl: item.account.logoUrl,
+        verificationStatus: item.account.verificationStatus,
+      },
+      sellerName: item.account.displayName,
+      sellerPhone: item.account.owner.phone,
+      sellerType: item.account.accountType,
+      isVerified: item.account.verificationStatus === 'approved',
+      refreshedAt: item.refreshedAt,
+      createdAt: item.createdAt,
+    }));
+
     return {
-      items: results.map((item) => ({
-        id: item.id,
-        title: item.title,
-        price: Number(item.price),
-        governorateName: item.area.city.governorate.nameAr,
-        cityName: item.area.city.nameAr,
-        primaryImageUrl: item.media[0]?.publicUrl ?? null,
-        refreshedAt: item.refreshedAt,
-      })),
+      data: mappedData,
+      meta: {
+        nextCursor,
+        next_cursor: nextCursor,
+        limit,
+        hasMore: !!nextCursor,
+      },
+      items: mappedData,
       nextCursor,
     };
   }

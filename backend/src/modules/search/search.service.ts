@@ -14,6 +14,8 @@ export class SearchService {
     const {
       q,
       categoryId,
+      categorySlug,
+      category_slug,
       governorateId,
       cityId,
       minPrice,
@@ -22,20 +24,56 @@ export class SearchService {
       limit = 20,
     } = queryDto;
 
-    const normalizedTerm = normalizeArabicText(q);
     const skip = (page - 1) * limit;
 
     const where: any = {
       publicationStatus: 'published',
-      OR: [
+      deletedAt: null,
+    };
+
+    if (q && q.trim().length > 0) {
+      const normalizedTerm = normalizeArabicText(q);
+      where.OR = [
         { title: { contains: normalizedTerm, mode: 'insensitive' } },
         { description: { contains: normalizedTerm, mode: 'insensitive' } },
         { title: { contains: q, mode: 'insensitive' } },
         { description: { contains: q, mode: 'insensitive' } },
-      ],
-    };
+      ];
+    }
 
-    if (categoryId) where.categoryId = categoryId;
+    // Category resolution with hierarchical subcategory inclusion
+    const targetSlug = categorySlug || category_slug;
+    if (targetSlug && !categoryId) {
+      const hyphenSlug = targetSlug.toLowerCase().replace(/_/g, '-');
+      const underscoreSlug = targetSlug.toLowerCase().replace(/-/g, '_');
+      const category = await this.prisma.category.findFirst({
+        where: {
+          OR: [
+            { slug: hyphenSlug },
+            { slug: underscoreSlug },
+            { slug: targetSlug },
+          ],
+        },
+        include: { children: { select: { id: true } } },
+      });
+
+      if (category) {
+        const categoryIds = [category.id, ...category.children.map((c) => c.id)];
+        where.categoryId = { in: categoryIds };
+      }
+    } else if (categoryId) {
+      const category = await this.prisma.category.findUnique({
+        where: { id: categoryId },
+        include: { children: { select: { id: true } } },
+      });
+      if (category) {
+        const categoryIds = [category.id, ...category.children.map((c) => c.id)];
+        where.categoryId = { in: categoryIds };
+      } else {
+        where.categoryId = categoryId;
+      }
+    }
+
     if (cityId) where.area = { cityId };
     if (governorateId) where.area = { city: { governorateId } };
 
@@ -53,16 +91,29 @@ export class SearchService {
         take: limit,
         orderBy: [{ refreshedAt: 'desc' }],
         include: {
+          category: {
+            select: { id: true, slug: true, nameAr: true, nameEn: true },
+          },
           media: {
             where: { mediaType: 'image' },
             orderBy: { sortOrder: 'asc' },
-            take: 1,
+            take: 5,
           },
           area: {
             include: {
               city: {
                 include: { governorate: true },
               },
+            },
+          },
+          account: {
+            select: {
+              id: true,
+              displayName: true,
+              accountType: true,
+              logoUrl: true,
+              verificationStatus: true,
+              owner: { select: { phone: true, fullName: true } },
             },
           },
         },
@@ -73,18 +124,34 @@ export class SearchService {
       data: items.map((item) => ({
         id: item.id,
         title: item.title,
+        description: item.description,
         price: Number(item.price),
-        governorateName: item.area.city.governorate.nameAr,
-        cityName: item.area.city.nameAr,
-        primaryImageUrl: item.media[0]?.publicUrl ?? null,
+        currency: item.currency || 'EGP',
+        listingKind: item.listingKind,
+        category: item.category,
+        governorateName: item.area?.city?.governorate?.nameAr ?? '',
+        cityName: item.area?.city?.nameAr ?? '',
+        areaName: item.area?.nameAr ?? '',
+        location: item.area?.city ? `${item.area.city.nameAr}، ${item.area.city.governorate.nameAr}` : '',
+        primaryImageUrl: item.media?.[0]?.publicUrl ?? null,
+        imageUrl: item.media?.[0]?.publicUrl ?? null,
+        media: item.media ?? [],
+        attributes: (item.attributes as any) || {},
+        account: item.account,
+        sellerName: item.account?.displayName ?? '',
+        sellerPhone: item.account?.owner?.phone ?? '',
+        sellerType: item.account?.accountType ?? 'individual',
+        isVerified: item.account?.verificationStatus === 'approved',
+        isDemo: item.isDemo,
         refreshedAt: item.refreshedAt,
+        createdAt: item.createdAt,
       })),
       meta: {
         total,
         page,
         limit,
         totalPages: Math.ceil(total / limit),
-        query: q,
+        query: q || '',
       },
     };
   }
