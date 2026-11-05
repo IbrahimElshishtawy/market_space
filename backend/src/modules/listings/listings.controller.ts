@@ -6,10 +6,12 @@ import {
   Param,
   Query,
   Body,
+  Req,
   UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { FastifyRequest } from 'fastify';
 import {
   ApiTags,
   ApiOperation,
@@ -90,7 +92,29 @@ export class ListingsController {
     summary: 'Record buyer contact action and reveal seller phone number',
   })
   @ApiResponse({ status: 200, description: 'Phone number revealed' })
-  async contactSeller(@Param('id') id: string) {
-    return this.listingsService.recordContactAction(id);
+  async contactSeller(
+    @Param('id') id: string,
+    @Req() req: FastifyRequest,
+    @CurrentUser() user?: AuthenticatedUser,
+  ) {
+    const ip = req.ip;
+    const ua = (req.headers['user-agent'] as string) || '';
+    return this.listingsService.recordContactAction(id, ip, ua, user?.id);
+  }
+
+  @Post(':id/reveal-contact')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Alias: Record buyer contact action and reveal seller phone number',
+  })
+  @ApiResponse({ status: 200, description: 'Phone number revealed' })
+  async revealContactAlias(
+    @Param('id') id: string,
+    @Req() req: FastifyRequest,
+    @CurrentUser() user?: AuthenticatedUser,
+  ) {
+    const ip = req.ip;
+    const ua = (req.headers['user-agent'] as string) || '';
+    return this.listingsService.recordContactAction(id, ip, ua, user?.id);
   }
 }

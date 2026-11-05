@@ -559,16 +559,58 @@ export class ListingsService {
       targetStatus,
     );
 
-    return this.prisma.listing.update({
+    const updated = await this.prisma.listing.update({
       where: { id },
       data: { publicationStatus: targetStatus },
     });
+
+    // Record immutable security audit log
+    await this.securityAudit.logEvent({
+      action: 'LISTING_STATUS_UPDATED',
+      targetEntity: 'Listing',
+      targetId: id,
+      actorId: userId,
+      actorType: userRole === 'SUPER_ADMIN' ? 'staff' : 'user',
+      metadata: {
+        previousStatus: listing.publicationStatus,
+        newStatus: targetStatus,
+      },
+    });
+
+    return updated;
   }
 
   /**
    * Records contact action (Call / WhatsApp click) and reveals seller phone number.
+   * Enforces IP rate limiting against phone scraping and logs security audit trail.
    */
-  async recordContactAction(id: string) {
+  async recordContactAction(
+    id: string,
+    ipAddress?: string,
+    userAgent?: string,
+    userId?: string,
+  ) {
+    // 1. IP Rate Limiting (Anti-Scraping): max 30 reveals per hour per IP
+    if (ipAddress) {
+      const rateLimitKey = `contact:ratelimit:ip:${ipAddress}`;
+      const { allowed } = await this.redis.checkRateLimit(rateLimitKey, 30, 3600);
+      if (!allowed) {
+        await this.securityAudit.logEvent({
+          action: 'CONTACT_REVEAL_RATE_LIMIT_EXCEEDED',
+          targetEntity: 'Listing',
+          targetId: id,
+          ipAddress,
+          userAgent,
+          actorId: userId,
+          metadata: { ipAddress },
+        });
+        throw new HttpException(
+          'Too many contact requests from your network. Please wait before retrying.',
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+    }
+
     const listing = await this.prisma.listing.findUnique({
       where: { id },
       include: {
@@ -590,9 +632,29 @@ export class ListingsService {
       data: { contactRevealsCount: { increment: 1 } },
     });
 
+    // Record security audit event
+    await this.securityAudit.logEvent({
+      action: 'CONTACT_REVEALED',
+      targetEntity: 'Listing',
+      targetId: id,
+      ipAddress,
+      userAgent,
+      actorId: userId,
+      metadata: {
+        sellerAccountId: listing.accountId,
+        sellerPhone: listing.account.owner.phone,
+      },
+    });
+
+    const phone = listing.account.owner.phone;
+    const cleanDigits = phone.replace(/[^0-9]/g, '');
+    const whatsappUrl = `https://wa.me/${cleanDigits}`;
+
     return {
-      phone: listing.account.owner.phone,
+      phone,
       sellerName: listing.account.owner.fullName,
+      whatsapp: whatsappUrl,
+      whatsappUrl,
     };
   }
 }

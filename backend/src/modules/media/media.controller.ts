@@ -52,4 +52,17 @@ export class MediaController {
   ) {
     return this.mediaService.generateImageUploadUrls(user.id, dto);
   }
+
+  @Post('presigned-url')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'OpenAPI Alias: Request presigned direct-to-storage upload URL',
+  })
+  @ApiResponse({ status: 200, description: 'Presigned upload URL generated' })
+  async requestPresignedUrlAlias(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: PresignedUploadDto,
+  ) {
+    return this.mediaService.generateImageUploadUrls(user.id, dto);
+  }
 }

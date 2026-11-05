@@ -84,6 +84,13 @@ export class WorkerService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * Health probe verifying background workers active status.
+   */
+  isHealthy(): boolean {
+    return this.intervals.length > 0;
+  }
+
+  /**
    * Enqueues an async notification dispatch.
    */
   async enqueueNotification(job: PushNotificationJobData): Promise<boolean> {
