@@ -24,3 +24,37 @@ export function normalizeArabicText(input: string): string {
       .replace(/\s+/g, ' ')
   );
 }
+
+/**
+ * Generates expanded search term variants to handle Egyptian marketplace dialects and prefixes.
+ * Includes definite article ('ال') stripping/addition, Alef/Taa Marbuta variants, and phonetic tokens.
+ */
+export function generateArabicSearchVariants(rawTerm: string): string[] {
+  if (!rawTerm || !rawTerm.trim()) return [];
+
+  const raw = rawTerm.trim();
+  const normalized = normalizeArabicText(raw);
+  const variants = new Set<string>();
+
+  variants.add(raw);
+  variants.add(normalized);
+
+  // Split into individual words
+  const words = normalized.split(' ');
+  const strippedWords = words.map((w) => (w.startsWith('ال') && w.length > 3 ? w.substring(2) : w));
+  const prefixedWords = words.map((w) => (!w.startsWith('ال') && w.length > 2 ? `ال${w}` : w));
+
+  const strippedJoined = strippedWords.join(' ');
+  const prefixedJoined = prefixedWords.join(' ');
+
+  if (strippedJoined !== normalized) variants.add(strippedJoined);
+  if (prefixedJoined !== normalized) variants.add(prefixedJoined);
+
+  // Egyptian dialect phonetic variants: ذ/ز, ث/س
+  const phonetic = normalized
+    .replace(/ذ/g, 'ز')
+    .replace(/ث/g, 'س');
+  if (phonetic !== normalized) variants.add(phonetic);
+
+  return Array.from(variants);
+}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../core/database/prisma.service';
 import { SearchQueryDto } from './dto/search-query.dto';
-import { normalizeArabicText } from './arabic-normalizer';
+import { generateArabicSearchVariants } from './arabic-normalizer';
 
 @Injectable()
 export class SearchService {
@@ -9,6 +9,7 @@ export class SearchService {
 
   /**
    * Performs fuzzy full-text keyword search and parametric faceted filtering.
+   * Supports dynamic category attributes, PostGIS spatial queries, and Egyptian dialect variants.
    */
   async searchListings(queryDto: SearchQueryDto) {
     const {
@@ -20,6 +21,30 @@ export class SearchService {
       cityId,
       minPrice,
       maxPrice,
+      condition,
+      sort,
+      sort_by,
+      lat,
+      latitude,
+      lng,
+      longitude,
+      radiusKm,
+      radius_km,
+      rooms,
+      baths,
+      finishing,
+      furnished,
+      brand,
+      make,
+      model,
+      year,
+      transmission,
+      fuelType,
+      fuel_type,
+      unitType,
+      unit_type,
+      attributes,
+      isDemo,
       page = 1,
       limit = 20,
     } = queryDto;
@@ -31,14 +56,23 @@ export class SearchService {
       deletedAt: null,
     };
 
+    if (condition) {
+      where.condition = condition;
+    }
+
+    if (isDemo !== undefined) {
+      where.isDemo = isDemo;
+    }
+
+    // Keyword search with Egyptian dialect expansion
     if (q && q.trim().length > 0) {
-      const normalizedTerm = normalizeArabicText(q);
-      where.OR = [
-        { title: { contains: normalizedTerm, mode: 'insensitive' } },
-        { description: { contains: normalizedTerm, mode: 'insensitive' } },
-        { title: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-      ];
+      const term = q.trim();
+      const variants = generateArabicSearchVariants(term);
+      where.OR = [];
+      for (const v of variants) {
+        where.OR.push({ title: { contains: v, mode: 'insensitive' } });
+        where.OR.push({ description: { contains: v, mode: 'insensitive' } });
+      }
     }
 
     // Category resolution with hierarchical subcategory inclusion
@@ -89,13 +123,100 @@ export class SearchService {
       if (maxPrice !== undefined) where.price.lte = maxPrice;
     }
 
+    // Dynamic Category Attribute Filters inside JSONB
+    const andFilters: any[] = [];
+    if (rooms !== undefined) {
+      andFilters.push({ attributes: { path: ['rooms'], equals: Number(rooms) } });
+    }
+    if (baths !== undefined) {
+      andFilters.push({ attributes: { path: ['baths'], equals: Number(baths) } });
+    }
+    if (finishing) {
+      andFilters.push({ attributes: { path: ['finishing'], equals: finishing } });
+    }
+    if (furnished !== undefined) {
+      andFilters.push({ attributes: { path: ['furnished'], equals: Boolean(furnished) } });
+    }
+    const brandVal = brand || make;
+    if (brandVal) {
+      andFilters.push({
+        OR: [
+          { attributes: { path: ['brand'], equals: brandVal } },
+          { attributes: { path: ['make'], equals: brandVal } },
+        ],
+      });
+    }
+    if (model) {
+      andFilters.push({ attributes: { path: ['model'], equals: model } });
+    }
+    if (year !== undefined) {
+      andFilters.push({ attributes: { path: ['year'], equals: Number(year) } });
+    }
+    if (transmission) {
+      andFilters.push({ attributes: { path: ['transmission'], equals: transmission } });
+    }
+    const fuelVal = fuelType || fuel_type;
+    if (fuelVal) {
+      andFilters.push({ attributes: { path: ['fuel_type'], equals: fuelVal } });
+    }
+    const unitVal = unitType || unit_type;
+    if (unitVal) {
+      andFilters.push({ attributes: { path: ['unit_type'], equals: unitVal } });
+    }
+    if (attributes) {
+      try {
+        const parsed = typeof attributes === 'string' ? JSON.parse(attributes) : attributes;
+        if (parsed && typeof parsed === 'object') {
+          for (const [key, val] of Object.entries(parsed)) {
+            if (val !== undefined && val !== null && val !== '') {
+              andFilters.push({ attributes: { path: [key], equals: val } });
+            }
+          }
+        }
+      } catch {}
+    }
+    if (andFilters.length > 0) {
+      where.AND = andFilters;
+    }
+
+    // Geographic spatial radius filtering via PostGIS
+    const targetLat = lat ?? latitude;
+    const targetLng = lng ?? longitude;
+    const targetRadius = (radiusKm ?? radius_km ?? 25) * 1000;
+    if (targetLat !== undefined && targetLng !== undefined) {
+      try {
+        const nearbyListings = await this.prisma.$queryRaw<Array<{ id: string }>>`
+          SELECT id FROM listings
+          WHERE publication_status = 'published'
+            AND deleted_at IS NULL
+            AND ST_DWithin(
+              display_location,
+              ST_SetSRID(ST_MakePoint(${targetLng}, ${targetLat}), 4326)::geography,
+              ${targetRadius}
+            )
+          ORDER BY display_location <-> ST_SetSRID(ST_MakePoint(${targetLng}, ${targetLat}), 4326) ASC
+          LIMIT 300;
+        `;
+        where.id = { in: nearbyListings.map((r) => r.id) };
+      } catch {}
+    }
+
+    // Ordering logic
+    const sortVal = sort || sort_by;
+    let orderBy: any = [{ refreshedAt: 'desc' }];
+    if (sortVal === 'price_asc') {
+      orderBy = [{ price: 'asc' }, { refreshedAt: 'desc' }];
+    } else if (sortVal === 'price_desc') {
+      orderBy = [{ price: 'desc' }, { refreshedAt: 'desc' }];
+    }
+
     const [total, items] = await Promise.all([
       this.prisma.listing.count({ where }),
       this.prisma.listing.findMany({
         where,
         skip,
         take: limit,
-        orderBy: [{ refreshedAt: 'desc' }],
+        orderBy,
         include: {
           category: {
             select: { id: true, slug: true, nameAr: true, nameEn: true },
