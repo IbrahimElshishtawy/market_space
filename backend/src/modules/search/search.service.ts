@@ -126,16 +126,24 @@ export class SearchService {
     // Dynamic Category Attribute Filters inside JSONB
     const andFilters: any[] = [];
     if (rooms !== undefined) {
-      andFilters.push({ attributes: { path: ['rooms'], equals: Number(rooms) } });
+      andFilters.push({
+        attributes: { path: ['rooms'], equals: Number(rooms) },
+      });
     }
     if (baths !== undefined) {
-      andFilters.push({ attributes: { path: ['baths'], equals: Number(baths) } });
+      andFilters.push({
+        attributes: { path: ['baths'], equals: Number(baths) },
+      });
     }
     if (finishing) {
-      andFilters.push({ attributes: { path: ['finishing'], equals: finishing } });
+      andFilters.push({
+        attributes: { path: ['finishing'], equals: finishing },
+      });
     }
     if (furnished !== undefined) {
-      andFilters.push({ attributes: { path: ['furnished'], equals: Boolean(furnished) } });
+      andFilters.push({
+        attributes: { path: ['furnished'], equals: Boolean(furnished) },
+      });
     }
     const brandVal = brand || make;
     if (brandVal) {
@@ -153,7 +161,9 @@ export class SearchService {
       andFilters.push({ attributes: { path: ['year'], equals: Number(year) } });
     }
     if (transmission) {
-      andFilters.push({ attributes: { path: ['transmission'], equals: transmission } });
+      andFilters.push({
+        attributes: { path: ['transmission'], equals: transmission },
+      });
     }
     const fuelVal = fuelType || fuel_type;
     if (fuelVal) {
@@ -165,7 +175,8 @@ export class SearchService {
     }
     if (attributes) {
       try {
-        const parsed = typeof attributes === 'string' ? JSON.parse(attributes) : attributes;
+        const parsed =
+          typeof attributes === 'string' ? JSON.parse(attributes) : attributes;
         if (parsed && typeof parsed === 'object') {
           for (const [key, val] of Object.entries(parsed)) {
             if (val !== undefined && val !== null && val !== '') {
@@ -185,7 +196,9 @@ export class SearchService {
     const targetRadius = (radiusKm ?? radius_km ?? 25) * 1000;
     if (targetLat !== undefined && targetLng !== undefined) {
       try {
-        const nearbyListings = await this.prisma.$queryRaw<Array<{ id: string }>>`
+        const nearbyListings = await this.prisma.$queryRaw<
+          Array<{ id: string }>
+        >`
           SELECT id FROM listings
           WHERE publication_status = 'published'
             AND deleted_at IS NULL

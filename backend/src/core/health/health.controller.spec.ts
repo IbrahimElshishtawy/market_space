@@ -70,6 +70,7 @@ describe('HealthController', () => {
               postgis: 'up (3.4 USE_GEOS=1)',
               redis_cache: 'up',
               redis_queue: 'up',
+              workers: 'active',
             },
           }),
         }),

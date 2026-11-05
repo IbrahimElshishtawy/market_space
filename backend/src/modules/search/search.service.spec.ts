@@ -1,17 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SearchService } from './search.service';
 import { PrismaService } from '../../core/database/prisma.service';
-import { normalizeArabicText } from './arabic-normalizer';
+import {
+  normalizeArabicText,
+  generateArabicSearchVariants,
+} from './arabic-normalizer';
 
 describe('Search Service & Arabic Normalization (Milestone 4)', () => {
   let service: SearchService;
   let prisma: PrismaService;
 
   const mockPrisma = {
+    category: { findUnique: jest.fn(), findFirst: jest.fn() },
     listing: {
       count: jest.fn(),
       findMany: jest.fn(),
     },
+    $queryRaw: jest.fn().mockResolvedValue([]),
   };
 
   beforeEach(async () => {
@@ -43,9 +48,39 @@ describe('Search Service & Arabic Normalization (Milestone 4)', () => {
     it('should strip Arabic Tashkeel / Harakat completely', () => {
       expect(normalizeArabicText('سَيَّارَةٌ')).toBe('سياره');
     });
+
+    it('should generate search variants with and without definite article (ال)', () => {
+      const variants = generateArabicSearchVariants('التويوتا');
+      expect(variants).toContain('التويوتا');
+      expect(variants).toContain('تويوتا');
+    });
   });
 
   describe('searchListings', () => {
+    it('should filter by dynamic category attributes (e.g. rooms, brand)', async () => {
+      mockPrisma.listing.count.mockResolvedValue(1);
+      mockPrisma.listing.findMany.mockResolvedValue([]);
+
+      await service.searchListings({
+        rooms: 3,
+        brand: 'تويوتا',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(mockPrisma.listing.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            AND: expect.arrayContaining([
+              expect.objectContaining({
+                attributes: { path: ['rooms'], equals: 3 },
+              }),
+            ]),
+          }),
+        }),
+      );
+    });
+
     it('should execute search query and return results with meta pagination', async () => {
       mockPrisma.listing.count.mockResolvedValue(1);
       mockPrisma.listing.findMany.mockResolvedValue([

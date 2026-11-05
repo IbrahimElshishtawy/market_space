@@ -395,6 +395,22 @@ async function main() {
     });
   }
 
+  // Synchronize spatial PostGIS geometries for listings and branches with their area centroids
+  await prisma.$executeRaw`
+    UPDATE listings l
+    SET display_location = a.centroid,
+        physical_location = a.centroid
+    FROM areas a
+    WHERE l.area_id = a.id;
+  `;
+  await prisma.$executeRaw`
+    UPDATE branches b
+    SET location = a.centroid
+    FROM areas a
+    WHERE b.area_id = a.id;
+  `;
+  console.log('   ✔ Synchronized PostGIS geometry centroids for listings and branches.');
+
   console.log(`   ✔ Seeded ${totalListingsCount} realistic demo listings with multiple images.\n`);
   console.log('====================================================');
   console.log('🎉 DEAL ONE DEMO DATASET SEED SUCCESSFUL');

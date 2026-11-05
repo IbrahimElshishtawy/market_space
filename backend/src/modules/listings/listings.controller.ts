@@ -105,7 +105,8 @@ export class ListingsController {
   @Post(':id/reveal-contact')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Alias: Record buyer contact action and reveal seller phone number',
+    summary:
+      'Alias: Record buyer contact action and reveal seller phone number',
   })
   @ApiResponse({ status: 200, description: 'Phone number revealed' })
   async revealContactAlias(

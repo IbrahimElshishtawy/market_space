@@ -1,8 +1,9 @@
-import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Res, Optional } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PrismaService } from '../database/prisma.service';
 import { RedisService } from '../redis/redis.service';
+import { WorkerService } from '../../workers/worker.service';
 
 @ApiTags('Health')
 @Controller('health')
@@ -10,6 +11,7 @@ export class HealthController {
   constructor(
     private readonly prisma: PrismaService,
     private readonly redisService: RedisService,
+    @Optional() private readonly workerService?: WorkerService,
   ) {}
 
   @Get(['liveness', 'live'])
@@ -60,6 +62,12 @@ export class HealthController {
     const isHealthy =
       dbHealthy && postgisHealthy && cacheHealthy && queueHealthy;
 
+    const workerStatus = this.workerService
+      ? this.workerService.isHealthy()
+        ? 'active'
+        : 'idle'
+      : 'active';
+
     const responsePayload = {
       status: isHealthy ? 'healthy' : 'unhealthy',
       checks: {
@@ -67,6 +75,7 @@ export class HealthController {
         postgis: postgisHealthy ? `up (${postgisVersion ?? 'active'})` : 'down',
         redis_cache: cacheHealthy ? 'up' : 'down',
         redis_queue: queueHealthy ? 'up' : 'down',
+        workers: workerStatus,
       },
       timestamp: new Date().toISOString(),
     };

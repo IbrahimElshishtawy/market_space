@@ -41,8 +41,12 @@ export function generateArabicSearchVariants(rawTerm: string): string[] {
 
   // Split into individual words
   const words = normalized.split(' ');
-  const strippedWords = words.map((w) => (w.startsWith('ال') && w.length > 3 ? w.substring(2) : w));
-  const prefixedWords = words.map((w) => (!w.startsWith('ال') && w.length > 2 ? `ال${w}` : w));
+  const strippedWords = words.map((w) =>
+    w.startsWith('ال') && w.length > 3 ? w.substring(2) : w,
+  );
+  const prefixedWords = words.map((w) =>
+    !w.startsWith('ال') && w.length > 2 ? `ال${w}` : w,
+  );
 
   const strippedJoined = strippedWords.join(' ');
   const prefixedJoined = prefixedWords.join(' ');
@@ -51,9 +55,7 @@ export function generateArabicSearchVariants(rawTerm: string): string[] {
   if (prefixedJoined !== normalized) variants.add(prefixedJoined);
 
   // Egyptian dialect phonetic variants: ذ/ز, ث/س
-  const phonetic = normalized
-    .replace(/ذ/g, 'ز')
-    .replace(/ث/g, 'س');
+  const phonetic = normalized.replace(/ذ/g, 'ز').replace(/ث/g, 'س');
   if (phonetic !== normalized) variants.add(phonetic);
 
   return Array.from(variants);
