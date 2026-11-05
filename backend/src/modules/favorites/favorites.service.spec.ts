@@ -5,7 +5,6 @@ import { NotFoundException } from '@nestjs/common';
 
 describe('FavoritesService', () => {
   let service: FavoritesService;
-  let prisma: PrismaService;
 
   const mockPrisma = {
     favorite: {
@@ -29,7 +28,6 @@ describe('FavoritesService', () => {
     }).compile();
 
     service = module.get<FavoritesService>(FavoritesService);
-    prisma = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {
@@ -48,7 +46,12 @@ describe('FavoritesService', () => {
           price: 1500000,
           currency: 'EGP',
           listingKind: 'sale',
-          category: { id: 'c-1', slug: 'real-estate', nameAr: 'عقارات', nameEn: 'Real Estate' },
+          category: {
+            id: 'c-1',
+            slug: 'real-estate',
+            nameAr: 'عقارات',
+            nameEn: 'Real Estate',
+          },
           area: {
             nameAr: 'مدينة نصر',
             city: {

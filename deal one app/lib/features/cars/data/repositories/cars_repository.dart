@@ -64,7 +64,7 @@ class ApiCarsRepository implements CarsRepository {
       }
 
       if (items.isEmpty) {
-        return _fallback.getCars(filter: filter, page: page, pageSize: pageSize);
+        return await _fallback.getCars(filter: filter, page: page, pageSize: pageSize);
       }
 
       final formatter = NumberFormat.decimalPattern();
@@ -148,7 +148,7 @@ class ApiCarsRepository implements CarsRepository {
           : (resData is Map ? Map<String, dynamic>.from(resData) : {});
 
       if (data.isEmpty) {
-        return _fallback.getCarById(id);
+        return await _fallback.getCarById(id);
       }
 
       final formatter = NumberFormat.decimalPattern();

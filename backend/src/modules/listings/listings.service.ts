@@ -211,7 +211,10 @@ export class ListingsService {
       });
 
       if (category) {
-        const categoryIds = [category.id, ...category.children.map((c) => c.id)];
+        const categoryIds = [
+          category.id,
+          ...category.children.map((c) => c.id),
+        ];
         where.categoryId = { in: categoryIds };
       }
     } else if (categoryId) {
@@ -220,7 +223,10 @@ export class ListingsService {
         include: { children: { select: { id: true } } },
       });
       if (category) {
-        const categoryIds = [category.id, ...category.children.map((c) => c.id)];
+        const categoryIds = [
+          category.id,
+          ...category.children.map((c) => c.id),
+        ];
         where.categoryId = { in: categoryIds };
       } else {
         where.categoryId = categoryId;
@@ -261,7 +267,13 @@ export class ListingsService {
       orderBy,
       include: {
         category: {
-          select: { id: true, slug: true, nameAr: true, nameEn: true, parentId: true },
+          select: {
+            id: true,
+            slug: true,
+            nameAr: true,
+            nameEn: true,
+            parentId: true,
+          },
         },
         media: {
           where: { mediaType: 'image' },

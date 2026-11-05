@@ -41,7 +41,7 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
   List<InvestmentProjectItem> _investments = [];
 
   int _navIndex = 0;
-  String _selectedCity = 'الرياض / دبي';
+  String _selectedCity = 'القاهرة / الجيزة';
 
   @override
   void initState() {
@@ -50,6 +50,7 @@ class _MarketHomeScreenState extends State<MarketHomeScreen> {
       final dependencies = AppDependencies.of(context);
       _repository = MarketRepositoryImpl(
         mockDataProvider: dependencies.mockDataProvider,
+        apiClient: dependencies.apiClient,
       );
       _loadData();
     });

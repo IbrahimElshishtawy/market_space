@@ -32,7 +32,11 @@ import '../features/cars/presentation/controllers/cars_controller.dart';
 import '../features/fashion/data/repositories/fashion_repository.dart';
 import '../features/fashion/presentation/controllers/fashion_cart_controller.dart';
 import '../features/fashion/presentation/controllers/fashion_controller.dart';
+import '../features/home_appliances/data/repositories/home_appliances_repository.dart';
+import '../features/home_appliances/presentation/controllers/home_appliances_controller.dart';
 import '../features/profile/presentation/controllers/profile_controller.dart';
+import '../features/real_estate/data/repositories/real_estate_repository.dart';
+import '../features/real_estate/presentation/controllers/real_estate_controller.dart';
 import '../features/real_estate/favorites/presentation/controllers/real_estate_favorites_controller.dart';
 import '../features/real_estate/notifications/presentation/controllers/real_estate_notification_controller.dart';
 import '../shared/state/sector_controller.dart';
@@ -69,6 +73,10 @@ class AppDependencies {
   final HomeServicesCatalogController homeServicesCatalogController;
   final HomeServicesBookingController homeServicesBookingController;
   final HomeServicesFavoritesController homeServicesFavoritesController;
+  final RealEstateRepository realEstateRepository;
+  final RealEstateController realEstateController;
+  final HomeAppliancesRepository homeAppliancesRepository;
+  final HomeAppliancesController homeAppliancesController;
   final CarsRepository carsRepository;
   final CarsController carsController;
   final FashionRepository fashionRepository;
@@ -109,6 +117,10 @@ class AppDependencies {
     HomeServicesCatalogController? homeServicesCatalogController,
     HomeServicesBookingController? homeServicesBookingController,
     HomeServicesFavoritesController? homeServicesFavoritesController,
+    RealEstateRepository? realEstateRepository,
+    RealEstateController? realEstateController,
+    HomeAppliancesRepository? homeAppliancesRepository,
+    HomeAppliancesController? homeAppliancesController,
     CarsRepository? carsRepository,
     CarsController? carsController,
     FashionRepository? fashionRepository,
@@ -177,6 +189,21 @@ class AppDependencies {
                  HomeServicesFavoritesRepositoryImpl(),
              servicesRepository:
                  homeServicesRepository ?? HomeServicesRepositoryImpl(),
+           ),
+       realEstateRepository =
+           realEstateRepository ?? MockRealEstateRepository(),
+       realEstateController =
+           realEstateController ??
+           RealEstateController(
+             repository: realEstateRepository ?? MockRealEstateRepository(),
+           ),
+       homeAppliancesRepository =
+           homeAppliancesRepository ?? MockHomeAppliancesRepository(),
+       homeAppliancesController =
+           homeAppliancesController ??
+           HomeAppliancesController(
+             repository:
+                 homeAppliancesRepository ?? MockHomeAppliancesRepository(),
            ),
        carsRepository = carsRepository ?? MockCarsRepository(),
        carsController =

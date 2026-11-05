@@ -56,7 +56,7 @@ class ApiRealEstateRepository implements RealEstateRepository {
       }
 
       if (items.isEmpty) {
-        return _fallback.getListings(filter: filter);
+        return await _fallback.getListings(filter: filter);
       }
 
       final formatter = NumberFormat.decimalPattern();
@@ -129,7 +129,7 @@ class ApiRealEstateRepository implements RealEstateRepository {
           : (resData is Map ? Map<String, dynamic>.from(resData) : {});
 
       if (data.isEmpty) {
-        return _fallback.getListingDetails(listingId);
+        return await _fallback.getListingDetails(listingId);
       }
 
       final formatter = NumberFormat.decimalPattern();

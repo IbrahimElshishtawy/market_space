@@ -52,11 +52,15 @@ export class AccountsService {
       include: {
         branches: {
           take: 5,
-          include: { area: { include: { city: { include: { governorate: true } } } } },
+          include: {
+            area: { include: { city: { include: { governorate: true } } } },
+          },
         },
         _count: {
           select: {
-            listings: { where: { publicationStatus: 'published', deletedAt: null } },
+            listings: {
+              where: { publicationStatus: 'published', deletedAt: null },
+            },
             branches: true,
           },
         },

@@ -18,6 +18,11 @@ import '../core/security/secure_token_provider.dart';
 import '../core/storage/preferences_service.dart';
 import '../core/storage/secure_storage_service.dart';
 import '../shared/state/sector_controller.dart';
+import '../features/real_estate/data/repositories/real_estate_repository.dart';
+import '../features/cars/data/repositories/cars_repository.dart';
+import '../features/fashion/data/repositories/fashion_repository.dart';
+import '../features/home_appliances/data/repositories/home_appliances_repository.dart';
+import '../features/home_services/data/repositories/home_services_repository.dart';
 import 'bootstrap_observer.dart';
 
 Future<AppDependencies> initializeDependencies(AppConfig config) async {
@@ -81,6 +86,11 @@ Future<AppDependencies> initializeDependencies(AppConfig config) async {
     localeController: localeController,
     themeController: themeController,
     sectorController: sectorController,
+    realEstateRepository: ApiRealEstateRepository(apiClient: apiClient),
+    homeAppliancesRepository: ApiHomeAppliancesRepository(apiClient: apiClient),
+    carsRepository: ApiCarsRepository(apiClient: apiClient),
+    fashionRepository: ApiFashionRepository(apiClient: apiClient),
+    homeServicesRepository: ApiHomeServicesRepository(apiClient: apiClient),
   );
 }
 

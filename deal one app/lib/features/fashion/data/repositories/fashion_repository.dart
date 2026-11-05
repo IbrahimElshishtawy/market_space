@@ -73,7 +73,7 @@ class ApiFashionRepository implements FashionRepository {
       }
 
       if (items.isEmpty) {
-        return _fallback.getProducts(
+        return await _fallback.getProducts(
           department: department,
           category: category,
           searchQuery: searchQuery,
@@ -164,7 +164,7 @@ class ApiFashionRepository implements FashionRepository {
           ? Map<String, dynamic>.from(resData['data'])
           : (resData is Map ? Map<String, dynamic>.from(resData) : {});
 
-      if (data.isEmpty) return _fallback.getProductById(id);
+      if (data.isEmpty) return await _fallback.getProductById(id);
 
       final num priceNum = data['price'] is num
           ? data['price']

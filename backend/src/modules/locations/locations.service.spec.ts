@@ -5,7 +5,6 @@ import { NotFoundException } from '@nestjs/common';
 
 describe('LocationsService', () => {
   let service: LocationsService;
-  let prisma: PrismaService;
 
   const mockPrisma = {
     governorate: {
@@ -28,7 +27,6 @@ describe('LocationsService', () => {
     }).compile();
 
     service = module.get<LocationsService>(LocationsService);
-    prisma = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {
@@ -56,7 +54,10 @@ describe('LocationsService', () => {
   });
 
   it('should return areas for valid city', async () => {
-    mockPrisma.city.findUnique.mockResolvedValue({ id: 1, nameAr: 'مدينة نصر' });
+    mockPrisma.city.findUnique.mockResolvedValue({
+      id: 1,
+      nameAr: 'مدينة نصر',
+    });
     const mockAreas = [{ id: 'area-1', nameAr: 'الحي السابع', cityId: 1 }];
     mockPrisma.area.findMany.mockResolvedValue(mockAreas);
 
@@ -67,6 +68,8 @@ describe('LocationsService', () => {
   it('should throw NotFoundException for non-existent city', async () => {
     mockPrisma.city.findUnique.mockResolvedValue(null);
 
-    await expect(service.getAreasByCity(999)).rejects.toThrow(NotFoundException);
+    await expect(service.getAreasByCity(999)).rejects.toThrow(
+      NotFoundException,
+    );
   });
 });

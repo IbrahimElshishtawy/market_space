@@ -15,10 +15,7 @@ class MarketRepositoryImpl implements MarketRepository {
   final MockDataProvider mockDataProvider;
   final ApiClient? apiClient;
 
-  MarketRepositoryImpl({
-    required this.mockDataProvider,
-    this.apiClient,
-  });
+  MarketRepositoryImpl({required this.mockDataProvider, this.apiClient});
 
   @override
   Future<List<RealEstateItem>> getRealEstateListings() async {
@@ -39,15 +36,24 @@ class MarketRepositoryImpl implements MarketRepository {
         if (items.isNotEmpty) {
           final fmt = NumberFormat.decimalPattern();
           return items.map<RealEstateItem>((item) {
-            final data = item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
-            final num priceNum = data['price'] is num ? data['price'] : (num.tryParse(data['price']?.toString() ?? '0') ?? 0);
+            final data = item is Map<String, dynamic>
+                ? item
+                : Map<String, dynamic>.from(item);
+            final num priceNum = data['price'] is num
+                ? data['price']
+                : (num.tryParse(data['price']?.toString() ?? '0') ?? 0);
             final isRent = data['listingKind'] == 'rent';
-            final attrs = data['attributes'] is Map ? Map<String, dynamic>.from(data['attributes']) : {};
+            final attrs = data['attributes'] is Map
+                ? Map<String, dynamic>.from(data['attributes'])
+                : {};
 
             final mediaList = data['media'] as List?;
-            final imageUrl = data['primaryImageUrl']?.toString() ??
+            final imageUrl =
+                data['primaryImageUrl']?.toString() ??
                 data['imageUrl']?.toString() ??
-                (mediaList != null && mediaList.isNotEmpty ? mediaList[0]['publicUrl']?.toString() : null) ??
+                (mediaList != null && mediaList.isNotEmpty
+                    ? mediaList[0]['publicUrl']?.toString()
+                    : null) ??
                 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80';
 
             return RealEstateItem(
@@ -60,8 +66,11 @@ class MarketRepositoryImpl implements MarketRepository {
               badge: 'موثق رسمياً',
               beds: (attrs['rooms'] as num?)?.toInt() ?? 3,
               baths: (attrs['baths'] as num?)?.toInt() ?? 2,
-              areaM2: (attrs['area_sqm'] as num?)?.toInt() ?? 150,
-              location: data['location']?.toString() ?? data['areaName']?.toString() ?? 'القاهرة الجديدة',
+              areaM2: (attrs['area_sqm'] as num?)?.toDouble() ?? 150.0,
+              location:
+                  data['location']?.toString() ??
+                  data['areaName']?.toString() ??
+                  'القاهرة الجديدة',
               timeAgo: 'اليوم',
               imageUrl: imageUrl,
             );
@@ -141,20 +150,31 @@ class MarketRepositoryImpl implements MarketRepository {
         if (items.isNotEmpty) {
           final fmt = NumberFormat.decimalPattern();
           return items.map<BuildingMaterialItem>((item) {
-            final data = item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
-            final num priceNum = data['price'] is num ? data['price'] : (num.tryParse(data['price']?.toString() ?? '0') ?? 0);
-            final attrs = data['attributes'] is Map ? Map<String, dynamic>.from(data['attributes']) : {};
+            final data = item is Map<String, dynamic>
+                ? item
+                : Map<String, dynamic>.from(item);
+            final num priceNum = data['price'] is num
+                ? data['price']
+                : (num.tryParse(data['price']?.toString() ?? '0') ?? 0);
+            final attrs = data['attributes'] is Map
+                ? Map<String, dynamic>.from(data['attributes'])
+                : {};
 
             final mediaList = data['media'] as List?;
-            final imageUrl = data['primaryImageUrl']?.toString() ??
+            final imageUrl =
+                data['primaryImageUrl']?.toString() ??
                 data['imageUrl']?.toString() ??
-                (mediaList != null && mediaList.isNotEmpty ? mediaList[0]['publicUrl']?.toString() : null) ??
+                (mediaList != null && mediaList.isNotEmpty
+                    ? mediaList[0]['publicUrl']?.toString()
+                    : null) ??
                 'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80';
 
             return BuildingMaterialItem(
               id: data['id']?.toString() ?? '',
               title: data['title']?.toString() ?? 'مواد بناء وتوريدات',
-              subtitle: data['description']?.toString() ?? 'توريد مباشر لجميع مواقع العمل والمشروعات',
+              subtitle:
+                  data['description']?.toString() ??
+                  'توريد مباشر لجميع مواقع العمل والمشروعات',
               price: '${fmt.format(priceNum)} ج.م',
               unit: attrs['unit']?.toString() ?? 'للطن',
               tag: 'توريد معتمد',
@@ -228,13 +248,24 @@ class MarketRepositoryImpl implements MarketRepository {
 
         if (items.isNotEmpty) {
           return items.map<ServiceProviderItem>((item) {
-            final data = item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
-            final account = data['account'] is Map ? data['account'] as Map : {};
+            final data = item is Map<String, dynamic>
+                ? item
+                : Map<String, dynamic>.from(item);
+            final account = data['account'] is Map
+                ? data['account'] as Map
+                : {};
 
             return ServiceProviderItem(
               id: data['id']?.toString() ?? '',
-              name: account['displayName']?.toString() ?? data['sellerName']?.toString() ?? data['title']?.toString() ?? 'مقدم خدمة معتمد',
-              serviceDesc: data['description']?.toString() ?? data['title']?.toString() ?? 'خدمات منزلية وهندسية متكاملة',
+              name:
+                  account['displayName']?.toString() ??
+                  data['sellerName']?.toString() ??
+                  data['title']?.toString() ??
+                  'مقدم خدمة معتمد',
+              serviceDesc:
+                  data['description']?.toString() ??
+                  data['title']?.toString() ??
+                  'خدمات منزلية وهندسية متكاملة',
               rating: 4.9,
               reviewsCount: 142,
               perkText: 'معاينة وضمان',

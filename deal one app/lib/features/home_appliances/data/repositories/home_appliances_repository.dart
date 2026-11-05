@@ -63,7 +63,7 @@ class ApiHomeAppliancesRepository implements HomeAppliancesRepository {
       }
 
       if (items.isEmpty) {
-        return _fallback.getProducts(filter: filter);
+        return await _fallback.getProducts(filter: filter);
       }
 
       final fmt = NumberFormat.decimalPattern();

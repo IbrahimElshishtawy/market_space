@@ -18,7 +18,9 @@ export class FilterListingsDto {
   @IsUUID()
   categoryId?: string;
 
-  @ApiPropertyOptional({ description: 'Category slug (e.g. real-estate, cars)' })
+  @ApiPropertyOptional({
+    description: 'Category slug (e.g. real-estate, cars)',
+  })
   @IsOptional()
   @IsString()
   categorySlug?: string;
@@ -33,7 +35,10 @@ export class FilterListingsDto {
   @IsString()
   q?: string;
 
-  @ApiPropertyOptional({ enum: ['newest', 'price_asc', 'price_desc'], default: 'newest' })
+  @ApiPropertyOptional({
+    enum: ['newest', 'price_asc', 'price_desc'],
+    default: 'newest',
+  })
   @IsOptional()
   @IsString()
   sort?: string;

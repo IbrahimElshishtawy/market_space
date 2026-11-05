@@ -1,7 +1,5 @@
 import {
-  IsNotEmpty,
   IsString,
-  MinLength,
   MaxLength,
   IsOptional,
   IsUUID,
@@ -12,7 +10,7 @@ import {
   Max,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { ListingCondition } from '../../../core/enums/domain.enums';
 
 export class SearchQueryDto {
@@ -25,7 +23,9 @@ export class SearchQueryDto {
   @MaxLength(100, { message: 'Search term cannot exceed 100 characters' })
   q?: string;
 
-  @ApiPropertyOptional({ description: 'Category slug (e.g. real-estate, cars)' })
+  @ApiPropertyOptional({
+    description: 'Category slug (e.g. real-estate, cars)',
+  })
   @IsOptional()
   @IsString()
   categorySlug?: string;

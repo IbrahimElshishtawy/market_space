@@ -9,7 +9,10 @@ export class LocationsController {
 
   @Get('governorates')
   @ApiOperation({ summary: 'Get all active governorates with cities' })
-  @ApiResponse({ status: 200, description: 'Governorates returned successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Governorates returned successfully',
+  })
   async getGovernorates() {
     return this.locationsService.getGovernorates();
   }

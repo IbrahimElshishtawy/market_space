@@ -58,7 +58,10 @@ export class SearchService {
       });
 
       if (category) {
-        const categoryIds = [category.id, ...category.children.map((c) => c.id)];
+        const categoryIds = [
+          category.id,
+          ...category.children.map((c) => c.id),
+        ];
         where.categoryId = { in: categoryIds };
       }
     } else if (categoryId) {
@@ -67,7 +70,10 @@ export class SearchService {
         include: { children: { select: { id: true } } },
       });
       if (category) {
-        const categoryIds = [category.id, ...category.children.map((c) => c.id)];
+        const categoryIds = [
+          category.id,
+          ...category.children.map((c) => c.id),
+        ];
         where.categoryId = { in: categoryIds };
       } else {
         where.categoryId = categoryId;
@@ -132,7 +138,9 @@ export class SearchService {
         governorateName: item.area?.city?.governorate?.nameAr ?? '',
         cityName: item.area?.city?.nameAr ?? '',
         areaName: item.area?.nameAr ?? '',
-        location: item.area?.city ? `${item.area.city.nameAr}، ${item.area.city.governorate.nameAr}` : '',
+        location: item.area?.city
+          ? `${item.area.city.nameAr}، ${item.area.city.governorate.nameAr}`
+          : '',
         primaryImageUrl: item.media?.[0]?.publicUrl ?? null,
         imageUrl: item.media?.[0]?.publicUrl ?? null,
         media: item.media ?? [],

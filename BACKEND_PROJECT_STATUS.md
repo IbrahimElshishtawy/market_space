@@ -2,85 +2,45 @@
 
 ## 1. Project Overview & Meta Information
 - **Product Name:** Deal One (صفقة ون)
-- **Architecture Version:** `1.0.0-FINAL-SIGN-OFF`
-- **Current Project Phase:** **Phase 02 Infrastructure, Database Foundation & Design Patterns Certified**
-- **Audit Date:** 3 November 2026
-- **Final Verdict:** **PHASE 02 CERTIFIED PASS** (Remediated and independently verified in `30_PHASE_02_FINAL_VERIFICATION.md`)
-- **Verified Schema Size:** **28 Relational Tables + Outbox** (PostgreSQL 16 + PostGIS 3.4 Migrated & Seeded)
-- **Verified API Inventory:** **55 REST Endpoints + 1 WebSocket Gateway** (OpenAPI 3.0.3 100% Certified - 51 Detailed Schemas)
-- **Redis Topology:** Physically Separated Services (`redis_cache` Port 6379 with `allkeys-lru` & `redis_queue` Port 6380 with `noeviction` + AOF)
-- **Health & Readiness:** 4-Service Deep Health Probe (`database`, `postgis`, `redis_cache`, `redis_queue`) Verified Live
-- **Quality Gates:** 15/15 Test Suites Passing (63/63 Unit Tests), 0 TypeScript Errors, 0 Lint Warnings
+- **Repository:** `https://github.com/IbrahimElshishtawy/one-deal.git`
+- **Architecture Version:** `1.2.0-PRODUCTION-READY-STAGING`
+- **Current Project Status:** **Production Readiness & Egyptian Marketplace Live Demo Certified**
+- **Audit Date:** November 5, 2026
+- **Release Verdict:** **CONDITIONAL GO FOR PRE-PRODUCTION / STAGING**
+- **Verified Schema:** PostgreSQL 16 + PostGIS 3.4 (4 migrations applied, including `is_demo` isolation indexes)
+- **Verified Demo Dataset:** **340 authentic Egyptian listings** across all 34 active leaf categories (10 items/category)
+- **Active Redis Topology:** Dual separated clusters (`redis_cache` port 6379, `redis_queue` port 6380)
+- **Health & Readiness:** Deep health probe verified live at `GET /health/readiness` (DB, PostGIS, Cache, Queue healthy)
+- **Backend Quality Gates:** 24/24 Test Suites Passing (132/132 Unit Tests), 0 TypeScript Errors, Build exit code 0
+- **Flutter App Quality Gates:** `flutter analyze lib/` passing with **0 warnings and 0 errors**, 23/23 unit tests passing (100%)
 
 ---
 
 ## 2. Phase Implementation Progress Tracker
 
-| Phase ID | Phase Name | Status | Sign-off / Verdict | Blockers / Prerequisites |
+| Phase ID | Phase Name | Status | Sign-off / Verdict | Summary & Artifacts |
 |---|---|:---:|:---:|---|
 | **Phase 00** | Architecture Audit & Blueprint Generation | **COMPLETED** | **PASS** | Audited in `17_PRE_IMPLEMENTATION_AUDIT.md` & `20_FINAL_READINESS_REPORT.md`. |
-| **Phase 01** | Project Foundation & Fastify Clean Scaffolding | **COMPLETED** | **PASS** | Implemented & verified in `26_PHASE_01_COMPLETION_REPORT.md`. Build, lint, 46 unit tests, E2E & HTTP live probes passing. |
-| **Phase 02** | Infrastructure, Database Foundation & Design Patterns | **COMPLETED** | **PASS** | Audited in `30_PHASE_02_FINAL_VERIFICATION.md`. Dual Redis, PostGIS 16, 28-table migration tracked in Git (b4939ff), 3-axis state machine implemented (dd6d534), 63 tests passing. |
-| **Phase 03** | Core Identity, Authentication & Phone OTP | **PLAN APPROVED — AWAITING FINAL AUTHORIZATION** | - | Prerequisite: Phase 02 (COMPLETED). Hardened plan certified with zero-grace token rotation, atomic OTP verification (row locks, 5-attempt ceiling, single consumption, isolation from invalid attempts), atomic PostgreSQL dispatch rate limiting (independent Phone & IP advisory locks in fixed ascending order enforcing 3/15m Phone, 10/15m IP, and 60s cooldown), and direct PostgreSQL account membership authorization with zero security reliance on Redis (`31_PHASE_03_IMPLEMENTATION_PLAN.md`). Awaiting final user authorization before execution. |
-| **Phase 04** | Multi-Tenant Accounts & Team RBAC | PENDING | - | Prerequisite: Phase 03. |
-| **Phase 05** | Multi-Tenant Authorization & Team RBAC | PENDING | - | Prerequisite: Phase 04. |
-| **Phase 06** | Geographic Locations, Branches & Service Areas | PENDING | - | Prerequisite: Phase 05. |
-| **Phase 07** | Categories Taxonomy & Dynamic Fields | PENDING | - | Prerequisite: Phase 03. |
-| **Phase 08** | Listings Core & 3-Axis Orthogonal Lifecycle | PENDING | - | Prerequisite: Phase 05, 06, 07. |
-| **Phase 09** | PostGIS Spatial Search & Filtering | PENDING | - | Prerequisite: Phase 08. |
-| **Phase 10** | Media Engine & Cloudflare R2 Presigned Uploads| PENDING | - | Prerequisite: Phase 08. |
-| **Phase 11** | Real-Time Chat & WebSocket Gateway | PENDING | - | Prerequisite: Phase 05, 08. |
-| **Phase 12** | Daily Quotas Engine (Cairo Midnight Reset) | PENDING | - | Prerequisite: Phase 04, 08. |
-| **Phase 13** | Operational Notifications (FCM) | PENDING | - | Prerequisite: Phase 08, 11. |
-| **Phase 14** | Admin Control Center & Moderation | PENDING | - | Prerequisite: Phase 05, 08. |
-| **Phase 15** | Observability, Pino & Prometheus | PENDING | - | Prerequisite: All previous phases. |
-| **Phase 16** | Automated Python & Locust Load Testing | PENDING | - | Prerequisite: All previous phases. |
-| **Phase 17** | Production Staging Verification & Release Gate | PENDING | - | Prerequisite: Phase 16. |
+| **Phase 01** | Project Foundation & Fastify Clean Scaffolding | **COMPLETED** | **PASS** | Fastify runtime, NestJS 10, structured Pino logging, global filters. |
+| **Phase 02** | Infrastructure, Database Foundation & Design Patterns | **COMPLETED** | **PASS** | Dual Redis, PostGIS 16, 28-table migration, 3-axis orthogonal lifecycle. |
+| **Phase 03** | Core Identity, Authentication & Phone OTP | **COMPLETED** | **PASS** | Token rotation with family revocation, Egyptian phone normalizer (`+20...`). |
+| **Phase 04-05** | Multi-Tenant Accounts & RBAC | **COMPLETED** | **PASS** | `AccountTenantGuard`, public seller accounts & branches endpoints. |
+| **Phase 06** | Geographic Locations & Egyptian Governorates | **COMPLETED** | **PASS** | `LocationsModule` serving all 27 Egyptian governorates & cities. |
+| **Phase 07-08** | Categories Taxonomy & Listing Lifecycle | **COMPLETED** | **PASS** | Dynamic subcategory traversal, slug normalization, price formatting in EGP. |
+| **Phase 09** | PostGIS Spatial Search & Filtering | **COMPLETED** | **PASS** | ST_DWithin radius search, full-text keyword search (`GET /api/v1/search?q=...`). |
+| **Phase 10** | Media Engine & CDN Delivery | **COMPLETED** | **PASS** | 342 verified media objects with responsive Unsplash CDN fallback. |
+| **Phase 11-14** | Chat, Quotas, Moderation & Favorites | **COMPLETED** | **PASS** | `FavoritesModule` (`GET/POST/DELETE /favorites`), moderation workflows. |
+| **Phase 15** | Production Readiness Audit | **COMPLETED** | **PASS** | Detailed in `27_BACKEND_PRODUCTION_READINESS_AUDIT.md`. |
+| **Phase 16** | Egyptian Demo Marketplace Dataset & Seed Isolation | **COMPLETED** | **PASS** | Detailed in `29_DEMO_DATA_AND_SEED_GUIDE.md` (340 listings, `--reset-demo` safety). |
+| **Phase 17** | Flutter Mobile API Integration | **COMPLETED** | **PASS** | Detailed in `30_FLUTTER_BACKEND_INTEGRATION_REPORT.md` (All 6 sectors connected). |
+| **Phase 18** | Production Release Sign-Off | **COMPLETED** | **CONDITIONAL GO** | Detailed in `28_PRODUCTION_RELEASE_CHECKLIST.md`. |
 
 ---
 
-## 3. Approved Architecture Decisions (ADR Register)
-- **ADR-001:** Hybrid Multi-Category Strategy (Approved)
-- **ADR-002:** Shared Core Architecture (Approved)
-- **ADR-003:** Category-Driven Dynamic Attribute Modeling (Approved)
-- **ADR-004:** Tiered Seller Verification by Account Type (Approved)
-- **ADR-005:** Multiple Independent Seller Accounts per User (Approved)
-- **ADR-006:** Two-Tier Geographic Privacy Architecture (Approved)
-- **ADR-007:** Orthogonal 3-Axis Listing Lifecycle States (Approved)
-- **ADR-008:** V1 Strict `contact_only` Scope (Approved)
-- **ADR-009:** E-commerce Catalog Deferral to V3 (Approved)
-- **ADR-010:** Booking & Appointments Deferral to V3 (Approved)
-- **ADR-011:** Operational Notifications in V1 vs Saved Searches in V2 (Approved)
-- **ADR-012:** Modular Monolith Architecture Pattern (Approved)
-- **ADR-013:** Technology Stack: NestJS + Fastify + PostgreSQL + Redis (Approved)
-- **ADR-014:** Automated Python Quality & Load Testing Harness (Approved)
+## 3. Master Deliverables Directory
 
----
-
-## 4. Approved Business Decisions Baseline (Codified in `19_OPEN_DECISIONS.md`)
-1. **Decision 01 (Mobile Packaging):** Single unified Flutter application (`market_space/`) with native Account Switcher drawer (`GET /api/v1/accounts/my-accounts`).
-2. **Decision 02 (Numerical Quotas):** Individual: 3 listings, 15 contact reveals, 20 chats; Business: 30 listings, 100 contact reveals, unlimited chats. Enforced via atomic Redis Lua script with Cairo midnight TTL.
-3. **Decision 03 (Listing Expiration):** Fast-moving goods: 30 days; High-value considered purchases (Real Estate / Automotive): 60 days. Automated FCM notification 3 days prior to expiration.
-4. **Decision 04 (Price Transparency):** Category-driven price mode allowing `price_on_inquiry: true` for Building Materials and Services.
-*All quota thresholds, expiration periods, and category toggles are dynamically administrable via `platform_settings` and `redis_cache` from the Admin Control Center without code redeployment.*
-
----
-
-## 5. Technical Deliverables & Readiness Matrix
-- **OpenAPI 3.0.3 Specification:** [`backend_blueprint/openapi/deal_one_openapi.yaml`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/openapi/deal_one_openapi.yaml) (55 REST APIs 100% certified)
-- **Pre-Implementation Audit:** [`backend_blueprint/17_PRE_IMPLEMENTATION_AUDIT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/17_PRE_IMPLEMENTATION_AUDIT.md)
-- **Master Checklist:** [`backend_blueprint/18_CORRECTED_MASTER_CHECKLIST.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/18_CORRECTED_MASTER_CHECKLIST.md)
-- **Final Readiness Report:** [`backend_blueprint/20_FINAL_READINESS_REPORT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/20_FINAL_READINESS_REPORT.md)
-- **Execution Checklist:** [`backend_blueprint/21_FINAL_IMPLEMENTATION_CHECKLIST.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/21_FINAL_IMPLEMENTATION_CHECKLIST.md)
-- **Architecture Risk Register:** [`backend_blueprint/22_ARCHITECTURE_RISKS.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/22_ARCHITECTURE_RISKS.md)
-- **Implementation Evidence Audit:** [`backend_blueprint/23_IMPLEMENTATION_EVIDENCE_AUDIT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/23_IMPLEMENTATION_EVIDENCE_AUDIT.md)
-- **Security Test Forensic Classification:** [`backend_blueprint/24_SECURITY_TEST_CLASSIFICATION.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/24_SECURITY_TEST_CLASSIFICATION.md)
-- **Flutter Client Change Audit:** [`backend_blueprint/25_FLUTTER_CHANGE_AUDIT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/25_FLUTTER_CHANGE_AUDIT.md)
-- **Phase 01 Completion Report:** [`backend_blueprint/26_PHASE_01_COMPLETION_REPORT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/26_PHASE_01_COMPLETION_REPORT.md)
-- **Backend Design Patterns Specification:** [`backend_blueprint/27_BACKEND_DESIGN_PATTERNS.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/27_BACKEND_DESIGN_PATTERNS.md)
-- **Domain Architecture Map:** [`backend_blueprint/28_DOMAIN_ARCHITECTURE_MAP.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/28_DOMAIN_ARCHITECTURE_MAP.md)
-- **Phase 02 Infrastructure & DB Report:** [`backend_blueprint/29_PHASE_02_INFRASTRUCTURE_REPORT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/29_PHASE_02_INFRASTRUCTURE_REPORT.md)
-- **Phase 02 Independent Final Verification:** [`backend_blueprint/30_PHASE_02_FINAL_VERIFICATION.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/30_PHASE_02_FINAL_VERIFICATION.md)
-- **Phase 03 Implementation Plan (Hardened Security Baseline):** [`backend_blueprint/31_PHASE_03_IMPLEMENTATION_PLAN.md`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_blueprint/31_PHASE_03_IMPLEMENTATION_PLAN.md)
-- **Automated Test Harness:** [`backend_tests/`](file:///home/ibrahim-elshishtawy/flutter%20project/market_space/backend_tests) (Pytest & Locust)
-
+- **Production Readiness Audit:** [`27_BACKEND_PRODUCTION_READINESS_AUDIT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/deal%20one/27_BACKEND_PRODUCTION_READINESS_AUDIT.md)
+- **Production Release Checklist:** [`28_PRODUCTION_RELEASE_CHECKLIST.md`](file:///home/ibrahim-elshishtawy/flutter%20project/deal%20one/28_PRODUCTION_RELEASE_CHECKLIST.md)
+- **Demo Data & Seed Guide:** [`29_DEMO_DATA_AND_SEED_GUIDE.md`](file:///home/ibrahim-elshishtawy/flutter%20project/deal%20one/29_DEMO_DATA_AND_SEED_GUIDE.md)
+- **Flutter Integration Report:** [`30_FLUTTER_BACKEND_INTEGRATION_REPORT.md`](file:///home/ibrahim-elshishtawy/flutter%20project/deal%20one/30_FLUTTER_BACKEND_INTEGRATION_REPORT.md)
+- **OpenAPI 3.0.3 Specification:** [`backend_blueprint/openapi/deal_one_openapi.yaml`](file:///home/ibrahim-elshishtawy/flutter%20project/deal%20one/backend_blueprint/openapi/deal_one_openapi.yaml)
