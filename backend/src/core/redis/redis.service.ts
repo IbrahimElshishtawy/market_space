@@ -36,38 +36,82 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     await Promise.all([this.initCacheClient(), this.initQueueClient()]);
   }
 
-  private async initCacheClient(): Promise<void> {
+  private resolveCacheTarget(): { url?: string; host: string; port: number; password?: string } {
+    const url =
+      this.configService.get<string>('REDIS_CACHE_URL') ||
+      this.configService.get<string>('REDIS_URL');
+    if (url) {
+      return { url, host: '', port: 0 };
+    }
     const host =
       this.configService.get<string>('REDIS_CACHE_HOST') ||
+      this.configService.get<string>('REDISHOST') ||
       this.configService.get<string>('REDIS_HOST', 'localhost');
     const port =
       this.configService.get<number>('REDIS_CACHE_PORT') ||
+      this.configService.get<number>('REDISPORT') ||
       this.configService.get<number>('REDIS_PORT', 6379);
     const password =
       this.configService.get<string>('REDIS_CACHE_PASSWORD') ||
+      this.configService.get<string>('REDISPASSWORD') ||
       this.configService.get<string>('REDIS_PASSWORD', '');
 
+    return { host, port, password: password || undefined };
+  }
+
+  private resolveQueueTarget(): { url?: string; host: string; port: number; password?: string } {
+    const url =
+      this.configService.get<string>('REDIS_QUEUE_URL') ||
+      this.configService.get<string>('REDIS_URL');
+    if (url) {
+      return { url, host: '', port: 0 };
+    }
+    const host =
+      this.configService.get<string>('REDIS_QUEUE_HOST') ||
+      this.configService.get<string>('REDISHOST', 'localhost');
+    const port =
+      this.configService.get<number>('REDIS_QUEUE_PORT') ||
+      this.configService.get<number>('REDISPORT', 6380);
+    const password =
+      this.configService.get<string>('REDIS_QUEUE_PASSWORD') ||
+      this.configService.get<string>('REDISPASSWORD', '');
+
+    return { host, port, password: password || undefined };
+  }
+
+  private async initCacheClient(): Promise<void> {
+    const target = this.resolveCacheTarget();
+    const displayEndpoint = target.url ? 'Cloud Redis URL' : `${target.host}:${target.port}`;
+
     try {
-      this.cacheClient = new Redis({
-        host,
-        port,
-        password: password || undefined,
+      const options: RedisOptions = {
         lazyConnect: true,
         maxRetriesPerRequest: 2,
         retryStrategy: (times) => {
           if (times > 5) {
             this.logger.warn(
-              `⚠️ Redis Cache retry limit reached (${times}) at ${host}:${port}`,
+              `⚠️ Redis Cache retry limit reached (${times}) at ${displayEndpoint}`,
             );
             return null;
           }
           return Math.min(times * 200, 2000);
         },
-      });
+      };
+
+      if (target.url) {
+        this.cacheClient = new Redis(target.url, options);
+      } else {
+        this.cacheClient = new Redis({
+          host: target.host,
+          port: target.port,
+          password: target.password,
+          ...options,
+        });
+      }
 
       this.cacheClient.on('connect', () => {
         this.isCacheHealthy = true;
-        this.logger.log(`⚡ Connected to Redis Cache at ${host}:${port}`);
+        this.logger.log(`⚡ Connected to Redis Cache at ${displayEndpoint}`);
       });
 
       this.cacheClient.on('error', (err) => {
@@ -82,7 +126,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       await this.cacheClient.connect().catch((err) => {
         this.isCacheHealthy = false;
         this.logger.warn(
-          `Redis Cache not accessible at startup (${err.message}) at ${host}:${port}.`,
+          `Redis Cache not accessible at startup (${err.message}) at ${displayEndpoint}.`,
         );
       });
     } catch (err: any) {
@@ -92,34 +136,38 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async initQueueClient(): Promise<void> {
-    const host = this.configService.get<string>(
-      'REDIS_QUEUE_HOST',
-      'localhost',
-    );
-    const port = this.configService.get<number>('REDIS_QUEUE_PORT', 6380);
-    const password = this.configService.get<string>('REDIS_QUEUE_PASSWORD', '');
+    const target = this.resolveQueueTarget();
+    const displayEndpoint = target.url ? 'Cloud Redis URL' : `${target.host}:${target.port}`;
 
     try {
-      this.queueClient = new Redis({
-        host,
-        port,
-        password: password || undefined,
+      const options: RedisOptions = {
         lazyConnect: true,
         maxRetriesPerRequest: null, // BullMQ requirement
         retryStrategy: (times) => {
           if (times > 5) {
             this.logger.warn(
-              `⚠️ Redis Queue retry limit reached (${times}) at ${host}:${port}`,
+              `⚠️ Redis Queue retry limit reached (${times}) at ${displayEndpoint}`,
             );
             return null;
           }
           return Math.min(times * 200, 2000);
         },
-      });
+      };
+
+      if (target.url) {
+        this.queueClient = new Redis(target.url, options);
+      } else {
+        this.queueClient = new Redis({
+          host: target.host,
+          port: target.port,
+          password: target.password,
+          ...options,
+        });
+      }
 
       this.queueClient.on('connect', () => {
         this.isQueueHealthy = true;
-        this.logger.log(`📦 Connected to Redis Queue at ${host}:${port}`);
+        this.logger.log(`📦 Connected to Redis Queue at ${displayEndpoint}`);
       });
 
       this.queueClient.on('error', (err) => {
@@ -134,7 +182,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       await this.queueClient.connect().catch((err) => {
         this.isQueueHealthy = false;
         this.logger.warn(
-          `Redis Queue not accessible at startup (${err.message}) at ${host}:${port}.`,
+          `Redis Queue not accessible at startup (${err.message}) at ${displayEndpoint}.`,
         );
       });
     } catch (err: any) {
@@ -180,17 +228,26 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
    * Returns connection options formatted for BullMQ Queue and Worker constructors.
    */
   getQueueConnectionOptions(): RedisOptions {
-    const host = this.configService.get<string>(
-      'REDIS_QUEUE_HOST',
-      'localhost',
-    );
-    const port = this.configService.get<number>('REDIS_QUEUE_PORT', 6380);
-    const password = this.configService.get<string>('REDIS_QUEUE_PASSWORD', '');
+    const target = this.resolveQueueTarget();
+    if (target.url) {
+      try {
+        const parsed = new URL(target.url);
+        return {
+          host: parsed.hostname,
+          port: Number(parsed.port) || 6379,
+          username: parsed.username || undefined,
+          password: parsed.password || undefined,
+          maxRetriesPerRequest: null,
+        };
+      } catch {
+        // Fallback to default if URL parsing fails
+      }
+    }
 
     return {
-      host,
-      port,
-      password: password || undefined,
+      host: target.host,
+      port: target.port,
+      password: target.password || undefined,
       maxRetriesPerRequest: null, // Required by BullMQ
     };
   }

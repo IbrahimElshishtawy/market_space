@@ -12,13 +12,22 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
 
   // Redis Infrastructure (Separated Cache & Queue Instances)
-  REDIS_CACHE_HOST: z.string().default('localhost'),
-  REDIS_CACHE_PORT: z.coerce.number().default(6379),
+  REDIS_CACHE_HOST: z.string().optional().default('localhost'),
+  REDIS_CACHE_PORT: z.coerce.number().optional().default(6379),
   REDIS_CACHE_PASSWORD: z.string().optional().default(''),
+  REDIS_CACHE_URL: z.string().optional(),
 
-  REDIS_QUEUE_HOST: z.string().default('localhost'),
-  REDIS_QUEUE_PORT: z.coerce.number().default(6380),
+  REDIS_QUEUE_HOST: z.string().optional().default('localhost'),
+  REDIS_QUEUE_PORT: z.coerce.number().optional().default(6380),
   REDIS_QUEUE_PASSWORD: z.string().optional().default(''),
+  REDIS_QUEUE_URL: z.string().optional(),
+
+  // Cloud & Managed Redis Compatibility (Railway, Render, Upstash, etc.)
+  REDIS_URL: z.string().optional(),
+  REDISHOST: z.string().optional(),
+  REDISPORT: z.coerce.number().optional(),
+  REDISPASSWORD: z.string().optional(),
+  REDISUSER: z.string().optional(),
 
   // Legacy Redis Compatibility
   REDIS_HOST: z.string().optional().default('localhost'),
