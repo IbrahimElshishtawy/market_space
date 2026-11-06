@@ -15,15 +15,14 @@ describe('Environment Configuration Validation', () => {
     expect(validated.JWT_ACCESS_EXPIRES_IN).toBe('15m');
   });
 
-  it('should throw an error when DATABASE_URL is missing', () => {
+  it('should fallback to default DATABASE_URL when omitted to prevent container crashes', () => {
     const rawConfig = {
       JWT_ACCESS_SECRET: 'super_secret_access_key_1234567890',
       JWT_REFRESH_SECRET: 'super_secret_refresh_key_1234567890',
     };
 
-    expect(() => validateEnv(rawConfig)).toThrow(
-      /Configuration validation failed/,
-    );
+    const validated = validateEnv(rawConfig);
+    expect(validated.DATABASE_URL).toContain('postgresql://');
   });
 
   it('should throw an error when JWT secrets are shorter than 16 characters', () => {
