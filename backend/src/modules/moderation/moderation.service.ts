@@ -2,10 +2,121 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../core/database/prisma.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { AdjudicateReportDto } from './dto/adjudicate-report.dto';
+import { AdjudicateListingDto } from './dto/adjudicate-listing.dto';
 
 @Injectable()
 export class ModerationService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * Retrieves pending listings awaiting human moderation review.
+   */
+  async getPendingListings(page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+
+    const [total, listings] = await Promise.all([
+      this.prisma.listing.count({
+        where: { moderationStatus: 'pending', deletedAt: null },
+      }),
+      this.prisma.listing.findMany({
+        where: { moderationStatus: 'pending', deletedAt: null },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'asc' },
+        include: {
+          category: {
+            select: { id: true, nameAr: true, nameEn: true, slug: true },
+          },
+          account: {
+            select: {
+              id: true,
+              displayName: true,
+              accountType: true,
+              owner: { select: { phone: true, fullName: true } },
+            },
+          },
+          media: { orderBy: { sortOrder: 'asc' } },
+        },
+      }),
+    ]);
+
+    return {
+      listings,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Approves or rejects a pending listing, updates publication status, and writes immutable records to moderation_log.
+   */
+  async adjudicateListing(
+    listingId: string,
+    moderatorId: string,
+    dto: AdjudicateListingDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
+    const listing = await this.prisma.listing.findUnique({
+      where: { id: listingId },
+    });
+
+    if (!listing || listing.deletedAt) {
+      throw new NotFoundException('Listing not found');
+    }
+
+    const isApprove = dto.action === 'approve';
+    const newModerationStatus = isApprove ? 'approved' : 'rejected';
+    const newPublicationStatus = isApprove ? 'published' : 'draft';
+
+    return this.prisma.$transaction(async (tx) => {
+      const updated = await tx.listing.update({
+        where: { id: listingId },
+        data: {
+          moderationStatus: newModerationStatus,
+          publicationStatus: newPublicationStatus,
+        },
+      });
+
+      // Insert into moderation_log
+      await tx.moderationLog.create({
+        data: {
+          targetType: 'listing',
+          targetId: listingId,
+          action: dto.action,
+          reasonCode: dto.reasonCode,
+          notes: dto.notes,
+        },
+      });
+
+      // Insert into auditLog
+      await tx.auditLog.create({
+        data: {
+          actorType: 'staff',
+          actorId: moderatorId,
+          action: `MODERATE_LISTING_${dto.action.toUpperCase()}`,
+          targetEntity: 'listing',
+          targetId: listingId,
+          ipAddress: ipAddress?.slice(0, 50),
+          userAgent: userAgent?.slice(0, 500),
+          diffPayload: {
+            previousModerationStatus: listing.moderationStatus,
+            newModerationStatus,
+            previousPublicationStatus: listing.publicationStatus,
+            newPublicationStatus,
+            reasonCode: dto.reasonCode,
+            notes: dto.notes,
+          },
+        },
+      });
+
+      return updated;
+    });
+  }
 
   /**
    * Files a user abuse report against a listing or user.

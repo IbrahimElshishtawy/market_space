@@ -25,6 +25,15 @@ export class SearchQueryDto {
   q?: string;
 
   @ApiPropertyOptional({
+    example: 'تويوتا كورولا',
+    description: 'Search term query alias',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100, { message: 'Search term cannot exceed 100 characters' })
+  query?: string;
+
+  @ApiPropertyOptional({
     description: 'Category slug (e.g. real-estate, cars)',
   })
   @IsOptional()

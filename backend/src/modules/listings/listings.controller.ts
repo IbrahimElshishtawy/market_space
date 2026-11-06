@@ -2,6 +2,8 @@ import {
   Controller,
   Get,
   Post,
+  Put,
+  Delete,
   Patch,
   Param,
   Query,
@@ -20,6 +22,8 @@ import {
 } from '@nestjs/swagger';
 import { ListingsService } from './listings.service';
 import { CreateListingDto } from './dto/create-listing.dto';
+import { UpdateListingDto } from './dto/update-listing.dto';
+import { UpdateAvailabilityDto } from './dto/update-availability.dto';
 import { FilterListingsDto } from './dto/filter-listings.dto';
 import { UpdateListingStatusDto } from './dto/update-listing-status.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -62,6 +66,71 @@ export class ListingsController {
     @Body() dto: CreateListingDto,
   ) {
     return this.listingsService.createListing(user.id, dto);
+  }
+
+  @Put(':id')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update existing listing details' })
+  @ApiResponse({ status: 200, description: 'Listing updated successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden (Not the owner)' })
+  @ApiResponse({ status: 404, description: 'Listing not found' })
+  async updateListing(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateListingDto,
+  ) {
+    return this.listingsService.updateListing(id, user.id, dto, user.role);
+  }
+
+  @Delete(':id')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Soft-delete a listing (archived state)' })
+  @ApiResponse({ status: 200, description: 'Listing deleted successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden (Not the owner)' })
+  @ApiResponse({ status: 404, description: 'Listing not found' })
+  async deleteListing(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.listingsService.deleteListing(id, user.id, user.role);
+  }
+
+  @Patch(':id/availability')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update listing operational availability status' })
+  @ApiResponse({ status: 200, description: 'Availability updated' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  async updateAvailability(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateAvailabilityDto,
+  ) {
+    return this.listingsService.updateAvailability(
+      id,
+      user.id,
+      dto.availabilityStatus,
+      user.role,
+    );
+  }
+
+  @Post(':id/submit')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Submit a draft listing for moderation review' })
+  @ApiResponse({ status: 200, description: 'Listing submitted for review' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  async submitForModeration(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.listingsService.submitForModeration(id, user.id);
   }
 
   @Patch(':id/status')

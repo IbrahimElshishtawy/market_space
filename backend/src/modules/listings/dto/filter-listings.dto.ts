@@ -37,6 +37,13 @@ export class FilterListingsDto {
   q?: string;
 
   @ApiPropertyOptional({
+    description: 'Search term alias for title/description',
+  })
+  @IsOptional()
+  @IsString()
+  query?: string;
+
+  @ApiPropertyOptional({
     enum: ['newest', 'latest', 'price_asc', 'price_desc', 'nearest'],
     default: 'newest',
   })

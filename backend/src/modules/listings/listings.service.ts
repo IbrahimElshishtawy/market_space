@@ -12,6 +12,7 @@ import { PrismaService } from '../../core/database/prisma.service';
 import { RedisService } from '../../core/redis/redis.service';
 import { SecurityAuditService } from '../../core/security/security-audit.service';
 import { CreateListingDto } from './dto/create-listing.dto';
+import { UpdateListingDto } from './dto/update-listing.dto';
 import { FilterListingsDto } from './dto/filter-listings.dto';
 import { assertValidPublicationTransition } from './listings-state-machine';
 
@@ -283,11 +284,11 @@ export class ListingsService {
       where.refreshedAt = { lt: new Date(cursor) };
     }
 
-    if (q && q.trim().length > 0) {
-      const term = q.trim();
+    const searchTerm = (q || filters.query || '').trim();
+    if (searchTerm.length > 0) {
       where.OR = [
-        { title: { contains: term, mode: 'insensitive' } },
-        { description: { contains: term, mode: 'insensitive' } },
+        { title: { contains: searchTerm, mode: 'insensitive' } },
+        { description: { contains: searchTerm, mode: 'insensitive' } },
       ];
     }
 
@@ -673,5 +674,206 @@ export class ListingsService {
       whatsapp: whatsappUrl,
       whatsappUrl,
     };
+  }
+
+  /**
+   * Updates an existing listing (title, description, price, attributes, media).
+   */
+  async updateListing(
+    id: string,
+    userId: string,
+    dto: UpdateListingDto,
+    userRole?: string,
+  ) {
+    const listing = await this.prisma.listing.findUnique({
+      where: { id },
+      include: { account: true, media: true },
+    });
+
+    if (!listing || listing.deletedAt) {
+      throw new NotFoundException('Listing not found');
+    }
+
+    if (listing.account.ownerUserId !== userId && userRole !== 'SUPER_ADMIN') {
+      throw new ForbiddenException(
+        'You do not have permission to edit this listing',
+      );
+    }
+
+    const updateData: any = {};
+    if (dto.title !== undefined) updateData.title = dto.title;
+    if (dto.description !== undefined) updateData.description = dto.description;
+    if (dto.price !== undefined) updateData.price = dto.price;
+    if (dto.condition !== undefined) updateData.condition = dto.condition;
+    if (dto.attributes !== undefined) {
+      updateData.attributes = {
+        ...((listing.attributes as any) || {}),
+        ...dto.attributes,
+      };
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      if (dto.mediaKeys && dto.mediaKeys.length > 0) {
+        for (const key of dto.mediaKeys) {
+          if (!key.includes(`/${userId}/`)) {
+            throw new ForbiddenException(
+              `Forbidden: Media asset '${key}' belongs to another user`,
+            );
+          }
+        }
+
+        await tx.listingMedia.deleteMany({ where: { listingId: id } });
+        const mediaRecords = dto.mediaKeys.map((key, index) => ({
+          listingId: id,
+          mediaType: 'image',
+          storageKey: key,
+          publicUrl: `${this.publicCdnDomain}/${key}`,
+          sortOrder: index,
+          processingStatus: 'ready',
+        }));
+        await tx.listingMedia.createMany({ data: mediaRecords });
+      }
+
+      const updated = await tx.listing.update({
+        where: { id },
+        data: updateData,
+        include: {
+          media: { orderBy: { sortOrder: 'asc' } },
+          category: {
+            select: { id: true, nameAr: true, nameEn: true, slug: true },
+          },
+          area: {
+            include: {
+              city: { include: { governorate: true } },
+            },
+          },
+        },
+      });
+
+      await this.securityAudit.logEvent({
+        action: 'LISTING_UPDATED',
+        targetEntity: 'Listing',
+        targetId: id,
+        actorId: userId,
+        actorType: userRole === 'SUPER_ADMIN' ? 'staff' : 'user',
+        metadata: { updatedFields: Object.keys(updateData) },
+      });
+
+      return updated;
+    });
+  }
+
+  /**
+   * Soft-deletes a listing (sets deletedAt and updates publication status to archived).
+   */
+  async deleteListing(id: string, userId: string, userRole?: string) {
+    const listing = await this.prisma.listing.findUnique({
+      where: { id },
+      include: { account: true },
+    });
+
+    if (!listing || listing.deletedAt) {
+      throw new NotFoundException('Listing not found');
+    }
+
+    if (listing.account.ownerUserId !== userId && userRole !== 'SUPER_ADMIN') {
+      throw new ForbiddenException(
+        'You do not have permission to delete this listing',
+      );
+    }
+
+    await this.prisma.listing.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        publicationStatus: 'archived',
+      },
+    });
+
+    await this.securityAudit.logEvent({
+      action: 'LISTING_DELETED',
+      targetEntity: 'Listing',
+      targetId: id,
+      actorId: userId,
+      actorType: userRole === 'SUPER_ADMIN' ? 'staff' : 'user',
+    });
+
+    return { success: true, message: 'Listing successfully deleted' };
+  }
+
+  /**
+   * Updates availability status (available, reserved, sold).
+   */
+  async updateAvailability(
+    id: string,
+    userId: string,
+    availabilityStatus: string,
+    userRole?: string,
+  ) {
+    const listing = await this.prisma.listing.findUnique({
+      where: { id },
+      include: { account: true },
+    });
+
+    if (!listing || listing.deletedAt) {
+      throw new NotFoundException('Listing not found');
+    }
+
+    if (listing.account.ownerUserId !== userId && userRole !== 'SUPER_ADMIN') {
+      throw new ForbiddenException(
+        'You do not have permission to modify this listing',
+      );
+    }
+
+    const updated = await this.prisma.listing.update({
+      where: { id },
+      data: { availabilityStatus },
+    });
+
+    await this.securityAudit.logEvent({
+      action: 'LISTING_AVAILABILITY_UPDATED',
+      targetEntity: 'Listing',
+      targetId: id,
+      actorId: userId,
+      metadata: { availabilityStatus },
+    });
+
+    return updated;
+  }
+
+  /**
+   * Submits a draft or rejected listing for moderation review.
+   */
+  async submitForModeration(id: string, userId: string) {
+    const listing = await this.prisma.listing.findUnique({
+      where: { id },
+      include: { account: true },
+    });
+
+    if (!listing || listing.deletedAt) {
+      throw new NotFoundException('Listing not found');
+    }
+
+    if (listing.account.ownerUserId !== userId) {
+      throw new ForbiddenException(
+        'You do not have permission to submit this listing',
+      );
+    }
+
+    const updated = await this.prisma.listing.update({
+      where: { id },
+      data: {
+        moderationStatus: 'pending',
+      },
+    });
+
+    await this.securityAudit.logEvent({
+      action: 'LISTING_SUBMITTED_FOR_MODERATION',
+      targetEntity: 'Listing',
+      targetId: id,
+      actorId: userId,
+    });
+
+    return updated;
   }
 }

@@ -1,4 +1,13 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -6,6 +15,8 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AccountsService } from './accounts.service';
+import { CreateAccountDto } from './dto/create-account.dto';
+import { CreateBranchDto } from './dto/create-branch.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   CurrentUser,
@@ -16,6 +27,34 @@ import {
 @Controller('accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
+
+  @Post()
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Register a new seller account' })
+  @ApiResponse({ status: 201, description: 'Seller account created' })
+  async createAccount(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: CreateAccountDto,
+  ) {
+    return this.accountsService.createAccount(user.id, dto);
+  }
+
+  @Post(':id/branches')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Add a branch to seller account' })
+  @ApiResponse({ status: 201, description: 'Branch added' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  async createBranch(
+    @Param('id') accountId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: CreateBranchDto,
+  ) {
+    return this.accountsService.createBranch(accountId, user.id, dto);
+  }
 
   @Get('my-accounts')
   @ApiBearerAuth('BearerAuth')

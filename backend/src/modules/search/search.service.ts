@@ -65,9 +65,9 @@ export class SearchService {
     }
 
     // Keyword search with Egyptian dialect expansion
-    if (q && q.trim().length > 0) {
-      const term = q.trim();
-      const variants = generateArabicSearchVariants(term);
+    const searchTerm = (q || queryDto.query || '').trim();
+    if (searchTerm.length > 0) {
+      const variants = generateArabicSearchVariants(searchTerm);
       where.OR = [];
       for (const v of variants) {
         where.OR.push({ title: { contains: v, mode: 'insensitive' } });

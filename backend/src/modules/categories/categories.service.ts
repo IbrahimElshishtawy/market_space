@@ -28,11 +28,15 @@ export class CategoriesService {
   }
 
   /**
-   * Retrieves category by slug.
+   * Retrieves category by slug or UUID.
    */
-  async getCategoryBySlug(slug: string) {
+  async getCategoryBySlug(identifier: string) {
+    const isUuid =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        identifier,
+      );
     const category = await this.prisma.category.findUnique({
-      where: { slug },
+      where: isUuid ? { id: identifier } : { slug: identifier },
       include: {
         children: {
           where: { isActive: true },
@@ -42,18 +46,24 @@ export class CategoriesService {
     });
 
     if (!category) {
-      throw new NotFoundException(`Category with slug '${slug}' not found`);
+      throw new NotFoundException(
+        `Category with identifier '${identifier}' not found`,
+      );
     }
 
     return category;
   }
 
   /**
-   * Retrieves active dynamic attribute schemas for a specific subcategory.
+   * Retrieves active dynamic attribute schemas for a specific subcategory by slug or UUID.
    */
-  async getCategoryFields(slug: string) {
+  async getCategoryFields(identifier: string) {
+    const isUuid =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        identifier,
+      );
     const category = await this.prisma.category.findUnique({
-      where: { slug },
+      where: isUuid ? { id: identifier } : { slug: identifier },
       include: {
         fields: {
           where: { isActive: true },
@@ -63,7 +73,9 @@ export class CategoriesService {
     });
 
     if (!category) {
-      throw new NotFoundException(`Category with slug '${slug}' not found`);
+      throw new NotFoundException(
+        `Category with identifier '${identifier}' not found`,
+      );
     }
 
     return category.fields;

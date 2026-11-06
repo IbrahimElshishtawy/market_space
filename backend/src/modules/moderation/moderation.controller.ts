@@ -22,6 +22,7 @@ import { UserRole } from '../../core/enums/domain.enums';
 import { ModerationService } from './moderation.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { AdjudicateReportDto } from './dto/adjudicate-report.dto';
+import { AdjudicateListingDto } from './dto/adjudicate-listing.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -46,6 +47,51 @@ export class ModerationController {
     @Body() dto: CreateReportDto,
   ) {
     return this.moderationService.fileReport(user.id, dto);
+  }
+
+  @Get('admin/moderation/listings')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.MODERATOR, UserRole.SUPER_ADMIN)
+  @ApiOperation({
+    summary: 'Get pending listings awaiting human moderation review',
+  })
+  @ApiResponse({ status: 200, description: 'Pending listings returned' })
+  async getPendingListings(
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
+  ) {
+    return this.moderationService.getPendingListings(
+      Number(page),
+      Number(limit),
+    );
+  }
+
+  @Post('admin/moderation/listings/:id/decision')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.MODERATOR, UserRole.SUPER_ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Approve or reject pending listing with audit logging',
+  })
+  @ApiResponse({ status: 200, description: 'Moderation decision recorded' })
+  @ApiResponse({ status: 404, description: 'Listing not found' })
+  async adjudicateListing(
+    @Param('id') listingId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: AdjudicateListingDto,
+    @Req() req: FastifyRequest,
+  ) {
+    const ip = req.ip;
+    const ua = (req.headers['user-agent'] as string) || '';
+    return this.moderationService.adjudicateListing(
+      listingId,
+      user.id,
+      dto,
+      ip,
+      ua,
+    );
   }
 
   @Get('admin/moderation/queue')
