@@ -5,6 +5,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+RUN apk add --no-cache openssl
+
 COPY backend/package*.json ./
 COPY backend/tsconfig*.json ./
 COPY backend/prisma ./prisma/
@@ -22,9 +24,13 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN apk add --no-cache openssl
+
 COPY backend/package*.json ./
 RUN npm ci --only=production
 
+# Copy generated Prisma client engine & types (.prisma) and wrapper (@prisma/client)
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
 COPY --from=builder /app/dist ./dist
 COPY backend/prisma ./prisma
