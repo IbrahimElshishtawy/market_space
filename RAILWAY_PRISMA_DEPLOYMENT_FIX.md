@@ -194,3 +194,4 @@ HTTP_STATUS: 200
 1. **Commit and Push:** Push Dockerfile fixes to branch `main`.
 2. **Railway Redeploy:** Railway will rebuild using the fixed Docker stages, incorporating both `.prisma` and `@prisma/client`.
 3. **Database URL:** When the user connects the Railway Postgres plugin, `DATABASE_URL` will immediately link to the healthy PostGIS database.
+
