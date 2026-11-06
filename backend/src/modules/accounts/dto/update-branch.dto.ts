@@ -38,4 +38,3 @@ export class UpdateBranchDto {
   @IsBoolean()
   isMain?: boolean;
 }
-

@@ -8,4 +8,3 @@ import { QuotasService } from './quotas.service';
   exports: [QuotasService],
 })
 export class QuotasModule {}
-

@@ -9,9 +9,7 @@ import { HttpExceptionFilter } from '../src/core/filters/http-exception.filter';
 import { TransformInterceptor } from '../src/core/interceptors/transform.interceptor';
 import { LoggingInterceptor } from '../src/core/interceptors/logging.interceptor';
 import { PrismaService } from '../src/core/database/prisma.service';
-import {
-  SMS_GATEWAY_ADAPTER,
-} from '../src/modules/auth/adapters/sms-gateway.interface';
+import { SMS_GATEWAY_ADAPTER } from '../src/modules/auth/adapters/sms-gateway.interface';
 import { MockSmsAdapter } from '../src/modules/auth/adapters/mock-sms.adapter';
 
 describe('Security Remediation & Marketplace Integration E2E', () => {

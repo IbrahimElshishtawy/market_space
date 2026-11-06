@@ -41,4 +41,3 @@ export class ConfirmUploadDto {
   @IsBoolean()
   isPrimary?: boolean;
 }
-

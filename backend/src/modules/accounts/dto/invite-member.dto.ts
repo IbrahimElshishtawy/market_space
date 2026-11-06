@@ -25,4 +25,3 @@ export class InviteMemberDto {
   })
   role!: 'manager' | 'lister' | 'responder';
 }
-

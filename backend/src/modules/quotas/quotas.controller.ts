@@ -32,4 +32,3 @@ export class QuotasController {
     return this.quotasService.getMyQuotaUsage(user.id);
   }
 }
-
