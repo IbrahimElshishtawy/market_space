@@ -78,7 +78,21 @@ export const envSchema = z.object({
 export type EnvConfig = z.infer<typeof envSchema>;
 
 export function validateEnv(config: Record<string, unknown>): EnvConfig {
-  const result = envSchema.safeParse(config);
+  const mergedConfig: Record<string, unknown> = {
+    ...config,
+  };
+
+  if (!mergedConfig.DATABASE_URL) {
+    const fallbackDb =
+      mergedConfig.POSTGRES_URL ||
+      mergedConfig.POSTGRESQL_URL ||
+      mergedConfig.DATABASE_PUBLIC_URL;
+    if (fallbackDb) {
+      mergedConfig.DATABASE_URL = fallbackDb;
+    }
+  }
+
+  const result = envSchema.safeParse(mergedConfig);
   if (!result.success) {
     const issues = result.error.issues
       .map((issue) => `[${issue.path.join('.')}]: ${issue.message}`)
