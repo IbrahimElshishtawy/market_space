@@ -426,7 +426,6 @@ export class ListingsService {
             accountType: true,
             logoUrl: true,
             verificationStatus: true,
-            owner: { select: { phone: true, fullName: true } },
           },
         },
       },
@@ -474,7 +473,7 @@ export class ListingsService {
         verificationStatus: item.account.verificationStatus,
       },
       sellerName: item.account.displayName,
-      sellerPhone: item.account.owner.phone,
+      sellerPhone: null,
       sellerType: item.account.accountType,
       isVerified: item.account.verificationStatus === 'approved',
       refreshedAt: item.refreshedAt,
@@ -640,8 +639,85 @@ export class ListingsService {
       },
     });
 
-    if (!listing || listing.publicationStatus !== 'published') {
+    if (
+      !listing ||
+      listing.publicationStatus !== 'published' ||
+      listing.deletedAt
+    ) {
       throw new NotFoundException('Listing not available for contact');
+    }
+
+    // Prevent owner from revealing contact for their own listing
+    if (userId && listing.account.ownerUserId === userId) {
+      throw new BadRequestException(
+        'Cannot reveal contact info for your own listing',
+      );
+    }
+
+    const DAILY_LIMIT = 5;
+    let remainingDailyQuota = DAILY_LIMIT;
+
+    // Enforce daily quota in Africa/Cairo timezone if authenticated
+    if (userId) {
+      const cairoDateStr = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Africa/Cairo',
+      }).format(new Date());
+      const usageDate = new Date(`${cairoDateStr}T00:00:00.000Z`);
+
+      const callerAccount = await this.prisma.account.findFirst({
+        where: {
+          OR: [{ ownerUserId: userId }, { members: { some: { userId } } }],
+        },
+        orderBy: { createdAt: 'asc' },
+      });
+
+      if (callerAccount) {
+        const existingQuota = await this.prisma.dailyQuota.findUnique({
+          where: {
+            uq_account_quota_date: {
+              accountId: callerAccount.id,
+              quotaType: 'contact_reveal',
+              usageDate,
+            },
+          },
+        });
+
+        if (existingQuota && existingQuota.usedCount >= DAILY_LIMIT) {
+          throw new HttpException(
+            {
+              statusCode: HttpStatus.FORBIDDEN,
+              message:
+                'Daily contact reveal quota exceeded (5/5). Resets at midnight Cairo time.',
+              code: 'DAILY_QUOTA_EXCEEDED',
+              remainingDailyQuota: 0,
+              dailyLimit: DAILY_LIMIT,
+            },
+            HttpStatus.FORBIDDEN,
+          );
+        }
+
+        const updatedQuota = await this.prisma.dailyQuota.upsert({
+          where: {
+            uq_account_quota_date: {
+              accountId: callerAccount.id,
+              quotaType: 'contact_reveal',
+              usageDate,
+            },
+          },
+          create: {
+            accountId: callerAccount.id,
+            quotaType: 'contact_reveal',
+            usageDate,
+            usedCount: 1,
+            limitSnapshot: DAILY_LIMIT,
+          },
+          update: {
+            usedCount: { increment: 1 },
+          },
+        });
+
+        remainingDailyQuota = Math.max(0, DAILY_LIMIT - updatedQuota.usedCount);
+      }
     }
 
     // Atomically increment contact reveals count
@@ -660,7 +736,7 @@ export class ListingsService {
       actorId: userId,
       metadata: {
         sellerAccountId: listing.accountId,
-        sellerPhone: listing.account.owner.phone,
+        remainingDailyQuota,
       },
     });
 
@@ -670,9 +746,11 @@ export class ListingsService {
 
     return {
       phone,
-      sellerName: listing.account.owner.fullName,
+      sellerName: listing.account.displayName || listing.account.owner.fullName,
       whatsapp: whatsappUrl,
       whatsappUrl,
+      remainingDailyQuota,
+      dailyLimit: DAILY_LIMIT,
     };
   }
 

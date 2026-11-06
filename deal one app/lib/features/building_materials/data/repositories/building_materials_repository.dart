@@ -1,3 +1,4 @@
+import '../../../../core/network/api_client.dart';
 import '../mock/mock_all_categories_data.dart';
 import '../mock/mock_building_materials_comprehensive_data.dart';
 import '../mock/mock_building_materials_data.dart';
@@ -253,4 +254,267 @@ class BuildingMaterialsRepositoryImpl implements BuildingMaterialsRepository {
     });
     return UnitConverter.roundCurrency(total);
   }
+}
+
+class ApiBuildingMaterialsRepository implements BuildingMaterialsRepository {
+  final ApiClient apiClient;
+  final BuildingMaterialsRepositoryImpl _fallback =
+      const BuildingMaterialsRepositoryImpl();
+
+  ApiBuildingMaterialsRepository({required this.apiClient});
+
+  @override
+  Future<DailyPriceBannerModel> getDailyPriceBanner() =>
+      _fallback.getDailyPriceBanner();
+
+  @override
+  Future<List<BuildingMaterialCategoryModel>> getCategories() =>
+      _fallback.getCategories();
+
+  @override
+  Future<List<BuildingMaterialProductModel>> getMostRequestedProducts() async {
+    try {
+      final response = await apiClient.get(
+        '/listings',
+        queryParameters: {
+          'categorySlug': 'building-materials',
+          'limit': 10,
+        },
+      );
+
+      final dynamic resData = response.data;
+      List<dynamic> items = [];
+      if (resData is Map && resData['data'] is List) {
+        items = resData['data'] as List;
+      } else if (resData is List) {
+        items = resData;
+      }
+
+      if (items.isEmpty) {
+        return await _fallback.getMostRequestedProducts();
+      }
+
+      return items.map<BuildingMaterialProductModel>((item) {
+        final Map<String, dynamic> data =
+            item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
+        final price = data['price']?.toString() ?? '0';
+        final cat = data['category'] is Map ? data['category'] as Map : {};
+        return BuildingMaterialProductModel(
+          id: data['id']?.toString() ?? '',
+          title: data['title']?.toString() ?? '',
+          description: data['description']?.toString() ?? '',
+          priceText: '$price ج.م',
+          rating: 4.8,
+          categoryTag: cat['nameAr']?.toString() ?? 'مواد بناء',
+          imageUrl: data['primaryImageUrl']?.toString() ??
+              'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122',
+        );
+      }).toList();
+    } catch (_) {
+      return await _fallback.getMostRequestedProducts();
+    }
+  }
+
+  @override
+  Future<ContractorProjectBannerModel> getContractorProjectBanner() =>
+      _fallback.getContractorProjectBanner();
+
+  @override
+  Future<SteelDailyPriceModel> getSteelDailyPrice() =>
+      _fallback.getSteelDailyPrice();
+
+  @override
+  Future<List<String>> getSteelSizes() => _fallback.getSteelSizes();
+
+  @override
+  Future<List<SteelRebarProductModel>> getSteelProducts({String? selectedSize}) =>
+      _fallback.getSteelProducts(selectedSize: selectedSize);
+
+  @override
+  Future<CategoryDetailModel> getCategoryDetail(
+    String categoryId, {
+    String? selectedFilter,
+  }) =>
+      _fallback.getCategoryDetail(categoryId, selectedFilter: selectedFilter);
+
+  @override
+  Future<List<BuildingMaterialCategoryModel>> getAllTenCategories() =>
+      _fallback.getAllTenCategories();
+
+  @override
+  Future<List<MaterialProductModel>> getMaterialProducts({
+    String? categoryId,
+    String? subcategoryId,
+    String? brand,
+    String? searchQuery,
+    double? minPrice,
+    double? maxPrice,
+    String? supplierId,
+  }) async {
+    try {
+      final queryParams = <String, dynamic>{
+        'categorySlug': 'building-materials',
+        'limit': 20,
+      };
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+        queryParams['q'] = searchQuery.trim();
+      }
+      if (minPrice != null) queryParams['minPrice'] = minPrice;
+      if (maxPrice != null) queryParams['maxPrice'] = maxPrice;
+
+      final response = await apiClient.get(
+        '/listings',
+        queryParameters: queryParams,
+      );
+
+      final dynamic resData = response.data;
+      List<dynamic> items = [];
+      if (resData is Map && resData['data'] is List) {
+        items = resData['data'] as List;
+      } else if (resData is List) {
+        items = resData;
+      }
+
+      if (items.isEmpty) {
+        return await _fallback.getMaterialProducts(
+          categoryId: categoryId,
+          subcategoryId: subcategoryId,
+          brand: brand,
+          searchQuery: searchQuery,
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          supplierId: supplierId,
+        );
+      }
+
+      return items.map<MaterialProductModel>((item) {
+        final Map<String, dynamic> data =
+            item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
+        final priceNum = data['price'] is num
+            ? (data['price'] as num).toDouble()
+            : (double.tryParse(data['price']?.toString() ?? '0') ?? 0.0);
+        final cat = data['category'] is Map ? data['category'] as Map : {};
+        final account = data['account'] is Map ? data['account'] as Map : {};
+
+        return MaterialProductModel(
+          id: data['id']?.toString() ?? '',
+          name: data['title']?.toString() ?? '',
+          categoryId: cat['id']?.toString() ?? 'building-materials',
+          subcategoryId: cat['slug']?.toString() ?? 'building-materials',
+          categoryName: cat['nameAr']?.toString() ?? 'مواد البناء والتوريدات',
+          brand: brand ?? 'عام',
+          manufacturer: account['displayName']?.toString() ?? 'مورد معتمد',
+          description: data['description']?.toString() ?? '',
+          technicalSpecs: const {'الجودة': 'مطابق للمواصفات القياسية المصرية'},
+          baseUnit: MaterialUnit.ton,
+          supportedUnits: const [MaterialUnit.ton],
+          unitPrice: priceNum,
+          minOrderQuantity: 1,
+          stockQuantity: 100,
+          supplyOrigin: 'مستودع المورد الرئيسي',
+          supplier: SupplierModel(
+            id: account['id']?.toString() ?? 'sup-default',
+            name: account['displayName']?.toString() ?? 'مورد مواد بناء',
+            companyType: 'موزع معتمد',
+            rating: 4.8,
+            reviewsCount: 25,
+            city: 'القاهرة',
+            governorate: 'القاهرة',
+            latitude: 30.0444,
+            longitude: 31.2357,
+            coverageGovernorates: const ['القاهرة', 'الجيزة', 'كافة المحافظات'],
+            minOrderValue: 5000.0,
+            fleetCapacityTons: 50.0,
+            contactPhone: data['sellerPhone']?.toString() ?? '+201001122334',
+          ),
+          imageUrls: [
+            data['primaryImageUrl']?.toString() ??
+                'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122',
+          ],
+        );
+      }).toList();
+    } catch (_) {
+      return await _fallback.getMaterialProducts(
+        categoryId: categoryId,
+        subcategoryId: subcategoryId,
+        brand: brand,
+        searchQuery: searchQuery,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        supplierId: supplierId,
+      );
+    }
+  }
+
+  @override
+  Future<MaterialProductModel?> getMaterialProductById(String productId) async {
+    try {
+      final response = await apiClient.get('/listings/$productId');
+      final dynamic resData = response.data;
+      final Map<String, dynamic> data =
+          resData is Map && resData['data'] is Map
+              ? Map<String, dynamic>.from(resData['data'])
+              : (resData is Map ? Map<String, dynamic>.from(resData) : {});
+
+      if (data.isEmpty || data['id'] == null) {
+        return await _fallback.getMaterialProductById(productId);
+      }
+
+      final priceNum = data['price'] is num
+          ? (data['price'] as num).toDouble()
+          : (double.tryParse(data['price']?.toString() ?? '0') ?? 0.0);
+      final cat = data['category'] is Map ? data['category'] as Map : {};
+      final account = data['account'] is Map ? data['account'] as Map : {};
+
+      return MaterialProductModel(
+        id: data['id']?.toString() ?? productId,
+        name: data['title']?.toString() ?? '',
+        categoryId: cat['id']?.toString() ?? 'building-materials',
+        subcategoryId: cat['slug']?.toString() ?? 'building-materials',
+        categoryName: cat['nameAr']?.toString() ?? 'مواد البناء والتوريدات',
+        brand: 'عام',
+        manufacturer: account['displayName']?.toString() ?? 'مورد معتمد',
+        description: data['description']?.toString() ?? '',
+        technicalSpecs: const {'الجودة': 'مطابق للمواصفات القياسية المصرية'},
+        baseUnit: MaterialUnit.ton,
+        supportedUnits: const [MaterialUnit.ton],
+        unitPrice: priceNum,
+        minOrderQuantity: 1,
+        stockQuantity: 100,
+        supplyOrigin: 'مستودع المورد الرئيسي',
+        supplier: SupplierModel(
+          id: account['id']?.toString() ?? 'sup-default',
+          name: account['displayName']?.toString() ?? 'مورد مواد بناء',
+          companyType: 'موزع معتمد',
+          rating: 4.8,
+          reviewsCount: 25,
+          city: 'القاهرة',
+          governorate: 'القاهرة',
+          latitude: 30.0444,
+          longitude: 31.2357,
+          coverageGovernorates: const ['القاهرة', 'الجيزة', 'كافة المحافظات'],
+          minOrderValue: 5000.0,
+          fleetCapacityTons: 50.0,
+          contactPhone: data['sellerPhone']?.toString() ?? '+201001122334',
+        ),
+        imageUrls: [
+          data['primaryImageUrl']?.toString() ??
+              'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122',
+        ],
+      );
+    } catch (_) {
+      return await _fallback.getMaterialProductById(productId);
+    }
+  }
+
+  @override
+  Future<List<SupplierModel>> getSuppliers() => _fallback.getSuppliers();
+
+  @override
+  Future<SupplierModel?> getSupplierById(String supplierId) =>
+      _fallback.getSupplierById(supplierId);
+
+  @override
+  Future<double> estimateCost(Map<String, double> materialQuantities) =>
+      _fallback.estimateCost(materialQuantities);
 }

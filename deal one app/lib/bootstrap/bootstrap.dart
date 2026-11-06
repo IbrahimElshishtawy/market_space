@@ -19,6 +19,8 @@ import '../core/storage/preferences_service.dart';
 import '../core/storage/secure_storage_service.dart';
 import '../shared/state/sector_controller.dart';
 import '../features/real_estate/data/repositories/real_estate_repository.dart';
+import '../features/building_materials/data/repositories/building_materials_repository.dart';
+import '../features/favorites/data/repositories/unified_favorites_repository.dart';
 import '../features/cars/data/repositories/cars_repository.dart';
 import '../features/fashion/data/repositories/fashion_repository.dart';
 import '../features/home_appliances/data/repositories/home_appliances_repository.dart';
@@ -91,6 +93,10 @@ Future<AppDependencies> initializeDependencies(AppConfig config) async {
     carsRepository: ApiCarsRepository(apiClient: apiClient),
     fashionRepository: ApiFashionRepository(apiClient: apiClient),
     homeServicesRepository: ApiHomeServicesRepository(apiClient: apiClient),
+    buildingMaterialsRepository:
+        ApiBuildingMaterialsRepository(apiClient: apiClient),
+    unifiedFavoritesRepository:
+        ApiUnifiedFavoritesRepository(apiClient: apiClient),
   );
 }
 

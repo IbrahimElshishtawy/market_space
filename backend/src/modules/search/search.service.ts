@@ -253,7 +253,6 @@ export class SearchService {
               accountType: true,
               logoUrl: true,
               verificationStatus: true,
-              owner: { select: { phone: true, fullName: true } },
             },
           },
         },
@@ -279,9 +278,17 @@ export class SearchService {
         imageUrl: item.media?.[0]?.publicUrl ?? null,
         media: item.media ?? [],
         attributes: (item.attributes as any) || {},
-        account: item.account,
+        account: item.account
+          ? {
+              id: item.account.id,
+              displayName: item.account.displayName,
+              accountType: item.account.accountType,
+              logoUrl: item.account.logoUrl,
+              verificationStatus: item.account.verificationStatus,
+            }
+          : null,
         sellerName: item.account?.displayName ?? '',
-        sellerPhone: item.account?.owner?.phone ?? '',
+        sellerPhone: null,
         sellerType: item.account?.accountType ?? 'individual',
         isVerified: item.account?.verificationStatus === 'approved',
         isDemo: item.isDemo,

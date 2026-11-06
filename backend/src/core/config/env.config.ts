@@ -53,7 +53,8 @@ export const envSchema = z.object({
   CLOUDFLARE_STREAM_ACCOUNT_ID: z.string().optional().default(''),
   CLOUDFLARE_STREAM_WEBHOOK_SECRET: z.string().optional().default(''),
 
-  // Payments (Paymob Egypt)
+  // Payments (Paymob Egypt - Feature Flagged for V2)
+  ENABLE_V2_PAYMENTS: z.coerce.boolean().optional().default(false),
   PAYMOB_API_KEY: z.string().optional().default(''),
   PAYMOB_INTEGRATION_ID_CARD: z.coerce.number().optional().default(0),
   PAYMOB_INTEGRATION_ID_WALLET: z.coerce.number().optional().default(0),

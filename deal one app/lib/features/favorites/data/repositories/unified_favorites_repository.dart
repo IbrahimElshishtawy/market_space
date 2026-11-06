@@ -1,5 +1,6 @@
 import 'package:market_space/features/real_estate/favorites/data/repositories/real_estate_favorites_repository.dart';
 
+import '../../../../core/network/api_client.dart';
 import '../../../../core/routing/route_names.dart';
 
 import '../models/unified_favorite_item_model.dart';
@@ -264,5 +265,126 @@ class UnifiedFavoritesRepositoryImpl implements UnifiedFavoritesRepository {
       _inMemoryFavorites.insert(0, item);
     }
     return true;
+  }
+}
+
+class ApiUnifiedFavoritesRepository implements UnifiedFavoritesRepository {
+  final ApiClient apiClient;
+  final UnifiedFavoritesRepositoryImpl _fallback =
+      UnifiedFavoritesRepositoryImpl();
+
+  ApiUnifiedFavoritesRepository({required this.apiClient});
+
+  @override
+  Future<List<UnifiedFavoriteItem>> getFavorites({
+    FavoriteSectorFilter sector = FavoriteSectorFilter.all,
+    String? searchQuery,
+  }) async {
+    try {
+      final response = await apiClient.get('/listings/favorites');
+      final dynamic resData = response.data;
+      List<dynamic> items = [];
+      if (resData is Map && resData['data'] is List) {
+        items = resData['data'] as List;
+      } else if (resData is List) {
+        items = resData;
+      }
+
+      if (items.isEmpty) {
+        return await _fallback.getFavorites(
+          sector: sector,
+          searchQuery: searchQuery,
+        );
+      }
+
+      final mapped = items.map<UnifiedFavoriteItem>((item) {
+        final Map<String, dynamic> data =
+            item is Map<String, dynamic> ? item : Map<String, dynamic>.from(item);
+        final priceNum = data['price'] is num
+            ? (data['price'] as num).toDouble()
+            : (double.tryParse(data['price']?.toString() ?? '0') ?? 0.0);
+        final cat = data['category'] is Map ? data['category'] as Map : {};
+        final catSlug = cat['slug']?.toString() ?? '';
+
+        String sectorId = 'real_estate';
+        String sectorName = 'عقارات';
+        if (catSlug.contains('car') || catSlug.contains('vehicle')) {
+          sectorId = 'cars';
+          sectorName = 'السيارات';
+        } else if (catSlug.contains('service')) {
+          sectorId = 'services';
+          sectorName = 'الخدمات المنزلية';
+        } else if (catSlug.contains('appliance')) {
+          sectorId = 'home_appliances';
+          sectorName = 'الأجهزة المنزلية';
+        } else if (catSlug.contains('building') ||
+            catSlug.contains('material')) {
+          sectorId = 'building_materials';
+          sectorName = 'مواد البناء';
+        } else if (catSlug.contains('fashion') ||
+            catSlug.contains('clothing')) {
+          sectorId = 'fashion';
+          sectorName = 'الملابس والأزياء';
+        }
+
+        return UnifiedFavoriteItem(
+          favoriteId:
+              data['favoriteId']?.toString() ?? data['id']?.toString() ?? '',
+          itemId:
+              data['listingId']?.toString() ?? data['id']?.toString() ?? '',
+          sectorId: sectorId,
+          sectorName: sectorName,
+          title: data['title']?.toString() ?? '',
+          subtitle: data['sellerName']?.toString() ?? '',
+          imageUrl: data['imageUrl']?.toString() ??
+              data['primaryImageUrl']?.toString() ??
+              'https://images.unsplash.com/photo-1549399542-7e3f8b79c341',
+          price: priceNum,
+          rating: 4.8,
+          deepLinkRoute: RouteNames.root,
+        );
+      }).toList();
+
+      var filtered = mapped;
+      if (sector != FavoriteSectorFilter.all) {
+        filtered = filtered.where((f) => f.sectorId == sector.id).toList();
+      }
+
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+        final query = searchQuery.toLowerCase().trim();
+        filtered = filtered
+            .where((f) =>
+                f.title.toLowerCase().contains(query) ||
+                (f.subtitle.toLowerCase().contains(query)))
+            .toList();
+      }
+
+      return filtered;
+    } catch (_) {
+      return await _fallback.getFavorites(
+        sector: sector,
+        searchQuery: searchQuery,
+      );
+    }
+  }
+
+  @override
+  Future<bool> addFavorite(UnifiedFavoriteItem item) async {
+    try {
+      await apiClient.post('/listings/${item.itemId}/favorite');
+      return true;
+    } catch (_) {
+      return await _fallback.addFavorite(item);
+    }
+  }
+
+  @override
+  Future<bool> removeFavorite(String itemId) async {
+    try {
+      await apiClient.delete('/favorites/$itemId');
+      return true;
+    } catch (_) {
+      return await _fallback.removeFavorite(itemId);
+    }
   }
 }

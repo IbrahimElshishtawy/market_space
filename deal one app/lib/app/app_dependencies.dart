@@ -12,6 +12,8 @@ import '../core/platform/platform_info.dart';
 import '../core/security/token_provider.dart';
 import '../core/storage/preferences_service.dart';
 import '../core/storage/secure_storage_service.dart';
+import '../features/building_materials/data/repositories/building_materials_repository.dart';
+import '../features/favorites/data/repositories/unified_favorites_repository.dart';
 import '../features/activity/presentation/controllers/unified_activity_controller.dart';
 import '../features/building_materials/presentation/controllers/building_materials_cart_controller.dart';
 import '../features/building_materials/presentation/controllers/building_materials_notification_controller.dart';
@@ -85,6 +87,8 @@ class AppDependencies {
   final ExploreController exploreController;
   final UnifiedActivityController unifiedActivityController;
   final UnifiedFavoritesController unifiedFavoritesController;
+  final BuildingMaterialsRepository buildingMaterialsRepository;
+  final UnifiedFavoritesRepository unifiedFavoritesRepository;
   final ProfileController profileController;
 
   AppDependencies({
@@ -126,6 +130,8 @@ class AppDependencies {
     FashionRepository? fashionRepository,
     FashionController? fashionController,
     FashionCartController? fashionCartController,
+    BuildingMaterialsRepository? buildingMaterialsRepository,
+    UnifiedFavoritesRepository? unifiedFavoritesRepository,
     ExploreController? exploreController,
     UnifiedActivityController? unifiedActivityController,
     UnifiedFavoritesController? unifiedFavoritesController,
@@ -222,8 +228,18 @@ class AppDependencies {
        exploreController = exploreController ?? ExploreController(),
        unifiedActivityController =
            unifiedActivityController ?? UnifiedActivityController(),
+       buildingMaterialsRepository =
+           buildingMaterialsRepository ??
+           const BuildingMaterialsRepositoryImpl(),
+       unifiedFavoritesRepository =
+           unifiedFavoritesRepository ?? UnifiedFavoritesRepositoryImpl(),
        unifiedFavoritesController =
-           unifiedFavoritesController ?? UnifiedFavoritesController(),
+           unifiedFavoritesController ??
+           UnifiedFavoritesController(
+             repository:
+                 unifiedFavoritesRepository ??
+                 UnifiedFavoritesRepositoryImpl(),
+           ),
        profileController = profileController ?? ProfileController();
 
   static AppDependencies of(BuildContext context) {

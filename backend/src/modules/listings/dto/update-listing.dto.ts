@@ -58,4 +58,3 @@ export class UpdateListingDto {
   @IsString({ each: true })
   mediaKeys?: string[];
 }
-

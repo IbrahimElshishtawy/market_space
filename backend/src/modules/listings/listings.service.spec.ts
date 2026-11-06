@@ -26,6 +26,8 @@ describe('Listings Service & Lifecycle (Milestone 3)', () => {
       update: jest.fn(),
     },
     listingMedia: { createMany: jest.fn() },
+    account: { findFirst: jest.fn() },
+    dailyQuota: { findUnique: jest.fn(), upsert: jest.fn() },
     $transaction: jest.fn((callback: (tx: any) => any) => callback(mockPrisma)),
     $queryRaw: jest.fn().mockResolvedValue([]),
   };
@@ -165,6 +167,9 @@ describe('Listings Service & Lifecycle (Milestone 3)', () => {
         },
       });
       mockPrisma.listing.update.mockResolvedValue({});
+      mockPrisma.account.findFirst.mockResolvedValue({ id: 'acc-buyer' });
+      mockPrisma.dailyQuota.findUnique.mockResolvedValue(null);
+      mockPrisma.dailyQuota.upsert.mockResolvedValue({ usedCount: 1 });
 
       const result = await service.recordContactAction(
         'listing-10',

@@ -156,35 +156,48 @@ export class ListingsController {
   }
 
   @Post(':id/contact')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Record buyer contact action and reveal seller phone number',
-  })
-  @ApiResponse({ status: 200, description: 'Phone number revealed' })
-  async contactSeller(
-    @Param('id') id: string,
-    @Req() req: FastifyRequest,
-    @CurrentUser() user?: AuthenticatedUser,
-  ) {
-    const ip = req.ip;
-    const ua = (req.headers['user-agent'] as string) || '';
-    return this.listingsService.recordContactAction(id, ip, ua, user?.id);
-  }
-
-  @Post(':id/reveal-contact')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary:
-      'Alias: Record buyer contact action and reveal seller phone number',
+      'Record buyer contact action and reveal seller phone number (Enforces Cairo daily quota)',
   })
   @ApiResponse({ status: 200, description: 'Phone number revealed' })
-  async revealContactAlias(
+  @ApiResponse({
+    status: 403,
+    description: 'Daily contact reveal quota exceeded (5/day in Cairo)',
+  })
+  async contactSeller(
     @Param('id') id: string,
     @Req() req: FastifyRequest,
-    @CurrentUser() user?: AuthenticatedUser,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
     const ip = req.ip;
     const ua = (req.headers['user-agent'] as string) || '';
-    return this.listingsService.recordContactAction(id, ip, ua, user?.id);
+    return this.listingsService.recordContactAction(id, ip, ua, user.id);
+  }
+
+  @Post(':id/reveal-contact')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      'Alias: Record buyer contact action and reveal seller phone number (Enforces Cairo daily quota)',
+  })
+  @ApiResponse({ status: 200, description: 'Phone number revealed' })
+  @ApiResponse({
+    status: 403,
+    description: 'Daily contact reveal quota exceeded (5/day in Cairo)',
+  })
+  async revealContactAlias(
+    @Param('id') id: string,
+    @Req() req: FastifyRequest,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const ip = req.ip;
+    const ua = (req.headers['user-agent'] as string) || '';
+    return this.listingsService.recordContactAction(id, ip, ua, user.id);
   }
 }

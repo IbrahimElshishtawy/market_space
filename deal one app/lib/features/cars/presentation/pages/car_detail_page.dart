@@ -420,7 +420,9 @@ class _CarDetailPageState extends State<CarDetailPage> {
                               Directionality(
                                 textDirection: TextDirection.ltr,
                                 child: Text(
-                                  car.sellerPhone,
+                                  car.sellerPhone.isNotEmpty && car.sellerPhone != 'null'
+                                      ? car.sellerPhone
+                                      : 'اضغط لكشف الرقم',
                                   style: TextStyle(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.bold,
@@ -513,8 +515,13 @@ class _CarDetailPageState extends State<CarDetailPage> {
                 flex: 3,
                 child: ElevatedButton.icon(
                   onPressed: () {
+                    final phone = car.sellerPhone.isNotEmpty && car.sellerPhone != 'null'
+                        ? car.sellerPhone
+                        : '01001122334';
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('جارٍ الاتصال بالبائع: ${car.sellerPhone}')),
+                      SnackBar(
+                        content: Text('بيانات التواصل مع البائع (${car.sellerName}): $phone'),
+                      ),
                     );
                   },
                   icon: const Icon(Icons.phone_rounded, size: 18.0),

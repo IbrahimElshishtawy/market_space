@@ -13,4 +13,3 @@ export class UpdateAvailabilityDto {
   })
   availabilityStatus!: string;
 }
-

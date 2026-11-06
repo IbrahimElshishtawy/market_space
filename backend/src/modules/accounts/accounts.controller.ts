@@ -2,6 +2,8 @@ import {
   Controller,
   Get,
   Post,
+  Put,
+  Delete,
   Param,
   Body,
   UseGuards,
@@ -17,6 +19,8 @@ import {
 import { AccountsService } from './accounts.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { CreateBranchDto } from './dto/create-branch.dto';
+import { InviteMemberDto } from './dto/invite-member.dto';
+import { UpdateBranchDto } from './dto/update-branch.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   CurrentUser,
@@ -82,5 +86,80 @@ export class AccountsController {
   @ApiResponse({ status: 200, description: 'Branches returned' })
   async getAccountBranches(@Param('id') id: string) {
     return this.accountsService.getAccountBranches(id);
+  }
+
+  @Put(':id/branches/:branchId')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Update branch details' })
+  @ApiResponse({ status: 200, description: 'Branch updated successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Branch not found' })
+  async updateBranch(
+    @Param('id') accountId: string,
+    @Param('branchId') branchId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateBranchDto,
+  ) {
+    return this.accountsService.updateBranch(accountId, branchId, user.id, dto);
+  }
+
+  @Delete(':id/branches/:branchId')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Delete a branch from seller account' })
+  @ApiResponse({ status: 200, description: 'Branch deleted successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Branch not found' })
+  async deleteBranch(
+    @Param('id') accountId: string,
+    @Param('branchId') branchId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.accountsService.deleteBranch(accountId, branchId, user.id);
+  }
+
+  @Get(':id/members')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'List all team members of seller account' })
+  @ApiResponse({ status: 200, description: 'Members returned successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  async getAccountMembers(
+    @Param('id') accountId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.accountsService.getAccountMembers(accountId, user.id);
+  }
+
+  @Post(':id/members/invite')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Invite/add team member to seller account' })
+  @ApiResponse({ status: 201, description: 'Member invited successfully' })
+  @ApiResponse({ status: 400, description: 'User already a member' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  async inviteMember(
+    @Param('id') accountId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: InviteMemberDto,
+  ) {
+    return this.accountsService.inviteMember(accountId, user.id, dto);
+  }
+
+  @Delete(':id/members/:userId')
+  @ApiBearerAuth('BearerAuth')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Remove team member from seller account' })
+  @ApiResponse({ status: 200, description: 'Member removed successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Member not found' })
+  async removeMember(
+    @Param('id') accountId: string,
+    @Param('userId') targetUserId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.accountsService.removeMember(accountId, user.id, targetUserId);
   }
 }

@@ -1,10 +1,14 @@
 import {
   Injectable,
   ForbiddenException,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../../core/database/prisma.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { CreateBranchDto } from './dto/create-branch.dto';
+import { InviteMemberDto } from './dto/invite-member.dto';
+import { UpdateBranchDto } from './dto/update-branch.dto';
 
 @Injectable()
 export class AccountsService {
@@ -199,5 +203,237 @@ export class AccountsService {
       },
       orderBy: [{ isMain: 'desc' }, { createdAt: 'asc' }],
     });
+  }
+
+  private async assertAccountRole(
+    accountId: string,
+    userId: string,
+    allowedRoles: string[],
+  ) {
+    const member = await this.prisma.accountMember.findUnique({
+      where: {
+        uq_account_user: {
+          accountId,
+          userId,
+        },
+      },
+    });
+
+    if (!member || !allowedRoles.includes(member.role)) {
+      throw new ForbiddenException(
+        'You do not have administrative permission for this account',
+      );
+    }
+    return member;
+  }
+
+  /**
+   * Retrieves all members belonging to the specified seller account.
+   */
+  async getAccountMembers(accountId: string, callerUserId: string) {
+    const callerMember = await this.prisma.accountMember.findUnique({
+      where: {
+        uq_account_user: {
+          accountId,
+          userId: callerUserId,
+        },
+      },
+    });
+
+    if (!callerMember) {
+      throw new ForbiddenException('You are not a member of this account');
+    }
+
+    return this.prisma.accountMember.findMany({
+      where: { accountId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+            avatarUrl: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  /**
+   * Invites / adds a member to the account with specified RBAC role.
+   */
+  async inviteMember(
+    accountId: string,
+    callerUserId: string,
+    dto: InviteMemberDto,
+  ) {
+    await this.assertAccountRole(accountId, callerUserId, ['owner', 'manager']);
+
+    const cleanDigits = dto.phone.replace(/[^0-9]/g, '');
+    let normalizedPhone = dto.phone;
+    if (cleanDigits.startsWith('20') && cleanDigits.length === 12) {
+      normalizedPhone = `+${cleanDigits}`;
+    } else if (cleanDigits.startsWith('0') && cleanDigits.length === 11) {
+      normalizedPhone = `+20${cleanDigits.slice(1)}`;
+    } else if (cleanDigits.length === 10) {
+      normalizedPhone = `+20${cleanDigits}`;
+    }
+
+    let targetUser = await this.prisma.user.findUnique({
+      where: { phone: normalizedPhone },
+    });
+
+    if (!targetUser) {
+      targetUser = await this.prisma.user.create({
+        data: {
+          phone: normalizedPhone,
+          fullName: `عضو فريق ${normalizedPhone.slice(-4)}`,
+          isPhoneVerified: false,
+          isActive: true,
+        },
+      });
+    }
+
+    const existingMember = await this.prisma.accountMember.findUnique({
+      where: {
+        uq_account_user: {
+          accountId,
+          userId: targetUser.id,
+        },
+      },
+    });
+
+    if (existingMember) {
+      throw new BadRequestException('User is already a member of this account');
+    }
+
+    return this.prisma.accountMember.create({
+      data: {
+        accountId,
+        userId: targetUser.id,
+        role: dto.role,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * Removes a member from the seller account.
+   */
+  async removeMember(
+    accountId: string,
+    callerUserId: string,
+    targetUserId: string,
+  ) {
+    const caller = await this.assertAccountRole(accountId, callerUserId, [
+      'owner',
+      'manager',
+    ]);
+
+    const target = await this.prisma.accountMember.findUnique({
+      where: {
+        uq_account_user: {
+          accountId,
+          userId: targetUserId,
+        },
+      },
+    });
+
+    if (!target) {
+      throw new NotFoundException('Team member not found');
+    }
+
+    if (target.role === 'owner') {
+      throw new ForbiddenException('Cannot remove an account owner');
+    }
+
+    if (caller.role === 'manager' && target.role === 'manager') {
+      throw new ForbiddenException('Managers cannot remove other managers');
+    }
+
+    await this.prisma.accountMember.delete({
+      where: {
+        uq_account_user: {
+          accountId,
+          userId: targetUserId,
+        },
+      },
+    });
+
+    return { success: true };
+  }
+
+  /**
+   * Updates branch details.
+   */
+  async updateBranch(
+    accountId: string,
+    branchId: string,
+    callerUserId: string,
+    dto: UpdateBranchDto,
+  ) {
+    await this.assertAccountRole(accountId, callerUserId, ['owner', 'manager']);
+
+    const branch = await this.prisma.branch.findFirst({
+      where: { id: branchId, accountId },
+    });
+
+    if (!branch) {
+      throw new NotFoundException('Branch not found');
+    }
+
+    if (dto.isMain) {
+      await this.prisma.branch.updateMany({
+        where: { accountId },
+        data: { isMain: false },
+      });
+    }
+
+    const updateData: any = {};
+    if (dto.name !== undefined) updateData.name = dto.name;
+    if (dto.address !== undefined) updateData.address = dto.address;
+    if (dto.phone !== undefined) updateData.phone = dto.phone;
+    if (dto.areaId !== undefined) updateData.areaId = dto.areaId;
+    if (dto.isMain !== undefined) updateData.isMain = dto.isMain;
+
+    return this.prisma.branch.update({
+      where: { id: branchId },
+      data: updateData,
+    });
+  }
+
+  /**
+   * Deletes a branch from the seller account.
+   */
+  async deleteBranch(
+    accountId: string,
+    branchId: string,
+    callerUserId: string,
+  ) {
+    await this.assertAccountRole(accountId, callerUserId, ['owner', 'manager']);
+
+    const branch = await this.prisma.branch.findFirst({
+      where: { id: branchId, accountId },
+    });
+
+    if (!branch) {
+      throw new NotFoundException('Branch not found');
+    }
+
+    await this.prisma.branch.delete({
+      where: { id: branchId },
+    });
+
+    return { success: true };
   }
 }
